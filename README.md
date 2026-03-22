@@ -82,12 +82,12 @@ VS Code の GitHub Copilot MCP サーバーが使用するトークンファイ�
 各 `.example` ファイルをコピーして実際のトークン値を設定してください。  
 すべてのトークンファイルは `.gitignore` により git 管理外です。
 
-| 実ファイル              | テンプレート                      | 用途                            | トークン取得先                                     |
-| ----------------------- | --------------------------------- | ------------------------------- | -------------------------------------------------- |
-| `.env.portfolio`        | `.env.portfolio.example`         | GitHub MCP（本リポジトリ用）    | GitHub → Settings → Developer settings → Fine-grained tokens |
-| `.env.portfolio-test`   | `.env.portfolio-test.example`    | GitHub MCP（テストリポジトリ用）| 同上（参照専用）                                   |
-| `.env.supabase`         | `.env.supabase.example`          | Supabase MCP                    | Supabase ダッシュボード → Account → Access Tokens  |
-| `.env.figma`            | `.env.figma.example`             | Figma MCP                       | Figma → Account Settings → Personal access tokens |
+| 実ファイル            | テンプレート                  | 用途                             | トークン取得先                                               |
+| --------------------- | ----------------------------- | -------------------------------- | ------------------------------------------------------------ |
+| `.env.portfolio`      | `.env.portfolio.example`      | GitHub MCP（本リポジトリ用）     | GitHub → Settings → Developer settings → Fine-grained tokens |
+| `.env.portfolio-test` | `.env.portfolio-test.example` | GitHub MCP（テストリポジトリ用） | 同上（参照専用）                                             |
+| `.env.supabase`       | `.env.supabase.example`       | Supabase MCP                     | Supabase ダッシュボード → Account → Access Tokens            |
+| `.env.figma`          | `.env.figma.example`          | Figma MCP                        | Figma → Account Settings → Personal access tokens            |
 
 ```bash
 # セットアップ例
