@@ -1,25 +1,31 @@
 {
-	"servers": {
-		"github-copilot": {
-			"type": "http",
-			"url": "https://api.githubcopilot.com/mcp/"
-		},
-		"github-portfolio": {
-			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "@modelcontextprotocol/server-github"],
-			"envFile": "${workspaceFolder}/.env.portfolio"
-		},
-		"github-portfolio-test": {
-			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "@modelcontextprotocol/server-github"],
-			"envFile": "${workspaceFolder}/.env.portfolio-test"
-		},
-		"figma": {
-			"type": "stdio",
-			"command": "/home/junpei-1997/.bun/bin/cursor-talk-to-figma-mcp"
-		}
-	},
-	"inputs": []
+  "servers": {
+    "github-copilot": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "github-portfolio": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "envFile": "${workspaceFolder}/.env.portfolio"
+    },
+    "github-portfolio-test": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "envFile": "${workspaceFolder}/.env.portfolio-test"
+    },
+    "figma": {
+      "type": "stdio",
+      "command": "/home/junpei-1997/.bun/bin/cursor-talk-to-figma-mcp"
+    },
+    "supabase": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase@latest"],
+      "envFile": "${workspaceFolder}/.env.supabase"
+    }
+  },
+  "inputs": []
 }
