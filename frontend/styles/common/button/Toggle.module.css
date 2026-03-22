@@ -1,0 +1,63 @@
+.toggle {
+  display: flex;
+  position: relative;
+  width: 260px;
+  z-index: 600;
+}
+
+.bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 130px;
+  height: 45px;
+  border-radius: 4px;
+  background-color: #00aaaa;
+  transition: all 0.25s;
+}
+
+.toggle_button {
+  position: relative;
+  width: 130px;
+  height: 45px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.toggle_button:hover {
+  background-color: rgba(0, 136, 136, 0.3);
+}
+
+.left {
+  border-left: 1.5px solid #00aaaa;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.left:hover {
+  border-left: 1.5px solid #008888;
+}
+
+.right {
+  border-right: 1.5px solid #00aaaa;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.right:hover {
+  border-right: 1.5px solid #008888;
+}
+
+.left,
+.right {
+  top: 0;
+  right: 0;
+  border-top: 1.5px solid #00aaaa;
+  border-bottom: 1.5px solid #00aaaa;
+}
+
+.left:hover,
+.right:hover {
+  border-top: 1.5px solid #008888;
+  border-bottom: 1.5px solid #008888;
+}

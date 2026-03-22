@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "control_items",
+  "info": {
+    "singularName": "control-item",
+    "pluralName": "control-items",
+    "displayName": "control_items",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "animation_name": {
+      "type": "string",
+      "required": true
+    },
+    "key": {
+      "type": "string",
+      "required": true
+    },
+    "is_loop": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    }
+  }
+}

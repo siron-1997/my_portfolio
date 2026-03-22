@@ -1,0 +1,54 @@
+import React from 'react';
+import { Html } from '@react-three/drei';
+import { Object3D } from 'three';
+import { NumberedCircled } from '@/components/common';
+import { ModelChildren } from '@/types/world';
+import { BREAK_POINTS } from '@/constants/common';
+import { APP_THEME_COLORS } from '@/constants/colors';
+import useNavigations from './useNavigations';
+
+type Props = {
+  modelChildren: ModelChildren;
+  isNavigationVisible: boolean;
+};
+
+const Navigations = ({ modelChildren, isNavigationVisible }: Props) => {
+  const { width, handleClick } = useNavigations();
+
+  return (
+    <group name="navigations">
+      {modelChildren
+        // 名前が IS_Sec3_<番号>_<名前> 形式のものを抽出
+        .filter((child: Object3D) => /^IS_Sec3_\d+_.+/.test(child.name))
+        .map((child: Object3D, i: number) => (
+          <Html
+            key={i}
+            position={[child.position.x, child.position.y, child.position.z]} // 位置情報を利用
+            style={{ zIndex: 600 }}
+          >
+            <NumberedCircled
+              index={i}
+              sx={{
+                fontSize: width >= BREAK_POINTS.XS ? 15 : 13,
+                borderWidth: 2,
+                borderStyle: 'solid',
+                borderColor: 'rgba(255, 255, 255, 0.5)',
+                transition: 'all 0.2s',
+                padding: width >= BREAK_POINTS.XS ? '5px 9px' : '3.5px 8px',
+                '&:hover': {
+                  borderColor: APP_THEME_COLORS.navigation,
+                  color: APP_THEME_COLORS.navigation,
+                },
+              }}
+              onClick={() => handleClick(i)}
+              isNavigationVisible={isNavigationVisible}
+            />
+          </Html>
+        ))}
+    </group>
+  );
+};
+
+Navigations.displayName = 'Navigations';
+
+export default React.memo(Navigations);

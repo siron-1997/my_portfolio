@@ -1,0 +1,15 @@
+# Next.js ビルド成果物
+.next/
+out/
+
+# 依存関係
+node_modules/
+
+# 静的ファイル（フォント・画像・3Dモデル等はフォーマット不要）
+public/
+
+# ロックファイル
+pnpm-lock.yaml
+
+# 環境変数
+.env*

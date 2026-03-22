@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <svg xmlns="http://www.w3.org/2000/svg" width="300mm" height="60mm" version="1.1" viewBox="0 0 850.4 170.1">
+    <defs>
+        <style>
+            .cls-1 {
+                fill: #fff;
+                stroke: #fff;
+                stroke-miterlimit: 10;
+            }
+        </style>
+    </defs>
+    <!-- Generator: Adobe Illustrator 28.6.0, SVG Export Plug-In . SVG Version: 1.2.0 Build 709)  -->
+    <g>
+        <g id="_レイヤー_1" data-name="レイヤー_1">
+            <g>
+                <path class="cls-1" d="M35.5,131.8h-10.3v-32h12.1v30.4h10v10h28.6v-10h10.1V19h11.8v112.8h-10.1v10.1h-10v10.3h-32v-10.3h-10.1v-10.1Z"/>
+                <path class="cls-1" d="M117.3,131.8h-10.3V59.4h12.1v70.8h10v10h28.6v-10h10.1V59.4h11.8v92.9h-11.8v-10.3h-8.3v10.3h-32v-10.3h-10.1v-10.1Z"/>
+                <path class="cls-1" d="M188.7,59.4h12.1v10.1h8.3v-10.1h32v10.1h10v10h10.1v72.7h-11.8v-71h-10.1v-10.1h-28.6v10.1h-10v71h-12.1V59.4Z"/>
+                <path class="cls-1" d="M270.4,59.4h12.1v10.1h8.3v-10.1h32v10.1h10v10h10.1v42.2h-10.1v10.1h-10v10.1h-32v-10.1h-8.3v30.6h-12.1V59.4ZM321.1,130.2v-10.1h10.1v-38.7h-10.1v-10.1h-28.6v10.1h-10v38.7h10v10.1h28.6Z"/>
+                <path class="cls-1" d="M362.5,131.8h-10.3v-52.3h10.3v-10h10.1v-10.1h32v10.1h10v10h10.1v32.2h-60.5v18.5h10v10h28.6v-10h10.1v-10.1h11.8v11.8h-10.1v10.1h-10v10.3h-32v-10.3h-10.1v-10.1ZM413,99.8v-18.5h-10.1v-10.1h-28.6v10.1h-10v18.5h48.7Z"/>
+                <path class="cls-1" d="M464.2,29h11.9v22.1h-11.9v-22.1ZM464.2,59.4h11.9v92.9h-11.9V59.4Z"/>
+                <path class="cls-1" d="M607.7,131.8h-10.3V39.1h10.3v-10.1h10.1v-10h32v10h10v10.1h10.1v92.7h-10.1v10.1h-10v10.3h-32v-10.3h-10.1v-10.1ZM619.5,130.2v10h28.6v-10h10.1V40.9h-10.1v-10.1h-28.6v10.1h-10v89.3h10Z"/>
+                <path class="cls-1" d="M689.4,131.8h-10.3V59.4h12.1v70.8h10v10h28.6v-10h10.1V59.4h11.8v92.9h-11.8v-10.3h-8.3v10.3h-32v-10.3h-10.1v-10.1Z"/>
+                <path class="cls-1" d="M771.2,131.8h-10.3v-52.3h10.3v-10h10.1v-10.1h32v10.1h10v10h10.1v32.2h-60.5v18.5h10v10h28.6v-10h10.1v-10.1h11.8v11.8h-10.1v10.1h-10v10.3h-32v-10.3h-10.1v-10.1ZM821.7,99.8v-18.5h-10.1v-10.1h-28.6v10.1h-10v18.5h48.7Z"/>
+            </g>
+        </g>
+    </g>
+</svg>

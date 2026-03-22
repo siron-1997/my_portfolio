@@ -1,0 +1,10 @@
+.finger_press {
+  position: relative;
+  margin: auto 0;
+}
+
+.finger_press img,
+.finger_press p {
+  position: relative;
+  z-index: 100;
+}

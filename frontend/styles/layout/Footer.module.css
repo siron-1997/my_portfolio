@@ -1,0 +1,37 @@
+.footer {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(15, 9, 30, 0.6);
+  backdrop-filter: blur(50px);
+  z-index: 100;
+}
+
+.footer_row {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  height: 140px;
+}
+
+.sns {
+  display: flex;
+  gap: 30px;
+}
+
+@media screen and (min-width: 768px) {
+  .sns {
+    gap: 30px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .footer_row {
+    justify-content: space-between;
+    flex-direction: row;
+    height: 115px;
+  }
+}

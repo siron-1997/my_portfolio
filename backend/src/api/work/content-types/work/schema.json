@@ -1,0 +1,85 @@
+{
+  "kind": "collectionType",
+  "collectionName": "works",
+  "info": {
+    "singularName": "work",
+    "pluralName": "works",
+    "displayName": "works",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "regex": "^(2d|3d)\\/.+$"
+    },
+    "created": {
+      "type": "date",
+      "required": true
+    },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::category.category"
+    },
+    "model": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "main_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "introduction_title": {
+      "type": "string",
+      "required": true,
+      "unique": false
+    },
+    "introduction_description": {
+      "type": "text",
+      "required": true
+    },
+    "controls_title": {
+      "type": "string",
+      "required": true
+    },
+    "control_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::control-item.control-item"
+    },
+    "key": {
+      "type": "string",
+      "required": true
+    },
+    "controls_description": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

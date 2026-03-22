@@ -1,0 +1,32 @@
+.profile_container {
+  flex-direction: column !important;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+@media screen and (min-width: 1024px) {
+  .profile {
+    flex-direction: row;
+  }
+
+  .profile_info {
+    width: 60%;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .profile_info {
+    width: 52%;
+  }
+}

@@ -1,0 +1,81 @@
+%%{init: {'theme': 'dark', 'themeVariables': {'background': '#0d0d0d', 'mainBkg': '#0d0d0d'}}}%%
+flowchart TD
+    subgraph BLENDER["🎨 Blender（3Dデータ制作）"]
+        B1["モデルを作成\n（メッシュ・マテリアル・アニメーション）"]
+        B2["カメラオブジェクトを命名規則で配置\n例: Cam_BP_LG_Sec3_0_Engine"]
+        B3["オフセット用空オブジェクトを配置\n例: Cam_BP_LG_Offset_Sec3_0_Engine"]
+        B4["GLB形式でエクスポート\n（DRACO圧縮）"]
+        B1 --> B2 --> B3 --> B4
+    end
+
+    subgraph DB["🗄️ Supabase（データ管理）"]
+        C1["作品データを登録\n（PostgreSQL ビュー: v_work_detail）\n・タイトル・説明文\n・model_url（GLBのパス）\n・controls配列\n　└ title / animation_name / is_loop"]
+        C2["3DモデルファイルをStorageに保存\n（バケット: portfolio-works）"]
+    end
+
+    subgraph LOAD["📦 ページ読み込み（ブラウザ表示）"]
+        L1["Next.js がページを表示\n/works/3d/slug"]
+        L2["内部APIを呼び出し\n/api/supabase/work-detail/3d/slug"]
+        L3["APIルート（route.ts）が\nSupabase v_work_detail ビューを検索"]
+        L4["Supabase Storage から GLB の\n署名付きURL（1時間有効）を生成"]
+        L5["GLBファイルをダウンロード\n（DRACO解凍）"]
+        L6["GLB内の全オブジェクトを走査\nカメラ・メッシュ・ライトを分類"]
+        L1 --> L2 --> L3 --> L4 --> L5 --> L6
+    end
+
+    subgraph CAMERA_EXTRACT["🔍 カメラデータの抽出（getCameraParams）"]
+        CE1["ブラウザ幅を検出\n例: LG サイズ（1024px以上）"]
+        CE2["GLB内から LG のカメラのみ抽出\n命名規則でフィルタリング"]
+        CE3["セクション用カメラパラメータを生成\n・Portal → Sec1 カメラの位置・角度\n・Introduction → Sec2 カメラの位置・角度\n・Controls → Sec3 カメラの位置・角度"]
+        CE4["コントロール用カメラ設定一覧を生成\n各コントロール項目 → 対応カメラの位置・角度・ビューオフセット"]
+        CE1 --> CE2 --> CE3 --> CE4
+    end
+
+    subgraph PAGE["🖥️ 画面構成（3つのセクション）"]
+        P1["① Portal セクション\n3Dビューア + タイトル"]
+        P2["② Introduction セクション\n作品説明 + 3Dビューワーボタン"]
+        P3["③ Controls セクション\n操作パネル（コントロール選択）"]
+        P1 --- P2 --- P3
+    end
+
+    subgraph SCROLL["📜 スクロールに連動したカメラ移動（GSAP ScrollTrigger）"]
+        S1["Portal を下にスクロール\n↓\nカメラが Sec1 → Sec2 の位置へ補間移動"]
+        S2["Introduction を下にスクロール\n↓\nカメラが Sec2 → Sec3 の位置へ補間移動"]
+        S3["Controls に到達\n↓\nisStartControls = true\nコントロール選択が有効化される"]
+        S1 --> S2 --> S3
+    end
+
+    subgraph CONTROLS_CLICK["🖱️ コントロール項目クリック時"]
+        K1["Controls UI でアイテムをクリック\n例: 『エンジン』"]
+        K2["currentIndex を更新\n（WorkThreeDContext）"]
+        K3["カメラ移動アニメーション開始\n【Arc-Slerp 補間】\n\n従来: XYZ 直線移動\n現在: シーン中心を軸に弧を描いて移動"]
+        K4["回転もクォータニオン補間\n（Euler角だとぎめり回転が発生するため）"]
+        K5["ビューオフセット適用\n（画面内での視点ずれを調整）"]
+        K6["GLBアニメーション再生\n例: AS_Engine_S_0（選択開始アニメ）\n　　AS_Engine_E_0（非選択終了アニメ）"]
+        K1 --> K2 --> K3 --> K4 --> K5 --> K6
+    end
+
+    subgraph VIEWER["🔭 3Dビューワーモード（自由視点）"]
+        V1["『Start』ボタンをクリック"]
+        V2["OrbitControls が有効化\n（マウス/タッチで自由にモデルを回転・ズーム）"]
+        V3["Canvas が最前面に（zIndex: 200）\nスクロール無効化"]
+        V4["『End』ボタンで通常モードに戻る"]
+        V1 --> V2 --> V3 --> V4
+    end
+
+    B4 --> DB
+    DB --> LOAD
+    LOAD --> CAMERA_EXTRACT
+    CAMERA_EXTRACT --> PAGE
+    PAGE --> SCROLL
+    SCROLL --> CONTROLS_CLICK
+    P2 --> VIEWER
+
+    style BLENDER fill:#1a1a2e,color:#e0e0ff,stroke:#7b68ee
+    style DB fill:#0d2137,color:#e0e0ff,stroke:#4a9eff
+    style LOAD fill:#0d3320,color:#e0e0ff,stroke:#4aff88
+    style CAMERA_EXTRACT fill:#2d1b00,color:#e0e0ff,stroke:#ffaa00
+    style PAGE fill:#2d0d0d,color:#e0e0ff,stroke:#ff6b6b
+    style SCROLL fill:#1a2d00,color:#e0e0ff,stroke:#88ff44
+    style CONTROLS_CLICK fill:#2d002d,color:#e0e0ff,stroke:#ff44ff
+    style VIEWER fill:#002d2d,color:#e0e0ff,stroke:#44ffff

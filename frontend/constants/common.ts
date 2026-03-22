@@ -1,0 +1,83 @@
+import { SiteMapItem, Sns, GsapAnimationConfig } from '@/types/common';
+
+/**
+ * 現在地のデフォルト座標（比叡山）
+ * @description 位置情報の共有が許可されなかった場合に使用
+ */
+export const DEFAULT_COORDINATES = {
+  latitude: 35.681236,
+  longitude: 139.767125,
+};
+
+/** ブレークポイント */
+export const BREAK_POINTS = {
+  XS: 768,
+  SM: 1024,
+  LG: 1280,
+  XL: 1536,
+  '2XL': 1920,
+};
+
+/** サイトマップ */
+export const SITE_MAP: SiteMapItem[] = [
+  { href: '/about', title: 'About' },
+  { href: '/works', title: 'Works' },
+  { href: '/contact', title: 'Contact' },
+];
+
+/**  SNSリスト */
+export const SNS_LIST: Sns[] = [
+  {
+    imageFilePath: '/icons/twitter_sns_48x48.svg',
+    alt: 'X',
+    href: 'https://twitter.com/Jsiron2029',
+  },
+  {
+    imageFilePath: '/icons/instagram_sns_48x48.svg',
+    alt: 'Instagram',
+    href: 'https://www.instagram.com/shiron50',
+  },
+  {
+    imageFilePath: '/icons/github_sns_60x60.svg',
+    alt: 'GitHub',
+    href: 'https://github.com/siron-1997',
+  },
+];
+
+/** GSAP アニメーションの設定 */
+export const DURATION = 1.8;
+
+export const POWER2_OUT_OPACITY_TOP_MOVE: GsapAnimationConfig = {
+  from: { y: 120, opacity: 0 },
+  to: { y: 0, opacity: 1, duration: DURATION, ease: 'power2.out' },
+};
+
+export const POWER2_OUT_OPACITY_BOTTOM_MOVE: GsapAnimationConfig = {
+  from: { y: -120, opacity: 0 },
+  to: { y: 0, opacity: 1, duration: DURATION, ease: 'power2.out' },
+};
+
+export const POWER2_OUT_OPACITY_LEFT_MOVE: GsapAnimationConfig = {
+  from: { x: 120, opacity: 0 },
+  to: { x: 0, opacity: 1, duration: DURATION, ease: 'power2.out' },
+};
+
+export const POWER2_OUT_OPACITY_RIGHT_MOVE: GsapAnimationConfig = {
+  from: { x: -120, opacity: 0 },
+  to: { x: 0, opacity: 1, duration: DURATION, ease: 'power2.out' },
+};
+
+export const POWER4_OUT_OPACITY_TOP_MOVE: GsapAnimationConfig = {
+  from: { y: 100, opacity: 0 },
+  to: { y: 0, opacity: 1, duration: DURATION, ease: 'power2.out' },
+};
+
+export const BACK_OUT_OPACITY_LEFT_MOVE: GsapAnimationConfig = {
+  from: { x: 100, opacity: 0 },
+  to: { x: 0, opacity: 1, duration: DURATION, delay: 0.2, ease: 'back.out' },
+};
+
+export const BACK_OUT_OPACITY_RIGHT_MOVE: GsapAnimationConfig = {
+  from: { x: -100, opacity: 0 },
+  to: { x: 0, opacity: 1, duration: DURATION, delay: 0.2, ease: 'back.out' },
+};

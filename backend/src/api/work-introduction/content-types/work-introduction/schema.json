@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "work_introductions",
+  "info": {
+    "singularName": "work-introduction",
+    "pluralName": "work-introductions",
+    "displayName": "work_introduction",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    }
+  }
+}
