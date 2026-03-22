@@ -1,280 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# frontend
 
-## Getting Started
+個人ポートフォリオサイトのフロントエンドアプリケーション。  
+Next.js 15 (App Router) + Three.js + GSAP で構築しています。
 
-First, run the development server:
+---
+
+## 技術スタック
+
+| パッケージ | バージョン | 用途 |
+|---|---|---|
+| `next` | 15.5.14 | フレームワーク（App Router） |
+| `react` / `react-dom` | ^19 | UI ライブラリ |
+| `typescript` | ^5 | 型システム |
+| `@mui/material` | ^5.13.1 | UI コンポーネント |
+| `@emotion/react` / `@emotion/styled` | ^11.14.0 | MUI スタイルエンジン |
+| `gsap` | ^3.14.2 | アニメーション |
+| `three` | ^0.183.2 | 3D レンダリング |
+| `@react-three/fiber` | ^9 | Three.js の React バインディング |
+| `@react-three/drei` | ^10 | Three.js ヘルパー集 |
+| `@react-three/postprocessing` | ^3.0.4 | ポストプロセスエフェクト |
+| `@supabase/supabase-js` | ^2.99.3 | Supabase クライアント |
+| `axios` | ^1.13.6 | HTTP クライアント |
+| `sharp` | ^0.34.5 | 画像最適化 |
+| **Node.js** | 22.14.0 | ランタイム |
+| **pnpm** | >=10.0.0 | パッケージマネージャー |
+
+---
+
+## セットアップ
+
+### 1. パッケージインストール
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. 環境変数の設定
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`.env.development` を参考に `.env` ファイルを作成し、各値を設定してください。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.development .env
+```
 
-## Learn More
+| 変数名 | 説明 |
+|---|---|
+| `NEXT_PUBLIC_BASE_URL` | フロントエンドのベース URL |
+| `BASE_URL` | サーバーサイドで使用するベース URL |
+| `MY_NAME` | お問い合わせメールの送信者名 |
+| `MY_EMAIL` | 送信元・受信先メールアドレス |
+| `SENDGRID_API_KEY` | SendGrid API キー |
+| `OPEN_WEATHER_API_KEY` | OpenWeatherMap API キー |
+| `SUPABASE_URL` | Supabase プロジェクト URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service_role キー（サーバーサイド専用） |
 
-To learn more about Next.js, take a look at the following resources:
+### 3. 開発サーバー起動
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+[http://localhost:3000](http://localhost:3000) で確認できます。
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## スクリプト
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| コマンド | 内容 |
+|---|---|
+| `pnpm dev` | 開発サーバー起動 |
+| `pnpm build` | プロダクションビルド |
+| `pnpm start` | プロダクションサーバー起動 |
+| `pnpm lint` | ESLint 実行 |
+
+---
 
 ## ディレクトリ構成
 
-ディレクトリ構成
-
+```text
 frontend/
-├── .next/ (Next.jsによって自動生成されるキャッシュやビルド出力)
-│
-├── animations/
-│    ├── about.ts
-│    ├── contact.ts
-│    ├── works.ts
-│    ├── work.ts
-│    ├── workWorld.ts
-│    ├── homeWorld.ts
-│
-├── app/
-│   ├── api/
-│   │   └── sendGrid/
-│   │       └── route.ts
-│   │
-│   └── (pages)/
-│       ├── about/
-│       │   └── page.tsx
-│       │
-│       ├── contact/
-│       │   └── page.tsx
-│       │
-│       └── works/
-│           ├── [slug]/
-│           │   └── page.tsx
-│           │
-│           └── page.tsx
-│
-├── components/
-│   ├── about/
-│   │   ├── index.ts
-│   │   ├── Introduction.tsx
-│   │   ├── ProfileImage.tsx
-│   │   └── SkillList.tsx
-│   │
-│   ├── contact/
-│   │   ├── ContactForm.tsx
-│   │   ├── index.ts
-│   │   ├── InputFields.tsx
-│   │   └── ProgressStatus.tsx
-│   │
-│   ├── common/
-│   │   ├── button/
-│   │   │   ├── Button.tsx
-│   │   │   ├── Close.tsx
-│   │   │   ├── Hamburger.tsx
-│   │   │   ├── index.ts
-│   │   │   ├── ScrollToTop.tsx
-│   │   │   └── Toggle.tsx
-│   │   │
-│   │   ├── loading/
-│   │   │   ├── index.ts
-│   │   │   ├── ModelViewerLoading.tsx
-│   │   │   └── PageLoading.tsx
-│   │   │
-│   │   ├── Card.tsx
-│   │   ├── Chip.tsx
-│   │   ├── Container.tsx
-│   │   ├── index.ts
-│   │   ├── FilgerPress.tsx
-│   │   ├── NextProgressBar.tsx
-│   │   ├── NumberedCircled.tsx 
-│   │   └── PageHeader.tsx
-│   │
-│   ├── world/
-│   │   ├── home/
-│   │   │   ├── modules/
-│   │   │   │   ├── Cloud.tsx
-│   │   │   │   ├── Door.tsx
-│   │   │   │   ├── Fog.tsx
-│   │   │   │   ├── Lightning.tsx
-│   │   │   │   ├── Model.tsx
-│   │   │   │   ├── Ocean.tsx
-│   │   │   │   ├── Rain.tsx
-│   │   │   │   ├── RigCamera.tsx
-│   │   │   │   ├── Star.tsx
-│   │   │   │   ├── SunLight.tsx
-│   │   │   │   └── WeatherEnvironment.tsx
-│   │   │   │
-│   │   │   ├── HomeWorld.tsx
-│   │   │   ├── Experience.tsx
-│   │   │   └── index.ts
-│   │   │
+├── app/                  # Next.js App Router（ルーティング・Server Components）
+│   ├── (pages)/          # Route Groups（URL に影響しないグループ）
+│   │   ├── about/
+│   │   ├── contact/
 │   │   └── works/
-│   │        ├── modules/
-│   │        │   ├── index.ts
-│   │        │   ├── CustomCamera.tsx
-│   │        │   ├── CustomOrbitControls.tsx
-│   │        │   └── CustomModel.tsx
-│   │        │
-│   │        ├── Experience.tsx
-│   │        ├── index.ts
-│   │        └── WorkWorld.tsx
-│   │
-│   ├── layout/
-│   │   ├── Footer.tsx
-│   │   ├── Header.tsx
-│   │   ├── index.ts
-│   │   ├── Meta.tsx
-│   │   └── Navigation.tsx
-│   │
-│   └── works/
-│       ├── CategoryFilter.tsx
-│       ├── Contents.tsx
-│       ├── index.ts
-│       └── Portal.tsx
-│
-├── configs/
-│   └── theme.ts
-│
-├── context/
-│   ├── ContactFormContext.tsx
-│   ├── index.ts
-│   ├── ModelViewerContext.tsx
-│   ├── PageHeaderContext.tsx
-│   ├── ThemeProviderWrapper.tsx
-│   └── WorkContext.tsx
-│
-├── constants/
-│   ├── about.ts
-│   ├── animation-configs.ts
-│   ├── break-points-camera.ts
-│   ├── break-points.ts
-│   ├── colors.ts
-│   ├── contact.ts
-│   ├── environment-colors.ts
-│   ├── mountain-materials.ts
-│   ├── site-map.ts
-│   ├── sns-list.ts
-│   ├── works-world.ts
-│   └── works.ts
-│
-├── types/
-│   ├── about.ts
-│   ├── animationConfigs.ts
-│   ├── breakPointsCamera.ts
-│   ├── breakPoints.ts
-│   ├── colors.ts
-│   ├── contact.ts
-│   ├── environmentColor.ts
-│   ├── mountainMaterials.ts
-│   ├── siteMap.ts
-│   ├── snsList.ts
-│   ├── worksWorld.ts
-│   └── works.ts
-│
-├── node_modules/ (...)
-│
-├── public/
-│   ├── doraco/ (...)
-│   ├── images/ (...)
-│   ├── models/ (...)
-│   └── icons/ (...)
-│
-├── styles/
+│   └── api/              # Route Handlers（サーバーサイド API）
+│       ├── getCurrentWeather/
+│       ├── sendGridEmail/
+│       └── supabase/
+├── animations/           # GSAP アニメーション定義（ページ単位で分割）
+├── components/           # UI コンポーネント（ドメイン別フォルダ）
 │   ├── about/
-│   │   ├── Introduction.module.css
-│   │   ├── ProfileImage.module.css
-│   │   ├── SkillList.module.css
-│   │   └── about.module.css
-│   │
-│   ├── contact/
-│   │   ├── ContactForm.module.css
-│   │   ├── InputFields.module.css
-│   │   └── ProgressStatus.module.css
-│   │
 │   ├── common/
-│   │   ├── button/
-│   │   │   ├── Button.module.css
-│   │   │   ├── Close.module.css
-│   │   │   ├── ScrollToTop.module.css
-│   │   │   └── Toggle.module.css
-│   │   │
-│   │   ├── loading/
-│   │   │   ├── ModelViewer.module.css
-│   │   │   └── PageLoading.module.css
-│   │   │
-│   │   ├── Card.module.css
-│   │   ├── Chip.module.css
-│   │   ├── Container.module.css
-│   │   ├── FingerPress.module.css
-│   │   ├── NextProgressBar.module.css
-│   │   ├── NumberedCircled.module.css
-│   │   └── PageHeader.module.css
-│   │
+│   ├── contact/
+│   ├── home/
 │   ├── layout/
-│   │   ├── Footer.module.css
-│   │   ├── Header.module.css
-│   │   └── Navigation.module.css
-│   │
 │   ├── works/
-│   │   ├── CategoryFilter.module.css
-│   │   ├── Contents.module.css
-│   │   └── Portal.module.css
-│   │
-│   └── globals.css
-│
-├── hooks/
-│   ├── index.ts
-│   ├── useIconSize.ts
-│   ├── useImageSize.ts
-│   ├── useIsIos.ts
-│   ├── useScrollDirection.ts
-│   └── useWindowSize.ts
-│
-├── utils/
-│   ├── world/
-│   │   ├── getBackgroundColor.ts
-│   │   ├── getCameraParams.ts
-│   │   ├── getEnvironmentColor.ts
-│   │   ├── getEnvMapIntensity.ts
-│   │   ├── getFogColor.ts
-│   │   ├── getLightningOccurrence.ts
-│   │   ├── getRainState.ts
-│   │   ├── getSunColor.ts
-│   │   ├── getSunIntensity.ts
-│   │   ├── index.ts
-│   │   ├── setCameraPositions.ts
-│   │   └── setCloudsVisible.ts
-│   │
-│   ├── disableScroll.ts
-│   ├── gsap.ts
-│   ├── index.ts
-│   └── truncateString.ts
-│
-├── .env
-├── .env.development
-├── .eslintrc.json
-├── .gitignore
-├── next-env.d.ts
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-├── REDME.md
-└── tcconfig.json
+│   └── world/
+├── configs/              # MUI テーマ等の設定
+├── constants/            # 定数（用途別ファイル）
+├── contexts/             # React Context（グローバル状態管理）
+├── hooks/                # 共通カスタムフック
+├── public/               # 静的アセット（画像・3D モデル・フォント等）
+├── services/             # データ取得関数（Supabase・外部 API）
+├── styles/               # CSS Modules（コンポーネント単位のスタイル）
+├── types/                # 型定義（用途別ファイル）
+└── utils/                # 汎用ユーティリティ関数
+```
 
+---
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
+## 参考リンク
+
+### Next.js
+
+- [Next.js ドキュメント](https://nextjs.org/docs) - Next.js の機能と API
+- [Learn Next.js](https://nextjs.org/learn) - インタラクティブチュートリアル
+- [Next.js GitHub リポジトリ](https://github.com/vercel/next.js)
+- [App Router デプロイガイド](https://nextjs.org/docs/app/building-your-application/deploying)
+
+### その他
+
+- [Three.js ドキュメント](https://threejs.org/docs/)
+- [React Three Fiber ドキュメント](https://docs.pmnd.rs/react-three-fiber)
+- [GSAP ドキュメント](https://gsap.com/docs/v3/)
+- [Supabase ドキュメント](https://supabase.com/docs)

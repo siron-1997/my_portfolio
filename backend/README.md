@@ -1,61 +1,98 @@
-# 🚀 Getting started with Strapi
+# backend
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
-
-### `develop`
-
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)
-
-```
-npm run develop
-# or
-yarn develop
-```
-
-### `start`
-
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-start)
-
-```
-npm run start
-# or
-yarn start
-```
-
-### `build`
-
-Build your admin panel. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-build)
-
-```
-npm run build
-# or
-yarn build
-```
-
-## ⚙️ Deployment
-
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
-
-```
-yarn strapi deploy
-```
-
-## 📚 Learn more
-
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://strapi.io/blog) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
-
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
-
-## ✨ Community
-
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
+ポートフォリオサイトのコンテンツ管理用 Strapi v5 アプリケーションです。  
+データベースに PostgreSQL、ファイルストレージに Supabase Storage を使用しています。
 
 ---
 
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+## 技術スタック
+
+| パッケージ | バージョン | 用途 |
+|---|---|---|
+| `@strapi/strapi` | 5.13.0 | Strapi フレームワーク本体 |
+| `@strapi/plugin-users-permissions` | 5.13.0 | 認証・権限管理プラグイン |
+| `@strapi/plugin-cloud` | 5.13.0 | Strapi Cloud デプロイプラグイン |
+| `@strapi/provider-upload-aws-s3` | ^5.22.0 | S3 互換アップロードプロバイダー |
+| `strapi-provider-upload-supabase` | ^1.0.0 | Supabase Storage アップロードプロバイダー |
+| `pg` | 8.8.0 | PostgreSQL ドライバー |
+| `typescript` | ^5 | 型システム |
+| **Node.js** | 22.14.0 | ランタイム |
+| **pnpm** | >=10.0.0 | パッケージマネージャー |
+
+---
+
+## セットアップ
+
+### 1. パッケージインストール
+
+```bash
+pnpm install
+```
+
+### 2. 環境変数の設定
+
+`.env.example` を参考に `.env` ファイルを作成し、各値を設定してください。
+
+```bash
+cp .env.example .env
+```
+
+### 3. 開発サーバー起動
+
+```bash
+pnpm dev
+```
+
+[http://localhost:1337/admin](http://localhost:1337/admin) で Strapi Admin にアクセスできます。
+
+---
+
+## スクリプト
+
+| コマンド | 内容 |
+|---|---|
+| `pnpm dev` | 開発サーバー起動（ホットリロード有効） |
+| `pnpm start` | 本番サーバー起動（ホットリロード無効） |
+| `pnpm build` | Admin パネルのビルド |
+| `pnpm upgrade:dry` | Strapi アップグレードのドライラン（確認用） |
+| `pnpm upgrade` | Strapi を最新バージョンへアップグレード |
+
+---
+
+## ディレクトリ構成
+
+```text
+backend/
+├── config/            # Strapi 設定ファイル（admin, database, middlewares 等）
+├── database/
+│   └── migrations/    # データベースマイグレーションファイル
+├── src/
+│   ├── api/           # Content-Type ごとの API（controllers, routes, services）
+│   │   ├── category/
+│   │   ├── control-item/
+│   │   ├── work/
+│   │   └── work-introduction/
+│   └── extensions/    # Strapi コア機能の拡張（最小限に留める）
+└── types/
+    └── generated/     # Strapi が自動生成する型定義（直接編集禁止）
+```
+
+---
+
+## Content Types
+
+| Content Type | 説明 |
+|---|---|
+| `category` | 作品カテゴリ |
+| `work` | ポートフォリオ作品 |
+| `work-introduction` | 作品紹介テキスト |
+| `control-item` | 3D ビューアの操作説明アイテム |
+
+---
+
+## 参考リンク
+
+- [Strapi ドキュメント](https://docs.strapi.io) - 公式ドキュメント
+- [Strapi CLI リファレンス](https://docs.strapi.io/dev-docs/cli) - CLI コマンド一覧
+- [Strapi Changelog](https://strapi.io/changelog) - アップデート履歴
+- [Strapi GitHub](https://github.com/strapi/strapi)
