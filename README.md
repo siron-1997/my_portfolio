@@ -66,13 +66,37 @@ portfolio_v2/
 
 ## 環境変数
 
+### アプリケーション用
+
 各パッケージに `.env` ファイルが必要です。  
 テンプレートを参考に値を設定してください。
 
-| パッケージ  | テンプレートファイル               |
-| ----------- | ---------------------------------- |
-| `frontend/` | `frontend/.env.development`        |
-| `backend/`  | `backend/.env` （Strapi 自動生成） |
+| パッケージ  | テンプレートファイル        |
+| ----------- | --------------------------- |
+| `frontend/` | `frontend/.env.development` |
+| `backend/`  | `backend/.env.example`      |
+
+### VS Code MCP サーバー用（ルート直下）
+
+VS Code の GitHub Copilot MCP サーバーが使用するトークンファイルです。  
+各 `.example` ファイルをコピーして実際のトークン値を設定してください。  
+すべてのトークンファイルは `.gitignore` により git 管理外です。
+
+| 実ファイル              | テンプレート                      | 用途                            | トークン取得先                                     |
+| ----------------------- | --------------------------------- | ------------------------------- | -------------------------------------------------- |
+| `.env.portfolio`        | `.env.portfolio.example`         | GitHub MCP（本リポジトリ用）    | GitHub → Settings → Developer settings → Fine-grained tokens |
+| `.env.portfolio-test`   | `.env.portfolio-test.example`    | GitHub MCP（テストリポジトリ用）| 同上（参照専用）                                   |
+| `.env.supabase`         | `.env.supabase.example`          | Supabase MCP                    | Supabase ダッシュボード → Account → Access Tokens  |
+| `.env.figma`            | `.env.figma.example`             | Figma MCP                       | Figma → Account Settings → Personal access tokens |
+
+```bash
+# セットアップ例
+cp .env.portfolio.example .env.portfolio
+cp .env.portfolio-test.example .env.portfolio-test
+cp .env.supabase.example .env.supabase
+cp .env.figma.example .env.figma
+# 各ファイルを開いてトークン値を入力する
+```
 
 ---
 
