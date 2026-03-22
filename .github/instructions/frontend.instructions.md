@@ -8,29 +8,29 @@ applyTo: "frontend/**"
 
 ## 技術スタック
 
-| パッケージ | バージョン | 用途 |
-|---|---|---|
-| `next` | 15.5.14 | フレームワーク（App Router） |
-| `react` / `react-dom` | ^19 | UI ライブラリ |
-| `typescript` | ^5 | 型システム |
-| `@mui/material` | ^5.13.1 | UI コンポーネント |
-| `@emotion/react` / `@emotion/styled` | ^11.14.0 | MUI スタイルエンジン |
-| `gsap` | ^3.14.2 | アニメーション |
-| `three` | ^0.183.2 | 3D レンダリング |
-| `@types/three` | 0.183.1 | three.js 型定義（devDependency） |
-| `@react-three/fiber` | ^9 | Three.js の React バインディング |
-| `@react-three/drei` | ^10 | Three.js ヘルパー集 |
-| `@react-three/postprocessing` | ^3.0.4 | ポストプロセスエフェクト |
-| `@supabase/supabase-js` | ^2.99.3 | Supabase クライアント |
-| `axios` | ^1.13.6 | HTTP クライアント |
-| `classnames` | ^2.5.1 | 条件付きクラス名結合 |
-| `sharp` | ^0.34.5 | 画像最適化 |
-| **Node.js** | 22.14.0 | ランタイム |
-| **pnpm** | >=10.0.0 | パッケージマネージャー |
+| パッケージ                           | バージョン | 用途                                                                                                                                            |
+| ------------------------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `next`                               | 15.5.14    | フレームワーク（App Router）**※ v15 系に固定（MUI v5 / 他パッケージとの互換性・安定性を優先）。アップグレードは MUI v7 対応と合わせて検討する** |
+| `react` / `react-dom`                | ^19        | UI ライブラリ                                                                                                                                   |
+| `typescript`                         | ^5         | 型システム                                                                                                                                      |
+| `@mui/material`                      | ^5.13.1    | UI コンポーネント                                                                                                                               |
+| `@emotion/react` / `@emotion/styled` | ^11.14.0   | MUI スタイルエンジン                                                                                                                            |
+| `gsap`                               | ^3.14.2    | アニメーション                                                                                                                                  |
+| `three`                              | ^0.183.2   | 3D レンダリング                                                                                                                                 |
+| `@types/three`                       | 0.183.1    | three.js 型定義（devDependency）                                                                                                                |
+| `@react-three/fiber`                 | ^9         | Three.js の React バインディング                                                                                                                |
+| `@react-three/drei`                  | ^10        | Three.js ヘルパー集                                                                                                                             |
+| `@react-three/postprocessing`        | ^3.0.4     | ポストプロセスエフェクト                                                                                                                        |
+| `@supabase/supabase-js`              | ^2.99.3    | Supabase クライアント                                                                                                                           |
+| `axios`                              | ^1.13.6    | HTTP クライアント                                                                                                                               |
+| `classnames`                         | ^2.5.1     | 条件付きクラス名結合                                                                                                                            |
+| `sharp`                              | ^0.34.5    | 画像最適化                                                                                                                                      |
+| **Node.js**                          | 22.14.0    | ランタイム                                                                                                                                      |
+| **pnpm**                             | >=10.0.0   | パッケージマネージャー                                                                                                                          |
 
 ## JSDoc ルール
 
-コード内のコメントは、宣言直上・ブロック内部・インラインを問わず**すべて JSDoc 形式（`/** */`）で統一する**。`//` による行コメントは使用しない。本ルールは関数・型・Props・定数のすべてに適用する。
+コード内のコメントは、宣言直上・ブロック内部・インラインを問わず**すべて JSDoc 形式（`/** \*/`）で統一する**。`//` による行コメントは使用しない。本ルールは関数・型・Props・定数のすべてに適用する。
 
 - **タイトル**: 1行目に簡潔な概要。
 - **説明**: 2行目以降に詳細な仕様（なぜその処理が必要か等）。
@@ -52,9 +52,12 @@ applyTo: "frontend/**"
  * @example
  * const tween = fadeIn(element, 1.2);
  */
-export const fadeIn = (target: HTMLElement, duration: number = 0.5): gsap.core.Tween => {
-    /** GSAP の fromTo でフェードインアニメーションを実行する */
-    return gsap.fromTo(target, { opacity: 0 }, { opacity: 1, duration });
+export const fadeIn = (
+  target: HTMLElement,
+  duration: number = 0.5,
+): gsap.core.Tween => {
+  /** GSAP の fromTo でフェードインアニメーションを実行する */
+  return gsap.fromTo(target, { opacity: 0 }, { opacity: 1, duration });
 };
 ```
 
@@ -104,26 +107,26 @@ ComponentName/
  * 作品一覧とホームの両方で使用する汎用カード。
  */
 type Props = {
-    /** カード画像の URL */
-    image?: string;
+  /** カード画像の URL */
+  image?: string;
 
-    /** 遷移先のリンク */
-    link?: string;
+  /** 遷移先のリンク */
+  link?: string;
 
-    /** 画像の代替テキスト */
-    alt?: string;
+  /** 画像の代替テキスト */
+  alt?: string;
 
-    /** 作品タイトル */
-    title: string;
+  /** 作品タイトル */
+  title: string;
 
-    /** 作品の概要テキスト */
-    description: string;
+  /** 作品の概要テキスト */
+  description: string;
 
-    /** カテゴリ名 */
-    categoryType: string;
+  /** カテゴリ名 */
+  categoryType: string;
 
-    /** 表示コンテキスト（作品一覧 or ホーム） */
-    type: 'work' | 'home';
+  /** 表示コンテキスト（作品一覧 or ホーム） */
+  type: "work" | "home";
 };
 ```
 
@@ -134,13 +137,13 @@ type Props = {
 
 ```ts
 // ✅ Good: エイリアスを使用して構造を明確にする
-import { Button } from '@/components/common/Button';
-import { useWorks } from '@/hooks/useWorks';
-import { COLORS } from '@/constants/colors';
+import { Button } from "@/components/common/Button";
+import { useWorks } from "@/hooks/useWorks";
+import { COLORS } from "@/constants/colors";
 
 // ❌ Bad: 階層が不明瞭になり、ファイル移動時の修正コストが高い
-import { Button } from '../../../components/common/Button';
-import { useWorks } from '../../hooks/useWorks';
+import { Button } from "../../../components/common/Button";
+import { useWorks } from "../../hooks/useWorks";
 ```
 
 ## スタイリング
@@ -162,11 +165,13 @@ import { useWorks } from '../../hooks/useWorks';
 ```
 
 ```ts
-import cn from 'classnames';
-import s from '@/styles/works/WorkContainer.module.css';
+import cn from "classnames";
+import s from "@/styles/works/WorkContainer.module.css";
 
 /** アクティブ状態に応じてクラスを切り替える */
-const classNames = cn(s.work_container, { [s.work_container_active]: isActive });
+const classNames = cn(s.work_container, {
+  [s.work_container_active]: isActive,
+});
 ```
 
 ## 状態管理（React Context）
@@ -186,11 +191,11 @@ const classNames = cn(s.work_container, { [s.work_container_active]: isActive })
  * @throws {Error} WorksProvider 外で使用された場合にエラーを投げる
  */
 export const useWorksContext = () => {
-    const context = useContext(WorksContext);
-    if (!context) {
-        throw new Error('useWorksContext must be used within a WorksProvider');
-    }
-    return context;
+  const context = useContext(WorksContext);
+  if (!context) {
+    throw new Error("useWorksContext must be used within a WorksProvider");
+  }
+  return context;
 };
 ```
 
@@ -204,7 +209,7 @@ export const useWorksContext = () => {
 ```tsx
 /** リスト描画の各アイテムは親の再レンダリングで不要な更新が生じるため memo でラップする */
 export const WorkCard = React.memo(({ title, image, link }: Props) => {
-    return <Card>...</Card>;
+  return <Card>...</Card>;
 });
 ```
 
@@ -230,9 +235,12 @@ return <WorksContext.Provider value={value}>{children}</WorksContext.Provider>;
 
 ```ts
 /** React.memo 済みの子コンポーネントへ渡すためメモ化する */
-const handleSelect = useCallback((id: number) => {
-    dispatch({ type: 'SELECT_ITEM', payload: id });
-}, [dispatch]);
+const handleSelect = useCallback(
+  (id: number) => {
+    dispatch({ type: "SELECT_ITEM", payload: id });
+  },
+  [dispatch],
+);
 ```
 
 ## 定数
@@ -243,10 +251,10 @@ const handleSelect = useCallback((id: number) => {
 ```ts
 /** ブレークポイント（px）。レスポンシブ分岐に使用する */
 export const BREAK_POINTS = {
-    XS: 768,
-    SM: 1024,
-    LG: 1280,
-    XL: 1536,
+  XS: 768,
+  SM: 1024,
+  LG: 1280,
+  XL: 1536,
 } as const;
 
 /**
@@ -255,8 +263,8 @@ export const BREAK_POINTS = {
  * @description 位置情報の共有が許可されなかった場合のフォールバック値
  */
 export const DEFAULT_COORDINATES = {
-    latitude: 35.681236,
-    longitude: 139.767125,
+  latitude: 35.681236,
+  longitude: 139.767125,
 } as const;
 ```
 
@@ -273,44 +281,44 @@ export const DEFAULT_COORDINATES = {
  * ContactFormContext で保持し、dispatch を通じて更新する。
  */
 export type ContactFormContextType = {
-    /** 入力者の名前 */
-    name: string;
+  /** 入力者の名前 */
+  name: string;
 
-    /** 入力者のメールアドレス */
-    email: string;
+  /** 入力者のメールアドレス */
+  email: string;
 
-    /** お問い合わせ本文 */
-    message: string;
+  /** お問い合わせ本文 */
+  message: string;
 
-    /** 名前が入力済みかどうか（バリデーションフラグ） */
-    isNotNameEmpty: boolean;
+  /** 名前が入力済みかどうか（バリデーションフラグ） */
+  isNotNameEmpty: boolean;
 
-    /** メールアドレスが有効な形式かどうか（バリデーションフラグ） */
-    isNotEmailValid: boolean;
+  /** メールアドレスが有効な形式かどうか（バリデーションフラグ） */
+  isNotEmailValid: boolean;
 
-    /** メールアドレスのエラーメッセージ */
-    emailErrorMessage: string;
+  /** メールアドレスのエラーメッセージ */
+  emailErrorMessage: string;
 
-    /** メッセージが入力済みかどうか（バリデーションフラグ） */
-    isNotMessageEmpty: boolean;
+  /** メッセージが入力済みかどうか（バリデーションフラグ） */
+  isNotMessageEmpty: boolean;
 
-    /** メール送信処理中かどうか */
-    isSending: boolean;
+  /** メール送信処理中かどうか */
+  isSending: boolean;
 
-    /** 送信結果。undefined: 未送信 / true: 成功 / false: 失敗 */
-    isSended: boolean | undefined;
+  /** 送信結果。undefined: 未送信 / true: 成功 / false: 失敗 */
+  isSended: boolean | undefined;
 
-    /** フォームの現在のステップ */
-    formStep: FormStep;
+  /** フォームの現在のステップ */
+  formStep: FormStep;
 
-    /** バリデーションエラーが存在するかどうか */
-    isValidationError: boolean;
+  /** バリデーションエラーが存在するかどうか */
+  isValidationError: boolean;
 
-    /** 初回バリデーションチェックが実施済みかどうか */
-    isInitialValidationCheck: boolean;
+  /** 初回バリデーションチェックが実施済みかどうか */
+  isInitialValidationCheck: boolean;
 
-    /** Context の状態を更新するための dispatch 関数 */
-    dispatch: React.Dispatch<ContactFormAction>;
+  /** Context の状態を更新するための dispatch 関数 */
+  dispatch: React.Dispatch<ContactFormAction>;
 };
 ```
 
@@ -322,21 +330,27 @@ export type ContactFormContextType = {
 
 ```ts
 /** app/layout.tsx でのフォント定義 */
-import localFont from 'next/font/local';
+import localFont from "next/font/local";
 
 const notoSansJP = localFont({
-    src: [
-        { path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Regular.woff2', weight: '400' },
-        { path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Bold.woff2',    weight: '700' },
-    ],
-    variable: '--font-noto-sans-jp',
-    display: 'swap',
+  src: [
+    {
+      path: "../public/fonts/Noto_Sans_JP/NotoSansJP-Regular.woff2",
+      weight: "400",
+    },
+    {
+      path: "../public/fonts/Noto_Sans_JP/NotoSansJP-Bold.woff2",
+      weight: "700",
+    },
+  ],
+  variable: "--font-noto-sans-jp",
+  display: "swap",
 });
 ```
 
 ```css
 /* CSS Modules または globals.css での参照 */
 .body {
-    font-family: var(--font-noto-sans-jp), sans-serif;
+  font-family: var(--font-noto-sans-jp), sans-serif;
 }
 ```
