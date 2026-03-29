@@ -1,0 +1,177 @@
+erDiagram
+
+    %% ============================================================
+    %% ER Diagram - portfolio_v2 Database Schema
+    %% Supabase (ap-northeast-1) | project: sszpjlziqoogvouruaee
+    %% Updated: 2026-03-26
+    %% Column details: database-er-diagram.md
+    %% ============================================================
+
+    works {
+        int       id                    PK
+        varchar   document_id
+        varchar   key
+        varchar   title
+        text      description
+        varchar   slug
+        date      created
+        varchar   introduction_title
+        text      introduction_description
+        varchar   controls_title
+        varchar   controls_description
+        timestamp created_at
+        timestamp updated_at
+        timestamp published_at
+        int       created_by_id         FK
+        int       updated_by_id         FK
+        varchar   locale
+    }
+
+    categories {
+        int       id            PK
+        varchar   document_id
+        varchar   key
+        varchar   name
+        timestamp created_at
+        timestamp updated_at
+        timestamp published_at
+        int       created_by_id FK
+        int       updated_by_id FK
+        varchar   locale
+    }
+
+    control_items {
+        int       id             PK
+        varchar   document_id
+        varchar   key
+        varchar   title
+        text      description
+        varchar   animation_name
+        boolean   is_loop
+        timestamp created_at
+        timestamp updated_at
+        timestamp published_at
+        int       created_by_id  FK
+        int       updated_by_id  FK
+        varchar   locale
+    }
+
+    work_introductions {
+        int       id            PK
+        varchar   document_id
+        varchar   title
+        varchar   description
+        timestamp created_at
+        timestamp updated_at
+        timestamp published_at
+        int       created_by_id FK
+        int       updated_by_id FK
+        varchar   locale
+    }
+
+    works_category_lnk {
+        int id          PK
+        int work_id     FK
+        int category_id FK
+    }
+
+    works_control_items_lnk {
+        int   id              PK
+        int   work_id         FK
+        int   control_item_id FK
+        float control_item_ord
+    }
+
+    files {
+        int       id               PK
+        varchar   document_id
+        varchar   name
+        varchar   alternative_text
+        varchar   caption
+        int       width
+        int       height
+        jsonb     formats
+        varchar   hash
+        varchar   ext
+        varchar   mime
+        numeric   size
+        varchar   url
+        varchar   preview_url
+        varchar   provider
+        jsonb     provider_metadata
+        varchar   folder_path
+        timestamp created_at
+        timestamp updated_at
+        timestamp published_at
+        int       created_by_id    FK
+        int       updated_by_id    FK
+        varchar   locale
+    }
+
+    files_related_mph {
+        int     id           PK
+        int     file_id      FK
+        int     related_id
+        varchar related_type
+        varchar field
+        float   order
+    }
+
+    files_folder_lnk {
+        int   id        PK
+        int   file_id   FK
+        int   folder_id FK
+        float file_ord
+    }
+
+    upload_folders {
+        int       id            PK
+        varchar   document_id
+        varchar   name
+        int       path_id
+        varchar   path
+        timestamp created_at
+        timestamp updated_at
+        timestamp published_at
+        int       created_by_id FK
+        int       updated_by_id FK
+        varchar   locale
+    }
+
+    upload_folders_parent_lnk {
+        int   id            PK
+        int   folder_id     FK
+        int   inv_folder_id FK
+        float folder_ord
+    }
+
+    admin_users {
+        int       id            PK
+        varchar   document_id
+        varchar   firstname
+        varchar   lastname
+        varchar   username
+        varchar   email
+        boolean   is_active
+        boolean   blocked
+        timestamp created_at
+        timestamp updated_at
+        int       created_by_id FK
+        int       updated_by_id FK
+    }
+
+    works           ||--o{ works_category_lnk       : "belongs to"
+    categories      ||--o{ works_category_lnk       : "used by"
+    works           ||--o{ works_control_items_lnk  : "has control"
+    control_items   ||--o{ works_control_items_lnk  : "used by"
+    files           ||--o{ files_related_mph         : "attached via"
+    files           ||--o{ files_folder_lnk          : "stored in"
+    upload_folders  ||--o{ files_folder_lnk          : "contains"
+    upload_folders  ||--o{ upload_folders_parent_lnk : "child folder"
+    upload_folders  ||--o{ upload_folders_parent_lnk : "parent folder"
+    admin_users     ||--o{ works                    : "creates/updates"
+    admin_users     ||--o{ categories               : "creates/updates"
+    admin_users     ||--o{ control_items            : "creates/updates"
+    admin_users     ||--o{ work_introductions       : "creates/updates"
+    admin_users     ||--o{ files                    : "creates/updates"
+    admin_users     ||--o{ upload_folders           : "creates/updates"
