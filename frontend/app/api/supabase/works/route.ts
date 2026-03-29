@@ -7,6 +7,15 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
+/**
+ * 作品一覧を取得する Route Handler。
+ * `v_works` ビューからデータを取得し、`image_url` をプロキシ経由の URL に差し替えて返す。
+ * Storage URL をクライアントに露出させず、Strapi でファイルを更新した際も
+ * 常に DB の最新パスを参照できる。
+ *
+ * @param req - Next.js リクエストオブジェクト（クエリパラメータ: `limit`）
+ * @returns 作品一覧 JSON（`image_url` はプロキシ URL `/api/supabase/image/[...slug]`）
+ */
 export async function GET(req: NextRequest) {
   const limitParam = req.nextUrl.searchParams.get('limit');
   const limit = limitParam ? parseInt(limitParam, 10) : undefined;
@@ -22,27 +31,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // 各行の image_url を署名付き URL に変換する
-  const signedData: WorkSummary[] = await Promise.all(
-    data.map(async (row) => {
-      if (!row.image_url) return row;
+  /** image_url をプロキシ URL に差し替える。GLB と同様に Storage URL をクライアントに非公開にする */
+  const result: WorkSummary[] = data.map((row) => ({
+    ...row,
+    image_url: row.image_url ? `/api/supabase/image/${row.slug}` : row.image_url,
+  }));
 
-      // `image_url` からパス部分を抽出
-      const path = row.image_url.split('/portfolio-works/')[1];
-      if (!path) return row;
-
-      const { data: signed, error: signErr } = await supabase.storage
-        .from('portfolio-works')
-        .createSignedUrl(path, 60 * 60); // 1時間有効
-
-      if (signErr || !signed) return row;
-
-      return {
-        ...row,
-        image_url: signed.signedUrl, // 有効なURLに差し替え
-      };
-    }),
-  );
-
-  return NextResponse.json(signedData);
+  return NextResponse.json(result);
 }

@@ -7,23 +7,23 @@ Next.js 15 (App Router) + Three.js + GSAP で構築しています。
 
 ## 技術スタック
 
-| パッケージ | バージョン | 用途 |
-|---|---|---|
-| `next` | 15.5.14 | フレームワーク（App Router） |
-| `react` / `react-dom` | ^19 | UI ライブラリ |
-| `typescript` | ^5 | 型システム |
-| `@mui/material` | ^5.13.1 | UI コンポーネント |
-| `@emotion/react` / `@emotion/styled` | ^11.14.0 | MUI スタイルエンジン |
-| `gsap` | ^3.14.2 | アニメーション |
-| `three` | ^0.183.2 | 3D レンダリング |
-| `@react-three/fiber` | ^9 | Three.js の React バインディング |
-| `@react-three/drei` | ^10 | Three.js ヘルパー集 |
-| `@react-three/postprocessing` | ^3.0.4 | ポストプロセスエフェクト |
-| `@supabase/supabase-js` | ^2.99.3 | Supabase クライアント |
-| `axios` | ^1.13.6 | HTTP クライアント |
-| `sharp` | ^0.34.5 | 画像最適化 |
-| **Node.js** | 22.14.0 | ランタイム |
-| **pnpm** | >=10.0.0 | パッケージマネージャー |
+| パッケージ                           | バージョン | 用途                             |
+| ------------------------------------ | ---------- | -------------------------------- |
+| `next`                               | 15.5.14    | フレームワーク（App Router）     |
+| `react` / `react-dom`                | ^19        | UI ライブラリ                    |
+| `typescript`                         | ^5         | 型システム                       |
+| `@mui/material`                      | ^5.13.1    | UI コンポーネント                |
+| `@emotion/react` / `@emotion/styled` | ^11.14.0   | MUI スタイルエンジン             |
+| `gsap`                               | ^3.14.2    | アニメーション                   |
+| `three`                              | ^0.183.2   | 3D レンダリング                  |
+| `@react-three/fiber`                 | ^9         | Three.js の React バインディング |
+| `@react-three/drei`                  | ^10        | Three.js ヘルパー集              |
+| `@react-three/postprocessing`        | ^3.0.4     | ポストプロセスエフェクト         |
+| `@supabase/supabase-js`              | ^2.99.3    | Supabase クライアント            |
+| `axios`                              | ^1.13.6    | HTTP クライアント                |
+| `sharp`                              | ^0.34.5    | 画像最適化                       |
+| **Node.js**                          | 22.14.0    | ランタイム                       |
+| **pnpm**                             | >=10.0.0   | パッケージマネージャー           |
 
 ---
 
@@ -37,21 +37,21 @@ pnpm install
 
 ### 2. 環境変数の設定
 
-`.env.development` を参考に `.env` ファイルを作成し、各値を設定してください。
+`.env.example` を参考に `.env` ファイルを作成し、各値を設定してください。
 
 ```bash
-cp .env.development .env
+cp .env.example .env
 ```
 
-| 変数名 | 説明 |
-|---|---|
-| `NEXT_PUBLIC_BASE_URL` | フロントエンドのベース URL |
-| `BASE_URL` | サーバーサイドで使用するベース URL |
-| `MY_NAME` | お問い合わせメールの送信者名 |
-| `MY_EMAIL` | 送信元・受信先メールアドレス |
-| `SENDGRID_API_KEY` | SendGrid API キー |
-| `OPEN_WEATHER_API_KEY` | OpenWeatherMap API キー |
-| `SUPABASE_URL` | Supabase プロジェクト URL |
+| 変数名                      | 説明                                             |
+| --------------------------- | ------------------------------------------------ |
+| `NEXT_PUBLIC_BASE_URL`      | フロントエンドのベース URL                       |
+| `BASE_URL`                  | サーバーサイドで使用するベース URL               |
+| `MY_NAME`                   | お問い合わせメールの送信者名                     |
+| `MY_EMAIL`                  | 送信元・受信先メールアドレス                     |
+| `SENDGRID_API_KEY`          | SendGrid API キー                                |
+| `OPEN_WEATHER_API_KEY`      | OpenWeatherMap API キー                          |
+| `SUPABASE_URL`              | Supabase プロジェクト URL                        |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service_role キー（サーバーサイド専用） |
 
 ### 3. 開発サーバー起動
@@ -66,12 +66,12 @@ pnpm dev
 
 ## スクリプト
 
-| コマンド | 内容 |
-|---|---|
-| `pnpm dev` | 開発サーバー起動 |
-| `pnpm build` | プロダクションビルド |
+| コマンド     | 内容                       |
+| ------------ | -------------------------- |
+| `pnpm dev`   | 開発サーバー起動           |
+| `pnpm build` | プロダクションビルド       |
 | `pnpm start` | プロダクションサーバー起動 |
-| `pnpm lint` | ESLint 実行 |
+| `pnpm lint`  | ESLint 実行                |
 
 ---
 

@@ -8,7 +8,7 @@ export async function getWorks({ limit }: GetWorksParams = {}): Promise<WorkSumm
       url.searchParams.set('limit', limit.toString());
     }
     const res = await fetch(url.toString(), {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -27,7 +27,7 @@ export async function getWorks({ limit }: GetWorksParams = {}): Promise<WorkSumm
 export async function getWorkCategories(): Promise<WorkCategory[]> {
   try {
     const res = await fetch(`${process.env.BASE_URL}/api/supabase/work-categories`, {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
     });
 
     if (!res.ok) {

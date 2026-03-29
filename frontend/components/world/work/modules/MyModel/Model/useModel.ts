@@ -30,8 +30,8 @@ const useModel = ({ content, setModelChildren }: Props) => {
     state: { isInitialControl, isStartControls, currentIndex },
   } = useWorkThreeDContext();
 
-  // GLTFLoader を使用してモデルを読み込む
-  const gltf = useLoader(GLTFLoader, content.model_url, (loader) => {
+  /** GLTFLoader でモデルをプロキシ経由で読み込む（Storage URL をクライアントに公開しない） */
+  const gltf = useLoader(GLTFLoader, `/api/supabase/model/${content.key}`, (loader) => {
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('/draco/');
     dracoLoader.preload();

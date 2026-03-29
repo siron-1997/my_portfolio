@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^7.0.1-beta.18",
     "@mui/material": "^5.13.1",
+    "@mui/material-nextjs": "^7.3.9",
     "@react-three/drei": "^10",
     "@react-three/fiber": "^9",
     "@react-three/postprocessing": "^3.0.4",

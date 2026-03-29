@@ -127,6 +127,5 @@ export type WorkDetail = {
   introduction_description: string;
   controls_title: string;
   controls_description: string;
-  model_url: string;
   controls: WorkControl[];
 };

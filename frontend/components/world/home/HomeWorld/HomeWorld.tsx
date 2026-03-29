@@ -2,7 +2,7 @@
 
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { ReinhardToneMapping } from 'three';
+import { PCFShadowMap, ReinhardToneMapping } from 'three';
 import { ModelViewerLoading } from '@/components/home';
 import { Experience } from '@/components/world/home/Experience';
 import { Rain } from '../modules';
@@ -25,7 +25,7 @@ const HomeWorld = () => {
       <Suspense fallback={<ModelViewerLoading />}>
         <div className={s.home_world}>
           <Canvas
-            shadows
+            shadows={{ type: PCFShadowMap }}
             dpr={[1, 2]}
             gl={{ antialias: true, toneMapping: ReinhardToneMapping }}
             camera={{ fov: 45, near: 0.01, far: 200 }}

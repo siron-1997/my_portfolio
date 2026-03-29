@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { ACESFilmicToneMapping } from 'three';
+import { ACESFilmicToneMapping, PCFShadowMap } from 'three';
 import { Experience } from '@/components/world/work/Experience';
 import { WorkDetail } from '@/types/api';
 import s from '@/styles/works/workThreeD/WorkWorld.module.css';
@@ -21,7 +21,7 @@ const WorkWorld = ({ content }: Props) => {
       <div></div>
       <div className={s.portal}>
         <Canvas
-          shadows="soft"
+          shadows={{ type: PCFShadowMap }}
           dpr={[1, 2]}
           gl={{
             antialias: true,
