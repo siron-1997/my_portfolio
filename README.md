@@ -45,12 +45,75 @@ portfolio_v2/
 
 ---
 
-## 各パッケージのセットアップ
+## セットアップ
 
-各ディレクトリ内の README を参照してください。
+### 前提条件
 
-- [frontend/README.md](./frontend/README.md)
-- [backend/README.md](./backend/README.md)
+| ツール | バージョン | 備考 |
+| --- | --- | --- |
+| Node.js | 22.14.0 | `.nvmrc` 対応。`nvm use` で切り替え可 |
+| pnpm | >=10.0.0 | `npm install -g pnpm` |
+| Supabase CLI | 最新 | `brew install supabase/tap/supabase` |
+
+### 手順
+
+#### 1. 依存関係のインストール
+
+```bash
+cd frontend && pnpm install
+cd ../backend && pnpm install
+```
+
+#### 2. 環境変数の設定
+
+```bash
+# アプリケーション用
+cp frontend/.env.example frontend/.env
+cp backend/.env.example backend/.env
+
+# VS Code MCP サーバー用（ルート直下）
+cp .env.portfolio.example .env.portfolio
+cp .env.portfolio-test.example .env.portfolio-test
+cp .env.supabase.example .env.supabase
+cp .env.figma.example .env.figma
+```
+
+各ファイルを開いて実際の値を設定してください。詳細は **環境変数** セクションを参照。
+
+#### 3. Supabase マイグレーションの適用
+
+`supabase/migrations/` 内の SQL ファイルを本番プロジェクトに適用します。
+
+```bash
+# Supabase CLI でリモートプロジェクトに push
+supabase db push --project-ref <project-ref>
+```
+
+または Supabase MCP を使って各マイグレーションファイルを実行してください。
+
+#### 4. 各サービスの起動
+
+**VS Code タスクで同時起動（推奨）:**
+
+VS Code のコマンドパレット（`Ctrl+Shift+P`）で `Tasks: Run Task` を選び、
+`start-my-portfolio` を実行すると Strapi と Next.js が同時に起動します。
+
+**手動起動:**
+
+```bash
+# ターミナル 1: Strapi
+cd backend && pnpm dev
+
+# ターミナル 2: Next.js
+cd frontend && pnpm dev
+```
+
+---
+
+## 各パッケージの詳細
+
+- [frontend/README.md](./frontend/README.md) - Next.js フロントエンド
+- [backend/README.md](./backend/README.md) - Strapi CMS
 
 ---
 
@@ -71,10 +134,10 @@ portfolio_v2/
 各パッケージに `.env` ファイルが必要です。  
 テンプレートを参考に値を設定してください。
 
-| パッケージ  | テンプレートファイル        |
-| ----------- | --------------------------- |
-| `frontend/` | `frontend/.env.development` |
-| `backend/`  | `backend/.env.example`      |
+| パッケージ  | テンプレートファイル      |
+| ----------- | ------------------------- |
+| `frontend/` | `frontend/.env.example`   |
+| `backend/`  | `backend/.env.example`    |
 
 ### VS Code MCP サーバー用（ルート直下）
 
