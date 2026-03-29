@@ -49,11 +49,11 @@ portfolio_v2/
 
 ### 前提条件
 
-| ツール | バージョン | 備考 |
-| --- | --- | --- |
-| Node.js | 22.14.0 | `.nvmrc` 対応。`nvm use` で切り替え可 |
-| pnpm | >=10.0.0 | `npm install -g pnpm` |
-| Supabase CLI | 最新 | `brew install supabase/tap/supabase` |
+| ツール       | バージョン | 備考                                  |
+| ------------ | ---------- | ------------------------------------- |
+| Node.js      | 22.14.0    | `.nvmrc` 対応。`nvm use` で切り替え可 |
+| pnpm         | >=10.0.0   | `npm install -g pnpm`                 |
+| Supabase CLI | 最新       | `brew install supabase/tap/supabase`  |
 
 ### 手順
 
@@ -64,13 +64,13 @@ portfolio_v2/
 VS Code のコマンドパレット（`Ctrl+Shift+P`）で `Extensions: Show Recommended Extensions`
 を実行すると推奨一覧が表示されます。「ワークスペースの推奨」タブで一括インストールできます。
 
-| 拡張機能 ID | 名前 | 用途 |
-| --- | --- | --- |
-| `github.copilot` | GitHub Copilot | AI コード補完（**MCP必須**） |
-| `github.copilot-chat` | GitHub Copilot Chat | AI エージェント・コードレビュー（**MCP必須**） |
-| `esbenp.prettier-vscode` | Prettier | コードフォーマッター |
-| `dbaeumer.vscode-eslint` | ESLint | リンター |
-| `denoland.vscode-deno` | Deno | Supabase Edge Functions 開発時の型検査 |
+| 拡張機能 ID              | 名前                | 用途                                           |
+| ------------------------ | ------------------- | ---------------------------------------------- |
+| `github.copilot`         | GitHub Copilot      | AI コード補完（**MCP必須**）                   |
+| `github.copilot-chat`    | GitHub Copilot Chat | AI エージェント・コードレビュー（**MCP必須**） |
+| `esbenp.prettier-vscode` | Prettier            | コードフォーマッター                           |
+| `dbaeumer.vscode-eslint` | ESLint              | リンター                                       |
+| `denoland.vscode-deno`   | Deno                | Supabase Edge Functions 開発時の型検査         |
 
 #### 2. 依存関係のインストール
 
@@ -149,10 +149,10 @@ cd frontend && pnpm dev
 各パッケージに `.env` ファイルが必要です。  
 テンプレートを参考に値を設定してください。
 
-| パッケージ  | テンプレートファイル      |
-| ----------- | ------------------------- |
-| `frontend/` | `frontend/.env.example`   |
-| `backend/`  | `backend/.env.example`    |
+| パッケージ  | テンプレートファイル    |
+| ----------- | ----------------------- |
+| `frontend/` | `frontend/.env.example` |
+| `backend/`  | `backend/.env.example`  |
 
 ### VS Code MCP サーバー用（ルート直下）
 
