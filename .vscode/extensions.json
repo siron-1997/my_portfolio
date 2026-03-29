@@ -1,7 +1,12 @@
 {
   "recommendations": [
-    "denoland.vscode-deno",
+    // 必須: GitHub Copilot（MCPサーバーとAI機能に必要）
+    "github.copilot",
+    "github.copilot-chat",
+    // 必須: コード品質
     "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    // 必須: Supabase Edge Functions用 Deno サポート
+    "denoland.vscode-deno"
   ]
 }
