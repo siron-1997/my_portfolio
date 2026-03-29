@@ -1,32 +1,62 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Next.js: Dev mode",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "dev"],
-            "port": 9229,
-            "console": "integratedTerminal",
-            "env": {
-                "NODE_OPTIONS": "--inspect"
-            },
-            "cwd": "${workspaceFolder}/frontend"
-        },
-        {
-            "type": "pwa-chrome",
-            "request": "launch",
-            "name": "Chrome: Frontend Debug",
-            "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}/frontend",
-            "sourceMaps": true
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Next.js Full Debug (Node + Chrome)",
-            "configurations": ["Next.js: Dev mode", "Chrome: Frontend Debug"]
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Next.js: Dev mode",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_OPTIONS": "--inspect"
+      },
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Chrome: Frontend Debug",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/frontend",
+      "sourceMaps": true
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Start My Portfolio: Chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/frontend",
+      "sourceMaps": true,
+      "preLaunchTask": "dev: all"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Backend: Strapi Dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal",
+      "presentation": {
+        "group": "backend"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Next.js Full Debug (Node + Chrome)",
+      "configurations": ["Next.js: Dev mode", "Chrome: Frontend Debug"]
+    },
+    {
+      "name": "Full Stack (Frontend + Backend)",
+      "configurations": ["Next.js: Dev mode", "Backend: Strapi Dev"],
+      "stopAll": true
+    },
+    {
+      "name": "start-my-portfolio",
+      "configurations": ["Start My Portfolio: Chrome"],
+      "stopAll": true
+    }
+  ]
 }

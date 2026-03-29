@@ -23,8 +23,13 @@
     "supabase": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@supabase/mcp-server-supabase@latest"],
+      "args": ["-y", "@supabase/mcp-server-supabase@latest", "--read-only"],
       "envFile": "${workspaceFolder}/.env.supabase"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest", "--browser", "chromium"]
     }
   },
   "inputs": []

@@ -1,29 +1,78 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Figma WebSocket Server",
-            "type": "shell",
-            "command": "/home/junpei-1997/.bun/bin/bunx cursor-talk-to-figma-socket",
-            "isBackground": true,
-            "problemMatcher": {
-                "pattern": {
-                    "regexp": "^$"
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^WebSocket server",
-                    "endsPattern": "^WebSocket server running"
-                }
-            },
-            "presentation": {
-                "reveal": "silent",
-                "panel": "dedicated",
-                "group": "figma"
-            },
-            "runOptions": {
-                "runOn": "folderOpen"
-            }
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev: frontend",
+      "type": "shell",
+      "command": "pnpm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Next\\.js",
+          "endsPattern": "Ready in"
         }
-    ]
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "servers"
+      }
+    },
+    {
+      "label": "dev: backend",
+      "type": "shell",
+      "command": "pnpm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "strapi develop",
+          "endsPattern": "Strapi started successfully"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "servers"
+      }
+    },
+    {
+      "label": "dev: all",
+      "dependsOn": ["dev: frontend", "dev: backend"],
+      "dependsOrder": "parallel"
+    },
+    {
+      "label": "Figma WebSocket Server",
+      "type": "shell",
+      "command": "/home/junpei-1997/.bun/bin/bunx cursor-talk-to-figma-socket",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^WebSocket server",
+          "endsPattern": "^WebSocket server running"
+        }
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated",
+        "group": "figma"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
 }

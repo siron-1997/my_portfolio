@@ -3,3 +3,4 @@
 .env.portfolio-test
 .env.figma
 .env.supabase
+.playwright-mcp/
