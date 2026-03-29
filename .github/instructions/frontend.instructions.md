@@ -354,3 +354,33 @@ const notoSansJP = localFont({
   font-family: var(--font-noto-sans-jp), sans-serif;
 }
 ```
+
+## デバッグ・動作確認（Playwright MCP）
+
+フロントエンドのデバッグ・動作確認は **VS Code に設定された Playwright MCP 経由**で行う。
+ブラウザを直接操作するのではなく、以下の MCP ツールを積極的に使用すること。
+
+### 優先する確認手順
+
+1. `mcp_playwright_browser_navigate` でページを開く
+2. `mcp_playwright_browser_console_messages` でコンソールエラー・警告を確認する
+3. `mcp_playwright_browser_take_screenshot` でスクリーンショットを取得してビジュアル確認する
+4. `mcp_playwright_browser_snapshot` で DOM 構造を確認する
+5. `mcp_playwright_browser_network_requests` でネットワークリクエストを確認する
+
+### 確認が必要な状況
+
+| 状況                             | 使用ツール                        |
+| -------------------------------- | --------------------------------- |
+| コンソールエラー・警告の調査     | `console_messages`                |
+| 画像・スタイルの崩れ確認         | `take_screenshot`                 |
+| API レスポンス・404 の確認       | `network_requests`                |
+| DOM 構造・アクセシビリティ確認   | `snapshot`                        |
+| フォーム入力・ボタン操作のテスト | `click`, `fill_form`, `press_key` |
+| ページ遷移の動作確認             | `navigate`, `navigate_back`       |
+
+### 注意事項
+
+- 初回使用時に Chromium が未インストールの場合は `mcp_playwright_browser_install` を実行する。
+- Playwright ブラウザのコンソールログは `.playwright-mcp/` ディレクトリに保存される（git 管理外）。
+- `mcp.json` の `playwright` サーバーは `--browser chromium` オプションで起動している。
