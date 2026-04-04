@@ -1,0 +1,18 @@
+flowchart TB
+    subgraph HomeContext["HomeContext（グローバル）"]
+        isLoading["isLoading<br/>初期値: true<br/>→ Canvas 初期化後に false"]
+        portalRef["portalRef<br/>→ RigCamera のアニメーション対象 DOM"]
+    end
+
+    subgraph useHomeWorld["useHomeWorld（ローカル）"]
+        isViewerLoading["isViewerLoading<br/>初期値: false<br/>→ 天気 API 完了後に true"]
+        currentWeatherData["currentWeatherData<br/>初期値: null<br/>→ API レスポンス"]
+        weather["weather<br/>初期値: DEFAULT_WEATHER<br/>→ API レスポンスの weather[]"]
+        timePoint["timePoint<br/>初期値: 'night'<br/>→ API から計算（morning/lunch/evening/night）"]
+        backgroundColor["backgroundColor<br/>→ timePoint に応じた背景色"]
+    end
+
+    isViewerLoading -->|true になると Canvas をレンダリング| Canvas
+    Canvas -->|onCreated| isLoading
+    isLoading -->|false になるとアニメーション開始| RigCamera
+    portalRef --> RigCamera

@@ -1,0 +1,92 @@
+flowchart TD
+    %% フェーズ1: 初期化
+    subgraph p1["① 初期化フェーズ"]
+        HP["アプリ全体の状態管理を準備"]
+        HW["3D ワールドのコンポーネントを起動"]
+        UHW["天気・時間帯の初期値（夜・デフォルト天気）をセット"]
+        MVL["ローディング画面を表示"]
+    end
+
+    HP --> HW --> UHW --> MVL
+
+    %% フェーズ2: 位置情報取得
+    subgraph p2["② 位置情報取得フェーズ"]
+        GEO["位置情報の取得を試みる"]
+        DIALOG["ユーザーに位置情報の使用許可を求める"]
+        ALLOW["実際の現在地を使用"]
+        DENY["東京駅（デフォルト地点）を使用"]
+        HANDLED["使用する座標が確定"]
+    end
+
+    UHW --> GEO --> DIALOG
+    DIALOG -->|許可| ALLOW --> HANDLED
+    DIALOG -->|拒否 または 非対応| DENY --> HANDLED
+
+    %% フェーズ3: 天気API
+    subgraph p3["③ 天気 API 取得フェーズ"]
+        APICALL["POST /api/getCurrentWeather<br/>{ latitude, longitude }"]
+        VALIDATE["リクエストの正当性を検証"]
+        OWA["OpenWeatherMap API<br/>GET /data/2.5/weather"]
+        CALC["取得した気象データをもとに現地時刻の時間帯を判定"]
+        SETSTATE["天気・時間帯をアプリの状態に反映"]
+        FINALLY["結果の成否に関わらず 3D ワールドの表示に進む"]
+        APIERR["エラーを返して処理を終了"]
+    end
+
+    HANDLED -->|座標が確定したら天気取得を開始| APICALL
+    APICALL --> VALIDATE
+    VALIDATE -->|不正| APIERR
+    VALIDATE -->|正常| OWA --> CALC --> SETSTATE --> FINALLY
+
+    %% フェーズ4: Canvasレンダリング
+    FINALLY -->|3D ワールドを表示に切り替える| RENDER
+
+    subgraph p4["④ 3D ワールド描画フェーズ"]
+        RENDER["3D シーンと雨エフェクトを同時に描画開始"]
+
+        subgraph canvas["3D シーン（描画順）"]
+            direction TB
+            WE["背景の空の色を時間帯に合わせて変化させる"]
+            FG["霧の濃さを設定する"]
+            SL["光源の色と強さを天気・時間帯に合わせて調整する"]
+            MDL["メインモデル・ポータルドア・海面を配置する"]
+            ST["夜のみ星を表示する"]
+            CL["天気に応じて雲の種類（薄雲・厚雲）を切り替える"]
+            LGT["雷雨のときのみ稲妻を光らせる"]
+            RC["カメラの位置を決めてポータルアニメーションを制御する"]
+            BS["影を事前に焼き込んでパフォーマンスを最適化する"]
+            WE --> FG --> SL --> MDL --> ST --> CL --> LGT --> RC --> BS
+        end
+
+        RAIN["3D シーンの外側で雨粒を 2D 描画する<br/>風速・雨量に応じてアニメーションを変化させる"]
+    end
+
+    RENDER --> canvas
+    RENDER --> RAIN
+
+    %% フェーズ5: Canvas初期化完了
+    subgraph p5["⑤ 3D エンジン起動完了フェーズ"]
+        ONCREATED["3D エンジンの起動が完了したことを検知"]
+        SETLOADING["ポータルアニメーションの開始を許可する"]
+    end
+
+    canvas -->|起動完了の通知| ONCREATED --> SETLOADING
+
+    %% フェーズ6: ポータルアニメーション
+    subgraph p6["⑥ ポータルアニメーションフェーズ"]
+        ULE["アニメーションに必要な要素と画面サイズが揃うのを待つ"]
+        CHKSIZE{画面サイズは確定しているか？}
+        WAIT["確定するまで待機"]
+        GETOBJ["シーン内のドア・部屋などのオブジェクトを収集する"]
+        CHKOBJ{必要なオブジェクトが揃っているか？}
+        NOANIM["アニメーションをスキップ"]
+        SETPOS["画面サイズに合わせてカメラの開始位置を調整する"]
+        ANIM["カメラをドアに向けて移動させ<br/>ポータルをくぐるアニメーションを再生する"]
+    end
+
+    SETLOADING --> ULE
+    ULE --> CHKSIZE
+    CHKSIZE -- No --> WAIT
+    CHKSIZE -- Yes --> GETOBJ --> CHKOBJ
+    CHKOBJ -- No --> NOANIM
+    CHKOBJ -- Yes --> SETPOS --> ANIM

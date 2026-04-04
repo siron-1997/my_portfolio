@@ -1,0 +1,32 @@
+flowchart TB
+    HomeWorld --> Canvas
+    Canvas --> Experience
+
+    subgraph Experience["Experience（3D シーン）"]
+        direction TB
+        WE["WeatherEnvironment<br/>背景環境カラー (timePoint)"]
+        FG["Fog<br/>霧の濃さ (fogRef)"]
+        SL["SunLight<br/>光源 (sunLightRef)<br/>天気・時間帯により色・強度が変化"]
+        Models["group: models<br/>┣ Model（メインモデル）<br/>┣ Door（ポータルドア）<br/>┗ Ocean（海面）"]
+        ST["Star<br/>夜空の星"]
+        CL["Clouds<br/>雲 (thinCloudRef / thickCloudRef)<br/>天気カテゴリに応じて切替"]
+        LG["Lightning<br/>稲妻 (lightningRef)<br/>Thunderstorm 時のみ発光"]
+        RC["RigCamera<br/>画面サイズに応じたカメラ位置<br/>ポータルアニメーション管理"]
+        BS["BakeShadows<br/>影の焼き込み"]
+
+        WE --> FG --> SL --> Models --> ST --> CL --> LG --> RC --> BS
+    end
+
+    subgraph useExperience["useExperience（3D ロジック）"]
+        refs["6 refs<br/>doorRef / sunLightRef / lightningRef<br/>fogRef / thinCloudRef / thickCloudRef"]
+        leva["leva コントロール（開発環境のみ）<br/>debugTimePoint / fogNear・fogFar<br/>thinCloudVisible・thickCloudVisible<br/>sunLightHelper・lightningHelper"]
+        effects["useEffect × 4（開発環境のみ）<br/>① debugTimePoint → setTimePoint<br/>② fog → fogRef 同期<br/>③ clouds → cloudRefs 同期<br/>④ ライトヘルパー生成・破棄"]
+        frame["useFrame（開発環境のみ）<br/>DirectionalLightHelper.update()<br/>PointLightHelper.update()"]
+
+        refs --- leva
+        leva --- effects
+        effects --- frame
+    end
+
+    Canvas --> useExperience
+    HomeWorld -->|2D canvas DOM| Rain["Rain（DOM canvas）<br/>風速・雨量に応じた 2D 雨アニメーション"]

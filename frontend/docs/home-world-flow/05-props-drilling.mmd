@@ -1,0 +1,20 @@
+flowchart LR
+    API["OpenWeatherMap API<br/>OpenWeatherCurrentData"] -->|レスポンス| useHomeWorld
+
+    useHomeWorld -->|currentWeatherData<br/>weather<br/>timePoint| HomeWorld
+    HomeWorld -->|currentWeatherData<br/>weather<br/>timePoint<br/>backgroundColor| Experience
+    Experience -->|timePoint| WeatherEnvironment
+    Experience -->|timePoint<br/>currentWeatherData<br/>weather| SunLight
+    Experience -->|timePoint<br/>weather| Clouds
+    Experience -->|timePoint<br/>weather| Fog
+    Experience -->|timePoint| Star
+    Experience -->|currentWeatherData<br/>weather| Lightning
+    Experience -->|currentWeatherData<br/>weather| Rain["Rain (DOM)"]
+
+    subgraph gwc["getWeatherCategory()（共通ヘルパー）"]
+        desc["description: string → thickCloud / thinCloud / clearSky / null"]
+    end
+
+    SunLight --> gwc
+    Clouds --> gwc
+    getEnvMapIntensity["getEnvMapIntensity()"] --> gwc

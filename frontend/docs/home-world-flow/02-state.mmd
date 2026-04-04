@@ -1,0 +1,18 @@
+stateDiagram-v2
+    direction LR
+
+    state "ModelViewerLoading 表示" as Loading
+    state "Canvas + Experience + Rain 表示" as Viewer
+    state "ポータルアニメーション開始" as Portal
+    state "天気 API 取得" as weatherFetch {
+        state "位置情報取得中" as locationFetch
+        state "API 呼び出し" as apiCall
+        [*] --> locationFetch
+        locationFetch --> apiCall: isPermissionHandled = true
+        apiCall --> [*]: finally setIsViewerLoading(true)
+    }
+
+    [*] --> Loading: HomeWorld マウント (isViewerLoading=false)
+    Loading --> weatherFetch
+    weatherFetch --> Viewer: isViewerLoading = true
+    Viewer --> Portal: Canvas onCreated → setIsLoading(false)
