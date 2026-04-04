@@ -5,9 +5,11 @@ import { HomeProvider } from '@/contexts';
 import { getWorks } from '@/services/works';
 import s from '@/styles/home/index.module.css';
 
-export const revalidate = 3600; // ISR 1時間
+/** ISR 1時間 */
+export const revalidate = 3600;
 
 export default async function Home() {
+  /** 取得した作品データ (最新3件) */
   const data = await getWorks({ limit: 3 });
 
   return (

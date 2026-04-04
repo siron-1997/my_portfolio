@@ -14,7 +14,9 @@ async function getWorkDetail(slug: string) {
     cache: 'no-store',
   });
 
-  if (!res.ok) throw new Error('Failed to fetch data');
+  if (!res.ok) {
+    throw new Error(`Failed to fetch work details: ${res.status} ${res.statusText}`);
+  }
   const data = await res.json();
 
   return data;
@@ -30,7 +32,7 @@ export default async function WorkPage({
   const data = await getWorkDetail(slug);
   const content = data.find((item: WorkDetail) => item.slug === `3d/${slug}`);
 
-  // 存在しない slug の場合は、works にリダイレクト
+  /** 存在しない slug の場合は works にリダイレクト */
   if (!content) {
     redirect('/works');
   }

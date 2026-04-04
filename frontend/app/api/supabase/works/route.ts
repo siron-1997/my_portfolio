@@ -15,6 +15,10 @@ const supabase = createClient(
  *
  * @param req - Next.js リクエストオブジェクト（クエリパラメータ: `limit`）
  * @returns 作品一覧 JSON（`image_url` はプロキシ URL `/api/supabase/image/[...slug]`）
+ 
+ *
+ * @example
+ * await GET(req);
  */
 export async function GET(req: NextRequest) {
   const limitParam = req.nextUrl.searchParams.get('limit');

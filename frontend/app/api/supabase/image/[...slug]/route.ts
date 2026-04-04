@@ -11,6 +11,10 @@ const supabase = createClient(
  *
  * @param path - Storage のファイルパス（例: `large_rc_plane.webp-abc123.webp`）
  * @returns MIME タイプ文字列。未知の拡張子の場合は `application/octet-stream`
+ 
+ *
+ * @example
+ * getContentType(path);
  */
 function getContentType(path: string): string {
   const ext = path.split('.').pop()?.toLowerCase();
@@ -35,6 +39,10 @@ function getContentType(path: string): string {
  * @param req - Next.js リクエストオブジェクト
  * @param params - URL パラメータ（slug: 作品スラッグ）
  * @returns 画像バイナリの ReadableStream レスポンス
+ 
+ *
+ * @example
+ * await GET(req, {});
  */
 export async function GET(
   req: NextRequest,

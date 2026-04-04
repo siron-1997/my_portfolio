@@ -7,11 +7,13 @@ const supabase = createClient(
 );
 
 export async function GET(req: NextRequest) {
-  // URL から slug を取得
+  /** URL から slug を取得 */
   const { pathname } = req.nextUrl;
   const slug = pathname.split('/').pop();
 
-  console.log('API called with slug:', slug);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('API called with slug:', slug);
+  }
 
   if (!slug) {
     return NextResponse.json({ error: 'Missing slug' }, { status: 400 });
@@ -23,7 +25,9 @@ export async function GET(req: NextRequest) {
     .eq('key', slug);
 
   if (error) {
-    console.error('Supabase error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Supabase error:', error);
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

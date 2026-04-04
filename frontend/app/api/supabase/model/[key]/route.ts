@@ -16,6 +16,10 @@ const supabase = createClient(
  * @param req - Next.js リクエストオブジェクト
  * @param params - URL パラメータ（key: 作品キー）
  * @returns GLB バイナリの ReadableStream レスポンス
+ 
+ *
+ * @example
+ * await GET(req, {});
  */
 export async function GET(
   req: NextRequest,

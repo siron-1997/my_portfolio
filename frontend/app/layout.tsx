@@ -4,10 +4,16 @@ import NextTopLoader from 'nextjs-toploader';
 import { Footer, Header } from '@/components/layout';
 import { ThemeProviderWrapper } from '@/contexts';
 import { ScrollToTop } from '@/components/common';
-// import { introduction } from '@/constants/about';
 import { APP_THEME_COLORS, COLOR_PALETTE } from '@/constants/colors';
 import localFont from 'next/font/local';
 import '@/styles/globals.css';
+
+declare global {
+  interface Window {
+    dataLayer: unknown[];
+    gtag: (...args: unknown[]) => void;
+  }
+}
 
 const notoSansJP = localFont({
   src: [
@@ -48,11 +54,9 @@ export const metadata: Metadata = {
     default: myName,
     template: `${myName} | %s`,
   },
-  // description: introduction.description,
   keywords: 'Siron-1997,portfolio',
   openGraph: {
     title: myName,
-    // description: introduction.description,
     url: 'https://junpei-oue.vercel.app',
     siteName: myName,
     images: [
@@ -70,7 +74,6 @@ export const metadata: Metadata = {
     site: xUserName,
     creator: xUserName,
     title: myName,
-    // description: introduction.description,
     images: [imagePath],
   },
 };
@@ -80,10 +83,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
+
   return (
     <html suppressHydrationWarning={true} lang="ja">
       <head>
-        {/* Favicon 設定 */}
+        {/** Favicon 設定 */}
         <link
           rel="apple-touch-icon"
           sizes="180x180"
@@ -109,26 +114,29 @@ export default function RootLayout({
         />
         <meta name="msapplication-TileColor" content={COLOR_PALETTE.faviconTileColor} />
         <meta name="theme-color" content={COLOR_PALETTE.white} />
-        {/* Google Analytics スクリプト */}
-        <Script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
-          strategy="afterInteractive"
-        />
-        <Script
-          id="google-analytics"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-                            window.dataLayer = window.dataLayer || [];
-                            function gtag(){dataLayer.push(arguments);}
-                            gtag('js', new Date());
-                            gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
-                                page_path: window.location.pathname,
-                            });
-                        `,
-          }}
-        />
+        {googleAnalyticsId && (
+          <>
+            <Script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+              strategy="afterInteractive"
+            />
+            <Script
+              id="google-analytics"
+              strategy="afterInteractive"
+              onLoad={() => {
+                window.dataLayer = window.dataLayer || [];
+                window.gtag = (...args: unknown[]) => {
+                  window.dataLayer.push(args);
+                };
+                window.gtag('js', new Date());
+                window.gtag('config', googleAnalyticsId, {
+                  page_path: window.location.pathname,
+                });
+              }}
+            />
+          </>
+        )}
       </head>
       <body className={`${notoSansJP.className} ${roboto.className}`}>
         <NextTopLoader

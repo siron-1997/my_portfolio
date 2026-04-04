@@ -14,38 +14,44 @@ export async function POST(request: NextRequest) {
   /** 開発環境の場合 */
   if (isDevelopment) console.log(`${apiName}: 取得開始...`);
 
-  // 環境変数に API キーが設定されているか確認
+  /** 環境変数に API キーが設定されているか確認 */
   if (!apiKey) {
-    console.error(LOG_MESSAGES.MISSING_ENV_VARIABLE('SENDGRID_API_KEY'));
+    if (isDevelopment) {
+      console.error(LOG_MESSAGES.MISSING_ENV_VARIABLE('SENDGRID_API_KEY'));
+    }
     return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
 
-  // SendGrid の API キーを設定
+  /** SendGrid の API キーを設定 */
   sgMail.setApiKey(apiKey);
 
   try {
     const data: InquiryPayload = await request.json();
 
-    // 許可されたリクエストキーを検証
+    /** 許可されたリクエストキーを検証 */
     const invalidKeys = Object.keys(data).filter(
       (key) => !API_ALLOWED_KEYS.SENDGRID.includes(key),
     );
     if (invalidKeys.length > 0) {
-      console.error(LOG_MESSAGES.INVALID_KEYS(apiName, invalidKeys));
+      if (isDevelopment) {
+        console.error(LOG_MESSAGES.INVALID_KEYS(apiName, invalidKeys));
+      }
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
     }
 
-    // メールアドレスが存在しない場合はエラーを返す
+    /** メールアドレスが存在しない場合はエラーを返す */
     if (!data.email) {
-      console.error(LOG_MESSAGES.SENDGRID_MISSING_EMAIL(apiName));
+      if (isDevelopment) {
+        console.error(LOG_MESSAGES.SENDGRID_MISSING_EMAIL(apiName));
+      }
       return NextResponse.json({ error: 'Email address is required' }, { status: 400 });
     }
 
-    // 自動返信メッセージの設定
+    /** 自動返信メッセージの設定 */
     const autoReplyMsg = {
-      to: data.email, // ユーザーのメールアドレス
-      from: { email: myEmail, name: myName }, // 自分のメールアドレスと名前
-      subject: 'Junpei Oue へのお問い合わせメール', // 件名
+      to: data.email,
+      from: { email: myEmail, name: myName },
+      subject: 'Junpei Oue へのお問い合わせメール',
       html: `
                 <p>${data.name || 'お客様'} 様</p>
                 <p>お問い合せいただき、ありがとうございます。</p>
@@ -63,12 +69,12 @@ export async function POST(request: NextRequest) {
             `,
     };
 
-    // 問い合わせ内容を運営側に送信するメッセージの設定
+    /** 問い合わせ内容を運営側に送信するメッセージの設定 */
     const inquiryMsg = {
-      to: myEmail, // 自分のメールアドレス
+      to: myEmail,
       from: { email: myEmail, name: 'Portfolio System' },
-      replyTo: { email: data.email, name: data.name || '匿名' }, // ユーザーのメールアドレスと名前
-      subject: 'Portfolio からのお問合せ', // 件名
+      replyTo: { email: data.email, name: data.name || '匿名' },
+      subject: 'Portfolio からのお問合せ',
       html: `
                 <p>${data.name || '匿名'} さんから以下の内容を受信しました。</p>
                 <p>=======================================================================================</p>
@@ -81,21 +87,29 @@ export async function POST(request: NextRequest) {
             `,
     };
 
-    // 自動返信メールを送信
+    /** 自動返信メールを送信 */
     await sgMail.send(autoReplyMsg);
-    console.log(LOG_MESSAGES.SENDGRID_EMAIL_SENT(apiName, data.email));
+    if (isDevelopment) {
+      console.log(LOG_MESSAGES.SENDGRID_EMAIL_SENT(apiName, data.email));
+    }
 
-    // 問い合わせ内容を運営側に送信
+    /** 問い合わせ内容を運営側に送信 */
     await sgMail.send(inquiryMsg);
-    console.log(LOG_MESSAGES.SENDGRID_EMAIL_SENT(apiName, myEmail));
+    if (isDevelopment) {
+      console.log(LOG_MESSAGES.SENDGRID_EMAIL_SENT(apiName, myEmail));
+    }
 
     return NextResponse.json({ message: 'Emails sent successfully' }, { status: 200 });
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error(LOG_MESSAGES.SENDGRID_ERROR(apiName, error.message));
+      if (isDevelopment) {
+        console.error(LOG_MESSAGES.SENDGRID_ERROR(apiName, error.message));
+      }
       return NextResponse.json({ error: 'Failed to send emails' }, { status: 500 });
     } else {
-      console.error(LOG_MESSAGES.SENDGRID_ERROR(apiName, 'An unknown error occurred'));
+      if (isDevelopment) {
+        console.error(LOG_MESSAGES.SENDGRID_ERROR(apiName, 'An unknown error occurred'));
+      }
       return NextResponse.json({ error: 'Failed to send emails' }, { status: 500 });
     }
   }
