@@ -1,51 +1,53 @@
-import { useEffect, useRef } from 'react';
-import { WeatherItem, OpenWeatherCurrentData } from '@/types/api';
+import React, { useEffect, useRef } from 'react';
+import { OpenWeatherCurrentData } from '@/types/api';
 import { RainState, RainStateResult } from '@/types/world';
 import { useWindowSize } from '@/hooks';
 import { BREAK_POINTS } from '@/constants/common';
 import { COLOR_PALETTE } from '@/constants/colors';
-import { WEATHER_TYPES } from '@/constants/world';
-
-type Props = {
-  currentWeatherData: OpenWeatherCurrentData | null;
-  weather: WeatherItem[];
-};
+import { DEFAULT_WEATHER, WEATHER_TYPES } from '@/constants/world';
+import s from '@/styles/home/HomeWorld.module.css';
 
 /**
- * HomeWorld の雨の描画ロジックを管理するカスタムフック
- * @param currentWeatherData - 現在の天気 API データ
- * @param weather - 天気情報
+ * Rain コンポーネントの Props
  */
-const useRain = ({ currentWeatherData, weather }: Props) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null!);
+type Props = {
+  /** Open Weather API から返される現在の天候データのレスポンス全体 */
+  currentWeatherData: OpenWeatherCurrentData | null;
+};
+
+const Rain = React.memo(({ currentWeatherData }: Props) => {
+  /** canvas 要素への参照 Ref */
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  /** ウィンドウサイズを取得 */
   const { width, height } = useWindowSize();
 
-  // 現在の風速を取得
-  const windSpeed = currentWeatherData?.wind?.speed || 0;
+  /** 天気情報リスト（API 成功時は取得値、未取得・失敗時はデフォルト値） */
+  const weather = currentWeatherData?.weather ?? DEFAULT_WEATHER;
 
   useEffect(() => {
-    // canvas要素、天気データ、ウィンドウサイズがなければ何もしない
+    /** canvas 要素・天気データ・ウィンドウサイズがなければ何もしない */
     if (!canvasRef.current || !currentWeatherData || !width || !height) {
       return;
     }
 
-    // 関連する天気を探す
+    /** 関連する天気を探す */
     const currentWeather = weather.find((w) => WEATHER_TYPES.includes(w.main));
-
     if (!currentWeather) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Canvas のサイズを設定
+    /** Canvas のサイズを設定 */
     canvas.width = window.outerWidth;
     canvas.height = window.outerHeight;
-    // Canvas サイズを保存
+
+    /** Canvas サイズを保存 */
     const w = canvas.width;
     const h = canvas.height;
 
-    // 雨の状態を取得
+    /** 雨の状態を取得 */
     const { color, lineWidth, xSpeed, ySpeed } = _getRainState({
       currentWeather,
       lineWidth: 2.5,
@@ -53,17 +55,17 @@ const useRain = ({ currentWeatherData, weather }: Props) => {
       ySpeed: width < BREAK_POINTS.XS ? 15 : 20,
     });
 
-    // 雨量を計算
+    /** 雨量を計算 */
     const rainFall = currentWeatherData?.rain
       ? currentWeatherData.rain['1h'] * (width < BREAK_POINTS.XS ? 180 : 250)
       : 0;
 
-    // 描画スタイルを設定
+    /** 描画スタイルを設定 */
     ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth;
     ctx.lineCap = 'round';
 
-    // 雨粒の配列を生成
+    /** 雨粒の配列を生成 */
     const particles = Array.from({ length: rainFall }, () => {
       const { length } = _getRainState({ currentWeather, length: 1.2 });
       return {
@@ -77,12 +79,15 @@ const useRain = ({ currentWeatherData, weather }: Props) => {
 
     let animationFrameId: number;
 
-    // 雨粒を移動
+    /**
+     * 雨粒を移動する。
+     * @returns {void} 戻り値は返さない
+     */
     const moveParticles = () => {
       particles.forEach((p) => {
         p.x += p.xs;
         p.y += p.ys;
-        // 画面外に出た雨粒を再配置
+        /** 画面外に出た雨粒を再配置 */
         if (p.x > w || p.y > h) {
           p.x = Math.random() * w;
           p.y = -30;
@@ -90,7 +95,10 @@ const useRain = ({ currentWeatherData, weather }: Props) => {
       });
     };
 
-    // 雨粒を描画
+    /**
+     * 雨粒を描画して次フレームを予約する。
+     * @returns {void} 戻り値は返さない
+     */
     const drawParticles = () => {
       ctx.clearRect(0, 0, w, h);
       particles.forEach((p) => {
@@ -99,7 +107,7 @@ const useRain = ({ currentWeatherData, weather }: Props) => {
         ctx.lineTo(p.x + p.l * p.xs, p.y + p.l * p.ys);
         ctx.stroke();
       });
-      // 雨粒を移動させ、再描画
+      /** 雨粒を移動させ、再描画 */
       moveParticles();
       animationFrameId = requestAnimationFrame(drawParticles);
     };
@@ -111,9 +119,30 @@ const useRain = ({ currentWeatherData, weather }: Props) => {
     };
   }, [currentWeatherData, weather, width, height, canvasRef]);
 
-  return { windSpeed, canvasRef };
-};
+  return (
+    <div className={s.rain_container}>
+      <canvas
+        ref={canvasRef}
+        className={s.rain_canvas}
+        style={{
+          /** 風速に応じて回転角度を設定（雨粒を傾ける） */
+          transform: `rotateZ(${currentWeatherData?.wind?.speed || 0}deg)`,
+        }}
+      />
+    </div>
+  );
+});
 
+Rain.displayName = 'Rain';
+
+export default Rain;
+
+/**
+ * 天候に応じた雨の描画パラメータを返す。
+ *
+ * @param {RainState} config - 現在天候に基づく描画設定
+ * @returns {RainStateResult} 雨の描画パラメータ
+ */
 const _getRainState = (config: RainState): RainStateResult => {
   const rainState = {
     color: config?.color ?? `rgba(${COLOR_PALETTE.rain}, 0.25)`,
@@ -122,9 +151,10 @@ const _getRainState = (config: RainState): RainStateResult => {
     xSpeed: config?.xSpeed ?? 0,
     ySpeed: config?.ySpeed ?? 0,
   };
-  // 雨の強さに応じて色、長さ、速度を変更
+
+  /** 雨の強さに応じて色・長さ・速度を変更 */
   switch (config.currentWeather.description) {
-    // 弱い雨
+    /** 弱い雨 */
     case 'light rain':
     case 'light intensity shower rain':
     case 'thunderstorm with light rain':
@@ -133,7 +163,7 @@ const _getRainState = (config: RainState): RainStateResult => {
       rainState.length = rainState.length - 0.2;
       rainState.ySpeed = rainState.ySpeed - 2;
       break;
-    // 通常の雨
+    /** 通常の雨 */
     case 'moderate rain':
     case 'shower rain':
     case 'ragged shower rain':
@@ -143,7 +173,7 @@ const _getRainState = (config: RainState): RainStateResult => {
       rainState.lineWidth = 2.5;
       rainState.ySpeed = rainState.ySpeed + 2.5;
       break;
-    // 激しい雨
+    /** 激しい雨 */
     case 'heavy intensity rain':
     case 'heavy intensity shower rain':
     case 'thunderstorm with heavy rain':
@@ -153,7 +183,7 @@ const _getRainState = (config: RainState): RainStateResult => {
       rainState.xSpeed = rainState.xSpeed + 1;
       rainState.ySpeed = rainState.ySpeed + 5;
       break;
-    // 非常に激しい雨
+    /** 非常に激しい雨 */
     case 'very heavy rain':
     case 'extreme rain':
       rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.15)`;
@@ -168,5 +198,3 @@ const _getRainState = (config: RainState): RainStateResult => {
 
   return rainState;
 };
-
-export default useRain;

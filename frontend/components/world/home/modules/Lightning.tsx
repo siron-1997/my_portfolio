@@ -1,22 +1,32 @@
+import React from 'react';
 import { useFrame } from '@react-three/fiber';
 import { PointLight } from 'three';
-import { WeatherItem } from '@/types/api';
+import { OpenWeatherCurrentData } from '@/types/api';
 import { LightningState } from '@/types/world';
-import { WEATHER_TYPES } from '@/constants/world';
-
-type Props = {
-  weather: WeatherItem[];
-};
+import { COLOR_PALETTE } from '@/constants/colors';
+import { DEFAULT_WEATHER, WEATHER_TYPES } from '@/constants/world';
 
 /**
- * HomeWorld の雷のロジックを管理するカスタムフック
- * @param weather - 天気情報
+ * Lightning コンポーネントの Props
  */
-const useLightning = ({ weather }: Props) => {
+type Props = {
+  /** Open Weather API から返される現在の天候データのレスポンス全体 */
+  currentWeatherData: OpenWeatherCurrentData | null;
+
+  /** 雷ポイントライトへの Ref */
+  ref: React.RefObject<PointLight | null>;
+};
+
+const Lightning = React.memo(({ currentWeatherData, ref }: Props) => {
+  /** 天気情報リスト（API 成功時は取得値、未取得・失敗時はデフォルト値） */
+  const weather = currentWeatherData?.weather ?? DEFAULT_WEATHER;
+
+  /** 現在の天気を取得 */
   const relevantWeather = weather.find((w) => WEATHER_TYPES.includes(w.main));
 
+  /** 雷の発生状態を初期化 */
   const lightningOccurrence: LightningState = {
-    power: () => 0, // 輝度
+    power: () => 0,
     positionX: () => 0,
     positionZ: () => 0,
     visible: false,
@@ -24,8 +34,9 @@ const useLightning = ({ weather }: Props) => {
 
   let currentPower = 0;
 
+  /** 天気の種類に応じて雷の強度・位置・可視状態を設定 */
   switch (relevantWeather?.description) {
-    // 弱い雷
+    /** 弱い雷 */
     case 'thunderstorm with light rain':
     case 'light thunderstorm':
     case 'thunderstorm with light drizzle':
@@ -37,7 +48,7 @@ const useLightning = ({ weather }: Props) => {
       lightningOccurrence.positionZ = (value) => Math.random() * (value * 3) - value / 2;
       lightningOccurrence.visible = true;
       break;
-    // 通常の雷
+    /** 通常の雷 */
     case 'thunderstorm with rain':
     case 'thunderstorm':
     case 'thunderstorm with drizzle':
@@ -49,7 +60,7 @@ const useLightning = ({ weather }: Props) => {
       lightningOccurrence.positionZ = (value) => Math.random() * (value * 2) - value / 2;
       lightningOccurrence.visible = true;
       break;
-    // 強い雷
+    /** 強い雷 */
     case 'thunderstorm with heavy rain':
     case 'heavy thunderstorm':
     case 'thunderstorm with heavy drizzle':
@@ -62,26 +73,38 @@ const useLightning = ({ weather }: Props) => {
       break;
   }
 
-  useFrame((state) => {
-    state.scene.children.forEach((child) => {
-      // 雷の発生
-      if (child.name === 'lightning' && child instanceof PointLight) {
-        // 雷の発生確率
-        if (Math.random() > 0.93 || child.power > 8000) {
-          if (child.power < 5000) {
-            child.position.set(
-              Math.random() * 40 - 20,
-              Math.random() * 20 + 50,
-              Math.random() * 40 - 20,
-            );
-          }
-          child.power = lightningOccurrence.power && lightningOccurrence.power(8);
-        }
+  /** フレームごとに雷の発生をアニメーション */
+  useFrame(() => {
+    const light = ref.current;
+    if (!light) return;
+    /** 確率的に雷を発生させる */
+    if (Math.random() > 0.93 || light.power > 8000) {
+      if (light.power < 5000) {
+        light.position.set(
+          Math.random() * 40 - 20,
+          Math.random() * 20 + 50,
+          Math.random() * 40 - 20,
+        );
       }
-    });
+      light.power = lightningOccurrence.power(8);
+    }
   });
 
-  return lightningOccurrence;
-};
+  return (
+    <pointLight
+      color={COLOR_PALETTE.lightning}
+      intensity={800000}
+      distance={80}
+      decay={2}
+      position={[-20, 70, -10]}
+      name="lightning"
+      visible={lightningOccurrence.visible}
+      castShadow
+      ref={ref}
+    />
+  );
+});
 
-export default useLightning;
+Lightning.displayName = 'Lightning';
+
+export default Lightning;

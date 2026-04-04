@@ -6,10 +6,15 @@ import { ModelChildren } from '@/types/world';
 import { Model } from './Model';
 import { Navigations } from './Navigations';
 
+/** Props の型定義 */
 type Props = {
+  /** content */
   content: WorkDetail;
+  /** isNavigationVisible */
   isNavigationVisible: boolean;
+  /** setModelChildren */
   setModelChildren: React.Dispatch<React.SetStateAction<ModelChildren>>;
+  /** modelChildren */
   modelChildren: ModelChildren;
 };
 

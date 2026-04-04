@@ -7,8 +7,11 @@ import { BREAK_POINTS } from '@/constants/common';
 import { APP_THEME_COLORS } from '@/constants/colors';
 import useNavigations from './useNavigations';
 
+/** Props の型定義 */
 type Props = {
+  /** modelChildren */
   modelChildren: ModelChildren;
+  /** isNavigationVisible */
   isNavigationVisible: boolean;
 };
 
@@ -18,12 +21,12 @@ const Navigations = ({ modelChildren, isNavigationVisible }: Props) => {
   return (
     <group name="navigations">
       {modelChildren
-        // 名前が IS_Sec3_<番号>_<名前> 形式のものを抽出
+        /** 名前が IS_Sec3_<番号>_<名前> 形式のものを抽出 */
         .filter((child: Object3D) => /^IS_Sec3_\d+_.+/.test(child.name))
         .map((child: Object3D, i: number) => (
           <Html
             key={i}
-            position={[child.position.x, child.position.y, child.position.z]} // 位置情報を利用
+            position={[child.position.x, child.position.y, child.position.z]}
             style={{ zIndex: 600 }}
           >
             <NumberedCircled

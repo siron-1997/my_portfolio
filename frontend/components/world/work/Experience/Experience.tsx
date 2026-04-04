@@ -8,7 +8,9 @@ import { WORK_WORLD_ENV_COLORS } from '@/constants/colors';
 import { BREAK_POINTS } from '@/constants/common';
 import useExperience from './useExperience';
 
+/** Props の型定義 */
 type Props = {
+  /** content */
   content: WorkDetail;
 };
 
@@ -72,12 +74,8 @@ const Experience = ({ content }: Props) => {
       <MyControls />
       <axesHelper args={[10]} visible={false} />
       <EffectComposer>
-        <DepthOfField
-          focusDistance={0} // ピントが合うカメラからの距離
-          focalLength={0.1} // 焦点距離（ボケの強さに影響）
-          bokehScale={8} // ボケの大きさ
-          height={1080} // エフェクトの解像度
-        />
+        {/** 被写界深度の設定 */}
+        <DepthOfField focusDistance={0} focalLength={0.1} bokehScale={8} height={1080} />
       </EffectComposer>
     </>
   );

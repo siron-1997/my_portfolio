@@ -3,8 +3,11 @@ import { WorkDetail } from '@/types/api';
 import { ModelChildren } from '@/types/world';
 import useModel from './useModel';
 
+/** Props の型定義 */
 type Props = {
+  /** content */
   content: WorkDetail;
+  /** setModelChildren */
   setModelChildren: React.Dispatch<React.SetStateAction<ModelChildren>>;
 };
 

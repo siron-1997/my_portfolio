@@ -1,1 +1,1 @@
-export { HomeWorld } from './HomeWorld';
+export { default as HomeWorld } from './HomeWorld';

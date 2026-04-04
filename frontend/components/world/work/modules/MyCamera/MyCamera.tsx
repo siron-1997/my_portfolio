@@ -8,10 +8,15 @@ import { ModelChildren } from '@/types/world';
 import { BREAK_POINTS } from '@/constants/common';
 import useMyCamera from './useMyCamera';
 
+/** Props の型定義 */
 type Props = {
+  /** cameraRef */
   cameraRef: React.MutableRefObject<PerspectiveCamera>;
+  /** setIsNavigationVisible */
   setIsNavigationVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  /** modelChildren */
   modelChildren: ModelChildren;
+  /** content */
   content: WorkDetail;
 };
 
