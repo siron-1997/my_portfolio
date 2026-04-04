@@ -1,5 +1,5 @@
-export { CareerHistory } from './CareerHistory';
-export { Introduction } from './Introduction';
-export { Portal } from './Portal';
-export { ProfileImage } from './ProfileImage';
-export { SkillList } from './SkillList';
+export { default as CareerHistory } from './CareerHistory';
+export { default as Introduction } from './Introduction';
+export { default as Portal } from './Portal';
+export { default as ProfileImage } from './ProfileImage';
+export { default as SkillList } from './SkillList';

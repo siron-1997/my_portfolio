@@ -14,22 +14,46 @@ import {
   timelineOppositeContentClasses,
   TimelineSeparator,
 } from '@mui/lab';
+import React, { useEffect, useRef } from 'react';
+
+import { careerHistoryAnimation } from '@/animations/about';
 import { CAREER_HISTORIES } from '@/constants/about';
-import useCareerHistory from './useCareerHistory';
+import { useWindowSize } from '@/hooks';
 import s from '@/styles/about/CareerHistory.module.css';
 
-const CareerHistory = () => {
-  const { careerHistoryRef, isMobile } = useCareerHistory();
+const CareerHistory = React.memo(() => {
+  /** 職務経歴の参照 Ref */
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  /** ウィンドウ幅 */
+  const { width } = useWindowSize();
+
+  useEffect(() => {
+    if (!ref.current) return;
+
+    /** 職務経歴アニメーションの初期化 */
+    const ctx = careerHistoryAnimation({
+      elements: ref.current?.querySelectorAll(
+        '.career-history-item',
+      ) as NodeListOf<HTMLElement>,
+      careerHistoryRef: ref,
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
 
   return (
-    <div className={s.container} ref={careerHistoryRef}>
+    <div className={s.container} ref={ref}>
       <Timeline
         sx={{
           padding: 0,
-          // 年代表示エリアの幅を調整
-          ...(!isMobile && {
+          /** 年代表示エリアの幅を調整 */
+          /** モバイル表示時は非表示 */
+          ...(!(width && width <= 768) && {
             [`& .${timelineOppositeContentClasses.root}`]: {
-              flex: 0, // 年代表示エリアの幅を調整
+              flex: 0,
               minWidth: '75px',
               paddingLeft: '0',
             },
@@ -44,8 +68,8 @@ const CareerHistory = () => {
         {CAREER_HISTORIES.map((history, i) => (
           <div key={i} className="career-history-item">
             <TimelineItem>
-              {/* 年 (PC表示時) */}
-              {!isMobile && (
+              {/** 年 (PC表示時) */}
+              {!(width && width <= 768) && (
                 <TimelineOppositeContent
                   sx={{
                     py: '18px',
@@ -57,24 +81,29 @@ const CareerHistory = () => {
                   {history.year}
                 </TimelineOppositeContent>
               )}
-              {/* タイムラインの接続部分 (線とビット) - 中央の軸 */}
+
+              {/** タイムラインの接続部分 (線とドット) */}
               <TimelineSeparator>
                 <TimelineDot color={history.color}>
                   {history.iconType === 'school' ? <SchoolIcon /> : <WorkIcon />}
                 </TimelineDot>
+
                 <TimelineConnector />
               </TimelineSeparator>
-              {/* 内容 (タイトルと説明) */}
+
+              {/** 内容 (タイトルと説明) */}
               <TimelineContent sx={{ py: '12px', pl: 2, pr: 0 }}>
-                {/* 年 (モバイル表示時) */}
-                {isMobile && (
+                {/** 年 (モバイル表示時) */}
+                {width && width <= 768 && (
                   <Typography component="p" variant="p" fontWeight="bold">
                     {history.year}
                   </Typography>
                 )}
+
                 <Typography component="h5" variant="h5">
                   {history.title}
                 </Typography>
+
                 <Typography component="p" variant="p" sx={{ whiteSpace: 'pre-wrap' }}>
                   {history.description}
                 </Typography>
@@ -85,6 +114,8 @@ const CareerHistory = () => {
       </Timeline>
     </div>
   );
-};
+});
+
+CareerHistory.displayName = 'CareerHistory';
 
 export default CareerHistory;
