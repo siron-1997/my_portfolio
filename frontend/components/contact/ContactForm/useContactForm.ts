@@ -5,7 +5,11 @@ import { useContactFormContext } from '@/contexts';
 import { CONFIRM_MESSAGE } from '@/constants/contact';
 import s from '@/styles/contact/ContactForm.module.css';
 
-/** コンタクトフォーム全体のアクションと送信ロジックを管理 */
+/**
+ * コンタクトフォーム全体のアクションと送信ロジックを管理する。
+ *
+ * @returns フォーム描画に必要な状態とイベントハンドラ
+ */
 const useContactForm = () => {
   const {
     name,
@@ -29,7 +33,10 @@ const useContactForm = () => {
     [s.end_form]: formStep === 'LAST_STEP',
   });
 
-  /** 入力内容の確認 */
+  /**
+   * 入力内容を検証して次ステップへ進める。
+   * @returns {void} 戻り値は返さない
+   */
   const handleEndInput = () => {
     /** 初回バリデーションチェックが未実施の場合 */
     if (!isInitialValidationCheck) {
@@ -56,13 +63,24 @@ const useContactForm = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  /** 修正する */
+  /**
+   * 入力ステップへ戻す。
+   * @returns {void} 戻り値は返さない
+   */
   const handleGoBackToInput = () => {
     dispatch({ type: 'SET_FORM_STEP', payload: 'FIRST_STEP' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  /** 送信 */
+  /**
+   * お問い合わせ内容を送信する。
+   * @param e - フォーム送信イベント
+   * @returns {Promise<void>} 送信完了までの Promise
+   
+ *
+ * @example
+ * await handleSubmit(e);
+ */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

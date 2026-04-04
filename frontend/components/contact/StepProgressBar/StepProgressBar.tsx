@@ -8,11 +8,17 @@ import { STEP_STATUS } from '@/constants/contact';
 import useStepProgressBar from './useStepProgressBar';
 import s from '@/styles/contact/StepProgressBar.module.css';
 
+/** Props の型定義 */
 type Props = {
+  /** stepPoints */
   stepPoints: StepPoint[];
+  /** wrapperClassName */
   wrapperClassName?: string;
+  /** progressClassName */
   progressClassName?: string;
+  /** labelClassName */
   labelClassName?: string;
+  /** contentClassName */
   contentClassName?: string;
 };
 

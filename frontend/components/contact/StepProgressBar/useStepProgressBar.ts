@@ -6,11 +6,17 @@ import { StepPoint, StepPointAction, StepPointState } from '@/types/common';
 import { STEP_STATUS } from '@/constants/contact';
 import s from '@/styles/contact/StepProgressBar.module.css';
 
+/** Props の型定義 */
 type Props = {
+  /** stepPoints */
   stepPoints: StepPoint[];
+  /** wrapperClassName */
   wrapperClassName?: string;
+  /** progressClassName */
   progressClassName?: string;
+  /** labelClassName */
   labelClassName?: string;
+  /** contentClassName */
   contentClassName?: string;
 };
 
@@ -24,15 +30,15 @@ const stepsReducer = (stepPoints: StepPoint[], action: StepPointAction): StepPoi
   return stepPoints.map((stepPoint, i) => {
     const newStepPoint = { ...stepPoint };
     switch (true) {
-      // 現在のインデックスより前のステップは「完了」
+      /** 現在のインデックスより前のステップは「完了」 */
       case i < action.index:
         newStepPoint.state = STEP_STATUS.COMPLETED;
         break;
-      // 現在のインデックスに一致するステップは指定された状態（CURRENT or ERROR）
+      /** 現在のインデックスに一致するステップは指定された状態（CURRENT or ERROR） */
       case i === action.index:
         newStepPoint.state = action.state;
         break;
-      // 現在のインデックスより後のステップは「未開始」
+      /** 現在のインデックスより後のステップは「未開始」 */
       default:
         newStepPoint.state = STEP_STATUS.NOT_STARTED;
         break;
@@ -46,6 +52,10 @@ const stepsReducer = (stepPoints: StepPoint[], action: StepPointAction): StepPoi
  * - フォーム全体の進行状況 (formStep) に応じて、プログレスバーの表示を更新する
  * - 状態駆動の設計で、UI の表示を一意に決定する
  * @param stepPoints ステップの初期データ配列
+ 
+ *
+ * @example
+ * useStepProgressBar({});
  */
 const useStepProgressBar = ({
   stepPoints,
@@ -70,20 +80,20 @@ const useStepProgressBar = ({
     let nextIndex = currentStepPointIndex;
     let nextState: StepPointState = STEP_STATUS.CURRENT;
 
-    // 入力画面の場合
+    /** 入力画面の場合 */
     if (formStep === 'FIRST_STEP') {
       nextIndex = 0;
-      // 入力内容にエラーがある場合
+      /** 入力内容にエラーがある場合 */
       if (isValidationError) {
         nextState = STEP_STATUS.ERROR;
       }
-      // 確認画面に進んだ場合
+      /** 確認画面に進んだ場合 */
     } else if (formStep === 'SECOND_STEP') {
       nextIndex = 1;
-      // 送信完了画面に進んだ場合
+      /** 送信完了画面に進んだ場合 */
     } else if (formStep === 'LAST_STEP') {
       nextIndex = 2;
-      // 送信に失敗した場合
+      /** 送信に失敗した場合 */
       if (!isSended) {
         nextState = STEP_STATUS.ERROR;
       }
@@ -94,7 +104,7 @@ const useStepProgressBar = ({
   }, [currentStepPointIndex, formStep, isValidationError, isSended]);
 
   useEffect(() => {
-    // formStep の変更を検知してステップを更新
+    /** formStep の変更を検知してステップを更新 */
     if (prevFormStepRef.current !== formStep) {
       prevFormStepRef.current = formStep;
       handleStepChange();
@@ -102,7 +112,7 @@ const useStepProgressBar = ({
   }, [formStep, handleStepChange]);
 
   useEffect(() => {
-    // isValidationError の変更（入力開始）を検知してステップを更新
+    /** isValidationError の変更（入力開始）を検知してステップを更新 */
     if (isValidationError) {
       handleStepChange();
     }

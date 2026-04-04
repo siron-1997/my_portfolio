@@ -1,11 +1,34 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Typography } from '@mui/material';
-import useSending from './useSending';
+import cn from 'classnames';
+
+import { useContactFormContext } from '@/contexts';
 import s from '@/styles/contact/Sending.module.css';
 
 const Sending = () => {
-  const { classNames } = useSending();
+  const { isSending } = useContactFormContext();
+  const classNames = cn(s.sending, { [s.sending_visible]: !isSending });
+
+  useEffect(() => {
+    const html = document.getElementsByTagName('html')[0];
+    const body = document.body;
+
+    if (isSending) {
+      html.style.overflow = 'hidden';
+      body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
+    } else {
+      html.style.overflow = 'auto';
+      body.style.overflow = 'auto';
+    }
+
+    return () => {
+      html.style.overflow = 'auto';
+      body.style.overflow = 'auto';
+    };
+  }, [isSending]);
 
   return (
     <>

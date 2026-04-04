@@ -1,3 +1,3 @@
-export { ModelViewerLoading } from './ModelViewerLoading';
-export { Portal } from './Portal';
-export { Works } from './Works';
+export { default as ModelViewerLoading } from './ModelViewerLoading';
+export { default as Portal } from './Portal';
+export { default as Works } from './Works';

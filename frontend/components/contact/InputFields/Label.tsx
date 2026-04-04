@@ -1,8 +1,12 @@
 import s from '@/styles/contact/InputFields.module.css';
 
+/** Props の型定義 */
 type Props = {
+  /** title */
   title: string;
+  /** id */
   id: string;
+  /** isFinishedFirstStep */
   isFinishedFirstStep: boolean;
 };
 

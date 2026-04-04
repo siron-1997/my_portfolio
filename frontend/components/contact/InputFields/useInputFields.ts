@@ -3,7 +3,11 @@ import { useContactFormContext } from '@/contexts';
 import { EMAIL_VALIDATION } from '@/constants/contact';
 import s from '@/styles/contact/InputFields.module.css';
 
-/** コンタクトフォームの入力値検証 */
+/**
+ * コンタクトフォームの入力値検証と入力ハンドラを提供する。
+ *
+ * @returns 入力状態、エラー状態、入力ハンドラ群
+ */
 const useInputFields = () => {
   const {
     formStep,
@@ -16,7 +20,7 @@ const useInputFields = () => {
     dispatch,
   } = useContactFormContext();
 
-  // 入力フィールドのクラス名
+  /** 入力フィールドのクラス名 */
   const isFinishedFirstStep = formStep === 'SECOND_STEP';
   const inputNameClassNames = cn(s.text_field, {
     [s.default_text_field]: !isFinishedFirstStep && isNotNameEmpty,
