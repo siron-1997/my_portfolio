@@ -1,11 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import usePageLoading from './usePageLoading';
+
+import { useIconSize } from '@/hooks';
 import s from '@/styles/common/loading/PageLoading.module.css';
 
 const PageLoading = () => {
-  const { iconSize } = usePageLoading();
+  const iconSize = useIconSize(70, 90, 110);
 
   return (
     <div className={s.page_loading}>

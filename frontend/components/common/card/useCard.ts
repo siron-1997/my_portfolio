@@ -15,11 +15,11 @@ const useCard = (type: 'work' | 'home') => {
   });
   const { width } = useWindowSize();
 
-  // "work" タイプの場合、または"home"タイプで幅が BREAK_POINTS.XS 未満または BREAK_POINTS.SM 以上の場合に適用
+  /** "work" タイプの場合、または"home"タイプで幅が BREAK_POINTS.XS 未満または BREAK_POINTS.SM 以上の場合に適用 */
   const termsWorks =
     type === 'work' ||
     (type === 'home' && !(width && width >= BREAK_POINTS.XS && width < BREAK_POINTS.SM));
-  // "home" タイプで幅が BREAK_POINTS.XS 以上かつ BREAK_POINTS.SM 未満の場合に適用
+  /** "home" タイプで幅が BREAK_POINTS.XS 以上かつ BREAK_POINTS.SM 未満の場合に適用 */
   const termsHome =
     type === 'home' && width && width >= BREAK_POINTS.XS && width < BREAK_POINTS.SM;
 

@@ -5,13 +5,21 @@ import { APP_THEME_COLORS } from '@/constants/colors';
 import useCard from './useCard';
 import s from '@/styles/common/Card.module.css';
 
+/** Props の型定義 */
 type Props = {
+  /** image */
   image?: string;
+  /** link */
   link?: string;
+  /** alt */
   alt?: string;
+  /** title */
   title: string;
+  /** description */
   description: string;
+  /** categoryType */
   categoryType: string;
+  /** type */
   type: 'work' | 'home';
 };
 

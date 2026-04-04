@@ -1,12 +1,24 @@
 import Head from 'next/head';
 import React from 'react';
-import useMeta from './useMeta';
 
+/**
+ * Meta コンポーネントの Props。
+ * ページごとのメタ情報（タイトル・OGP・Twitter Card）を設定する。
+ */
 type Props = {
+  /** ページのタイトル（ブラウザタブと OGP に使用） */
   title?: string;
+
+  /** SEO キーワード（カンマ区切り） */
   keywords?: string;
+
+  /** ページの説明文（meta description および OGP に使用） */
   description?: string;
+
+  /** OGP・Twitter Card 用の画像パス */
   imagePath?: string;
+
+  /** OGP の og:type（例: "website", "article"） */
   type?: string;
 };
 
@@ -17,7 +29,7 @@ const Meta = ({
   imagePath,
   type: _type,
 }: Props) => {
-  const { xUserName } = useMeta();
+  const xUserName = '@Jsiron2029';
 
   return (
     <Head>

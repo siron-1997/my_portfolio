@@ -1,16 +1,27 @@
 'use client';
 
 import Image from 'next/image';
-import useHamburger from './useHamburger';
+import cn from 'classnames';
 
+import s from '@/styles/common/button/Hamburger.module.css';
+
+/**
+ * Hamburger コンポーネントの Props。
+ * スマートフォン表示時のドロワーを開くハンバーガーメニューボタン。
+ */
 type Props = {
+  /** 外部から追加するクラス名 */
   className?: string;
+
+  /** ハンバーガーアイコンのサイズ（ピクセル） */
   iconSize: number;
+
+  /** ハンバーガーメニューを開くコールバック */
   onOpen: () => void;
 };
 
 const Hamburger = ({ className, iconSize, onOpen }: Props) => {
-  const { classNames } = useHamburger(className);
+  const classNames = cn(className, s.hamburger);
 
   return (
     <div className={classNames} onClick={onOpen}>

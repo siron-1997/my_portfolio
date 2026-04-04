@@ -4,7 +4,9 @@ import Image from 'next/image';
 import useScrollToTop from './useScrollToTop';
 import s from '@/styles/common/button/ScrollToTop.module.css';
 
+/** Props の型定義 */
 type Props = {
+  /** isViewerActive */
   isViewerActive: boolean;
 };
 

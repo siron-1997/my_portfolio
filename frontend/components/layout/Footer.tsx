@@ -1,13 +1,26 @@
 'use client';
 
 import Image from 'next/image';
+import React from 'react';
+
 import { Container } from '@/components/common';
+import { useIconSize } from '@/hooks';
 import { SNS_LIST } from '@/constants/common';
-import useFooter from './useFooter';
 import s from '@/styles/layout/Footer.module.css';
 
-const Footer = () => {
-  const { iconSize, copyright } = useFooter();
+const Footer = React.memo(() => {
+  /** アイコンサイズを取得 */
+  const iconSize = useIconSize(35, 35, 35);
+
+  /** サイト公開年（著作権表記の開始年） */
+  const startYear = 2023;
+  /** 現在の年（ビルド時ではなくレンダリング時に評価される） */
+  const currentYear = new Date().getFullYear();
+  /** 著作権表記。開始年と現在年が異なる場合は範囲表記にする */
+  const copyright =
+    currentYear === startYear
+      ? `${startYear} Junpei Oue`
+      : `${startYear}–${currentYear} Junpei Oue`;
 
   return (
     <footer className={s.footer}>
@@ -40,6 +53,8 @@ const Footer = () => {
       </Container>
     </footer>
   );
-};
+});
+
+Footer.displayName = 'Footer';
 
 export default Footer;
