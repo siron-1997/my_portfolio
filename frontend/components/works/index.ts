@@ -1,3 +1,3 @@
-export { CategoryFilter } from './CategoryFilter';
+export { default as CategoryFilter } from './CategoryFilter';
 export { Contents } from './Contents';
-export { Portal } from './Portal';
+export { default as Portal } from './Portal';

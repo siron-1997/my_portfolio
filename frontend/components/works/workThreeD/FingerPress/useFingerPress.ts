@@ -16,7 +16,7 @@ const useFingerPress = () => {
     dispatch({ type: 'SET_FINGER_VISIBLE', payload: value });
   const { width } = useWindowSize();
   const iconSize = useIconSize(75, 85, 95);
-  // ブレイクポイントがモバイルかどうか
+  /** ブレイクポイントがモバイルかどうか */
   const isBreakPointMB = width! < BREAK_POINTS.XS;
 
   useEffect(() => {

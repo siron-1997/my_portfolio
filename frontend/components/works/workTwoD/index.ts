@@ -1,6 +1,5 @@
-// export { default as Categories } from './Categories';
-// export { default as Description } from './Description';
-// export { default as Images } from './Images';
-// // export { default as MainImage } from './MainImage';
-// export { default as Portal } from './Portal';
-// export { default as Tags } from './Tags';
+/**
+ * 旧 2D 作品詳細コンポーネント群のエントリーポイント。
+ * 現在は使用停止中のため、空モジュールとして保持している。
+ */
+export {};

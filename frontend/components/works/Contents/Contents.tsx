@@ -1,20 +1,27 @@
 'use client';
 
+import React, { useRef } from 'react';
+
 import { Card } from '@/components/common';
 import { WorkSummary } from '@/types/api';
 import { truncateString } from '@/utils';
 import { useContents } from './useContents';
 import s from '@/styles/works/Contents.module.css';
 
+/** Props の型定義 */
 type Props = {
+  /** data */
   data: WorkSummary[];
 };
 
-const Contents = ({ data }: Props) => {
+const Contents = React.memo(({ data }: Props) => {
+  /** コンテンツの参照 */
+  const ref = useRef<HTMLDivElement | null>(null);
+
   const { contentsRef, selectedWorks } = useContents({ data });
 
   return (
-    <div className={s.contents} ref={contentsRef}>
+    <div className={s.contents} ref={ref}>
       {selectedWorks.map((work: WorkSummary, i: number) => (
         <Card
           key={i}
@@ -29,6 +36,8 @@ const Contents = ({ data }: Props) => {
       ))}
     </div>
   );
-};
+});
+
+Contents.displayName = 'Contents';
 
 export default Contents;

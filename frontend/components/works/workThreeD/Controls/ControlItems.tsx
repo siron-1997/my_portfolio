@@ -1,11 +1,18 @@
 import { Typography, ListItem } from '@mui/material';
 
+/** Props の型定義 */
 type Props = {
+  /** title */
   title: string;
+  /** description */
   description: string;
+  /** index */
   index: number;
+  /** className */
   className: string;
+  /** style */
   style?: React.CSSProperties;
+  /** onClick */
   onClick: React.MouseEventHandler<HTMLLIElement>;
 };
 

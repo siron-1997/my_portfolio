@@ -9,7 +9,9 @@ import ControlItems from './ControlItems';
 import useControls from './useControls';
 import s from '@/styles/works/workThreeD/Controls.module.css';
 
+/** Props の型定義 */
 type Props = {
+  /** content */
   content: WorkDetail;
 };
 
