@@ -11,19 +11,28 @@ import {
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** CardsProps の型定義 */
 type CardsProps = {
-  contentItems: NodeListOf<Element>;
+  /** contentItems */
+  contentItems: NodeListOf<HTMLElement>;
+  /** contentsRef */
   contentsRef: React.RefObject<HTMLDivElement>;
 };
 
+/** CategoryFilterProps の型定義 */
 type CategoryFilterProps = {
+  /** categoryFilter */
   categoryFilter: HTMLDivElement;
-  categoryFilterRef: React.RefObject<HTMLDivElement>;
+  /** categoryFilterRef */
+  categoryFilterRef: React.RefObject<HTMLDivElement | null>;
 };
 
+/** PortalProps の型定義 */
 type PortalProps = {
+  /** title */
   title: HTMLHeadingElement;
-  titleRef: React.RefObject<HTMLHeadingElement>;
+  /** titleRef */
+  titleRef: React.RefObject<HTMLHeadingElement | null>;
 };
 
 export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => {
@@ -31,7 +40,7 @@ export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => 
     const width = window.innerWidth;
     let point = true;
 
-    Array.from(contentItems).forEach((item: any, i: number) => {
+    Array.from(contentItems).forEach((item: HTMLElement, i: number) => {
       const cardAnimate = gsap.timeline({
         ...getScrollTriggerOption({
           delay: 0.4,
@@ -45,7 +54,7 @@ export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => 
 
       cardAnimate.fromTo(
         item,
-        // from
+        /** from */
         width < BREAK_POINTS.XS && !((i + 1) % 2 === 0)
           ? BACK_OUT_OPACITY_RIGHT_MOVE.from
           : width < BREAK_POINTS.XS && (i + 1) % 2 === 0
@@ -53,7 +62,8 @@ export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => 
             : point
               ? BACK_OUT_OPACITY_RIGHT_MOVE.from
               : BACK_OUT_OPACITY_LEFT_MOVE.from,
-        // to
+
+        /** to */
         width < BREAK_POINTS.XS && !((i + 1) % 2 === 0)
           ? BACK_OUT_OPACITY_RIGHT_MOVE.to
           : width < BREAK_POINTS.XS && (i + 1) % 2 === 0
@@ -64,8 +74,10 @@ export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => 
       );
 
       switch (true) {
-        case (i + 1) % 2 === 0 && width >= BREAK_POINTS.XS && width < BREAK_POINTS.SM: // tb
-        case (i + 1) % 3 === 0 && width >= BREAK_POINTS.SM: // pc
+        /** tb */
+        case (i + 1) % 2 === 0 && width >= BREAK_POINTS.XS && width < BREAK_POINTS.SM:
+        /** pc */
+        case (i + 1) % 3 === 0 && width >= BREAK_POINTS.SM:
           point = !point;
           break;
         default:

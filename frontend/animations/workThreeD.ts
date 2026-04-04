@@ -10,34 +10,55 @@ import {
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** ControlsProps の型定義 */
 type ControlsProps = {
+  /** section */
   section: HTMLElement;
+  /** listPC */
   listPC: HTMLDivElement;
+  /** listMB */
   listMB: HTMLDivElement;
+  /** controlsRef */
   controlsRef: React.RefObject<HTMLDivElement>;
 };
 
+/** IntroductionProps の型定義 */
 type IntroductionProps = {
+  /** section */
   section: HTMLElement;
+  /** introductionRef */
   introductionRef: React.RefObject<HTMLDivElement>;
 };
 
+/** PortalProps の型定義 */
 type PortalProps = {
+  /** portal */
   portal: HTMLElement;
+  /** portalRef */
   portalRef: React.RefObject<HTMLElement>;
 };
 
+/** FingerPressProps の型定義 */
 type FingerPressProps = {
+  /** image */
   image: HTMLImageElement;
+  /** text */
   text: HTMLParagraphElement;
+  /** fingerPressRef */
   fingerPressRef: React.RefObject<HTMLDivElement>;
+  /** currentWidth */
   currentWidth: number;
+  /** isFingerVisible */
   isFingerVisible: boolean;
 };
 
+/** ToggleButtonProps の型定義 */
 type ToggleButtonProps = {
+  /** bg */
   bg: HTMLDivElement;
+  /** toggleButtonRef */
   toggleButtonRef: React.RefObject<HTMLDivElement>;
+  /** isViewerActive */
   isViewerActive: boolean;
 };
 

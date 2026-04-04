@@ -13,14 +13,23 @@ import { BREAK_POINTS } from '@/constants/common';
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** Props の型定義 */
 type Props = {
+  /** startPosition */
   startPosition: Vector3;
+  /** endPosition */
   endPosition: Vector3;
+  /** portal */
   portal: HTMLDivElement;
+  /** door */
   door: Group;
+  /** room */
   room: Mesh;
+  /** cameraContainerRef */
   cameraContainerRef: React.RefObject<Group>;
+  /** camera */
   camera: OrthographicCamera | PerspectiveCamera;
+  /** width */
   width: number;
 };
 
@@ -35,7 +44,7 @@ export const rigCameraAnimation = ({
   width,
 }: Props) => {
   const ctx = gsap.context(() => {
-    // カメラ位置アニメーション
+    /** カメラ位置アニメーション */
     const cameraAnimation = gsap.timeline({
       scrollTrigger: {
         trigger: portal,
@@ -49,7 +58,8 @@ export const rigCameraAnimation = ({
         ease: 'power2.out',
       },
     });
-    // ドア開閉アニメーション
+
+    /** ドア開閉アニメーション */
     const doorAnimation = gsap.timeline({
       scrollTrigger: {
         trigger: portal,
@@ -65,9 +75,10 @@ export const rigCameraAnimation = ({
 
     const handleUpdate = () => {
       const scrollTop = window.scrollY;
-      // スクロールダウン
+
+      /** スクロールダウン */
       if (scrollTop > lastScrollTop) {
-        // 扉の角度が0°より大きい、かつ部屋のマテリアルがインスタンスの場合、部屋を表示
+        /** 扉の角度が0°より大きい、かつ部屋のマテリアルがインスタンスの場合、部屋を表示 */
         if (
           door.rotation.y > MathUtils.degToRad(0) &&
           room.material instanceof Material
@@ -75,9 +86,10 @@ export const rigCameraAnimation = ({
           room.material.opacity = 1;
           room.material.needsUpdate = true;
         }
-        // スクロールアップ
+
+        /** スクロールアップ */
       } else if (scrollTop < lastScrollTop) {
-        // 扉の角度が0°、かつ部屋のマテリアルがインスタンスの場合、部屋を非表示
+        /** 扉の角度が0°、かつ部屋のマテリアルがインスタンスの場合、部屋を非表示 */
         if (
           door.rotation.y === MathUtils.degToRad(0) &&
           room.material instanceof Material
@@ -86,7 +98,8 @@ export const rigCameraAnimation = ({
           room.material.needsUpdate = true;
         }
       }
-      // スクロール位置を更新
+
+      /** スクロール位置を更新 */
       lastScrollTop = scrollTop;
     };
 

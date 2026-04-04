@@ -9,15 +9,22 @@ import {
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** PortalProps の型定義 */
 type PortalProps = {
+  /** title */
   title: HTMLHeadingElement;
-  portalRef: React.RefObject<HTMLElement>;
+  /** portalRef */
+  portalRef: React.RefObject<HTMLDivElement | null>;
 };
 
+/** WorksProps の型定義 */
 type WorksProps = {
+  /** title */
   title: HTMLHeadingElement;
+  /** cards */
   cards: HTMLDivElement;
-  worksRef: React.RefObject<HTMLElement>;
+  /** worksRef */
+  worksRef: React.RefObject<HTMLElement | null>;
 };
 
 export const portalAnimation = ({ title, portalRef }: PortalProps) => {

@@ -7,33 +7,47 @@ import {
   POWER2_OUT_OPACITY_LEFT_MOVE,
   POWER2_OUT_OPACITY_RIGHT_MOVE,
 } from '@/constants/common';
-import { GsapAnimationConfig } from '@/types/common';
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** PortalProps の型定義 */
 type PortalProps = {
+  /** title */
   title: HTMLHeadingElement;
-  titleRef: React.RefObject<HTMLHeadingElement>;
+  /** titleRef */
+  titleRef: React.RefObject<HTMLHeadingElement | null>;
 };
 
+/** IntroductionProps の型定義 */
 type IntroductionProps = {
+  /** section */
   section: HTMLElement;
-  introductionRef: React.RefObject<HTMLDivElement>;
+  /** introductionRef */
+  introductionRef: React.RefObject<HTMLDivElement | null>;
 };
 
+/** ProfileImageProps の型定義 */
 type ProfileImageProps = {
+  /** image */
   image: HTMLImageElement;
-  profileImageRef: React.RefObject<HTMLDivElement>;
+  /** profileImageRef */
+  profileImageRef: React.RefObject<HTMLDivElement | null>;
 };
 
+/** SkillsProps の型定義 */
 type SkillsProps = {
+  /** skillList */
   skillList: NodeListOf<Element>;
-  skillsListRef: React.RefObject<HTMLDivElement>;
+  /** skillsListRef */
+  skillsListRef: React.RefObject<HTMLDivElement | null>;
 };
 
+/** CareerHistoryProps の型定義 */
 type CareerHistoryProps = {
+  /** elements */
   elements: NodeListOf<Element>;
-  careerHistoryRef: React.RefObject<HTMLDivElement>;
+  /** careerHistoryRef */
+  careerHistoryRef: React.RefObject<HTMLDivElement | null>;
 };
 
 /** ポータルタイトルのアニメーション

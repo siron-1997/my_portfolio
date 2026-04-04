@@ -2,9 +2,13 @@ import React from 'react';
 import { gsap } from 'gsap';
 import { POWER2_OUT_OPACITY_TOP_MOVE } from '@/constants/common';
 
+/** Props の型定義 */
 type Props = {
+  /** title */
   title: HTMLHeadingElement;
+  /** progressBar */
   progressBar: HTMLDivElement;
+  /** progressStatusRef */
   progressStatusRef: React.RefObject<HTMLDivElement>;
 };
 
