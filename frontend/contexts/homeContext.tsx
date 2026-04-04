@@ -3,7 +3,9 @@
 import React, { useState, useContext } from 'react';
 import { HomeContextType } from '@/types/contexts';
 
+/** Props の型定義 */
 type Props = {
+  /** children */
   children: React.ReactNode;
 };
 

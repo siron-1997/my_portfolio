@@ -22,7 +22,7 @@ declare module '@mui/material/styles' {
       '&:hover'?: React.CSSProperties;
     };
   }
-  // allow configuration using `createTheme`
+  /** allow configuration using `createTheme` */
   interface TypographyVariantsOptions {
     logo: React.CSSProperties;
     p: React.CSSProperties;
@@ -254,11 +254,11 @@ export const theme = createTheme({
       },
     },
     card_title: {
-      // WorkCard タイトル
+      /** WorkCard タイトル */
       fontWeight: 600,
     },
     card_paragraph: {
-      // WorkCard 段落
+      /** WorkCard 段落 */
       textDecoration: 'none',
       transition: 'all 0.3s',
       '&:hover': {

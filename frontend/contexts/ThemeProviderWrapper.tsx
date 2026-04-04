@@ -14,6 +14,11 @@ import { theme as baseTheme } from '@/configs/theme';
  * @param children - ラップ対象の子要素
  * @param notoSansJP - Noto Sans JP フォントの CSS 変数オブジェクト
  * @param roboto - Roboto フォントの CSS 変数オブジェクト
+ * @returns テーマ適用済みのラップ済み JSX
+ 
+ *
+ * @example
+ * ThemeProviderWrapper({});
  */
 export default function ThemeProviderWrapper({
   children,

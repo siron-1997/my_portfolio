@@ -1,9 +1,16 @@
+/** Props の型定義 */
 type Props = {
+  /** element */
   element: HTMLElement;
+  /** start */
   start?: 'top bottom' | string;
+  /** end */
   end?: 'bottom top' | string;
+  /** delay */
   delay?: number;
+  /** markers */
   markers?: boolean;
+  /** id */
   id?: string;
 };
 

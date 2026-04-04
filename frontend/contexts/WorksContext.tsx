@@ -4,7 +4,9 @@ import React, { useState, useContext } from 'react';
 import { WorksContextType } from '@/types/contexts';
 import { WorkCategory } from '@/types/api';
 
+/** Props の型定義 */
 type Props = {
+  /** children */
   children: React.ReactNode;
 };
 

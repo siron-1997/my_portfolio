@@ -1,6 +1,6 @@
 import { AppThemeColors, TimePointColorSet, WorkWorldColorSet } from '@/types/colors';
 
-// 共通のカラーパレット
+/** 共通のカラーパレット */
 export const COLOR_PALETTE = {
   white: '#FFFFFF',
   black: '#1D1730',
@@ -45,7 +45,7 @@ export const COLOR_PALETTE = {
   themeColor: '#ffffff',
 };
 
-// 構造化されたカラー定義
+/** 構造化されたカラー定義 */
 export const APP_THEME_COLORS: AppThemeColors = {
   border: {
     dark: {
@@ -75,7 +75,7 @@ export const APP_THEME_COLORS: AppThemeColors = {
   navigation: COLOR_PALETTE.navigation,
 };
 
-// 環境ごとのカラー定義
+/** 環境ごとのカラー定義 */
 export const TIME_POINT_ENV_COLORS: TimePointColorSet = {
   evening: {
     fog: COLOR_PALETTE.fogEvening,
@@ -103,7 +103,7 @@ export const TIME_POINT_ENV_COLORS: TimePointColorSet = {
   },
 };
 
-// ワークワールドのカラー定義
+/** ワークワールドのカラー定義 */
 export const WORK_WORLD_ENV_COLORS: WorkWorldColorSet = {
   ambientLight: COLOR_PALETTE.ambientLight,
   directionalLight: COLOR_PALETTE.directionalLight,

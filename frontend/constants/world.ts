@@ -8,13 +8,12 @@ import {
   HomeWorldRigCameraPositions,
   WorkWorldSectionsCameraParams,
 } from '@/types/world';
+import { TimePoint } from '@/types/world';
 import { HomeWorldMountainMaterials } from '@/types/world';
 import { WORK_WORLD_ENV_COLORS } from '@/constants/colors';
 import { BREAK_POINTS } from '@/constants/common';
 
-// ========================================================
-// Home World
-// ========================================================
+/** Home World */
 /** 天気のデフォルト値 */
 export const DEFAULT_WEATHER: WeatherItem[] = [
   { id: 0, main: 'Clear', description: 'clear sky', icon: '' },
@@ -27,6 +26,16 @@ export const WEATHER_TYPES: Array<string> = [
   'Snow',
   'Clear',
   'Clouds',
+  /** 7xx Atmosphere */
+  'Mist',
+  'Smoke',
+  'Haze',
+  'Dust',
+  'Fog',
+  'Sand',
+  'Ash',
+  'Squall',
+  'Tornado',
 ];
 
 /** Home Worldの山のマテリアルの粗さ */
@@ -128,7 +137,7 @@ export const WEATHER_DESCRIPTIONS_THUNDERSTORM_ALL = [
   ...WEATHER_DESCRIPTIONS_THUNDERSTORM_LIGHT,
   ...WEATHER_DESCRIPTIONS_THUNDERSTORM_NORMAL,
   ...WEATHER_DESCRIPTIONS_THUNDERSTORM_HEAVY,
-  'ragged thunderstorm', // useSunLight, useClouds のみ
+  'ragged thunderstorm',
 ] as const;
 
 /** 天気の詳細：雨と霧 */
@@ -147,10 +156,28 @@ export const WEATHER_DESCRIPTIONS_RAIN_MIST = [
   'mist',
 ] as const;
 
-/** 天気の詳細：厚い雲（雨、雷、霧など） */
+/**
+ * 天気の詳細：大気現象（7xx Atmosphere）。
+ * Drizzle (3xx) / Snow (6xx) は未対応のため除外。
+ * 対応済み: fog / smoke / haze / dust 系 / squalls / tornado。
+ */
+export const WEATHER_DESCRIPTIONS_ATMOSPHERE = [
+  'fog',
+  'smoke',
+  'haze',
+  'sand/dust whirls',
+  'sand',
+  'dust',
+  'volcanic ash',
+  'squalls',
+  'tornado',
+] as const;
+
+/** 天気の詳細：厚い雲（雨、雷、霧、大気現象など） */
 export const WEATHER_DESCRIPTIONS_THICK_CLOUDS = [
   ...WEATHER_DESCRIPTIONS_THUNDERSTORM_ALL,
   ...WEATHER_DESCRIPTIONS_RAIN_MIST,
+  ...WEATHER_DESCRIPTIONS_ATMOSPHERE,
 ] as const;
 
 /** 天気の詳細：薄い雲 */
@@ -163,9 +190,35 @@ export const WEATHER_DESCRIPTIONS_THIN_CLOUDS = [
 /** 天気の詳細：快晴 */
 export const WEATHER_DESCRIPTIONS_CLEAR_SKY = ['clear sky'] as const;
 
-// ========================================================
-// Work World
-// ========================================================
+/** Home World デバッグ用：タイムポイントコントロール */
+export const HOME_WORLD_DEBUG_TIME_POINT_CONTROL = {
+  value: 'night' as TimePoint,
+  options: ['lunch', 'evening', 'night'] as TimePoint[],
+  label: '時間帯',
+};
+
+/** Home World デバッグ用：霧コントロール */
+export const HOME_WORLD_DEBUG_FOG_CONTROLS = {
+  near: { value: 4, min: 0, max: 10, label: '霧の最少距離' },
+  far: { value: 100, min: 0, max: 200, label: '霧の最大距離' },
+};
+
+/** Home World デバッグ用：雲表示コントロール */
+export const HOME_WORLD_DEBUG_CLOUD_CONTROLS = {
+  thinCloudVisible: { value: true, label: '薄雲表示' },
+  thickCloudVisible: { value: true, label: '厚雲表示' },
+};
+
+/** Home World デバッグ用：ライトヘルパーコントロール */
+export const HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS = {
+  sunLightHelperVisible: { value: true, label: '太陽光ヘルパー表示' },
+  lightningHelperVisible: { value: true, label: '雷光ヘルパー表示' },
+};
+
+/** Home World デバッグ用：ライトヘルパーサイズ */
+export const HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE = 30;
+
+/** Work World */
 /** ブレークポイント名の定数 */
 export const BREAK_POINT_KEYS = ['XS', 'SM', 'LG', 'XL', '2XL', '3XL'] as const;
 export type BreakPointKey = (typeof BREAK_POINT_KEYS)[number];

@@ -8,7 +8,7 @@ export const INTRODUCTION: SectionHeader = {
 export const CONFIRM_MESSAGE =
   'このページを離れようとしています。変更内容は保存されません。';
 
-// Eメールのバリデーション (RFC 5322 準拠)
+/** Eメールのバリデーション (RFC 5322 準拠) */
 export const EMAIL_VALIDATION =
   /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+[.]+[A-Za-z0-9]{2,}$/;
 

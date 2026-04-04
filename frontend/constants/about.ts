@@ -1,6 +1,3 @@
-import SchoolIcon from '@mui/icons-material/School';
-import WorkIcon from '@mui/icons-material/Work';
-import CodeIcon from '@mui/icons-material/Code';
 import { SectionHeader, Skills, CareerHistory } from '@/types/common';
 
 const path = '/icons/';

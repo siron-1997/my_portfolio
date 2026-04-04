@@ -16,25 +16,57 @@ export type ContactFormAction =
   | { type: 'START_SENDING' }
   | { type: 'FINISH_SENDING'; payload: { isSended: boolean | undefined } };
 
+/** HomeContextType の型定義 */
 export type HomeContextType = {
+  /** ホームページのポータルセクションのルート要素の ref */
   portalRef: React.MutableRefObject<HTMLDivElement>;
+
+  /** 3D モデルのロード中かどうか */
   isLoading: boolean;
+
+  /** ローディング状態を更新するセッター */
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+/** ContactFormContextType の型定義 */
 export type ContactFormContextType = {
+  /** 氏名フィールドの入力値 */
   name: string;
+
+  /** メールアドレスフィールドの入力値 */
   email: string;
+
+  /** メッセージフィールドの入力値 */
   message: string;
+
+  /** 氏名が空でないかどうか（true = 有効） */
   isNotNameEmpty: boolean;
+
+  /** メールアドレスが有効かどうか（true = 有効） */
   isNotEmailValid: boolean;
+
+  /** メールアドレスのバリデーションエラーメッセージ */
   emailErrorMessage: string;
+
+  /** メッセージが空でないかどうか（true = 有効） */
   isNotMessageEmpty: boolean;
+
+  /** 送信処理中かどうか */
   isSending: boolean;
+
+  /** 送信完了フラグ（true=成功 / false=失敗 / undefined=未送信） */
   isSended: boolean | undefined;
+
+  /** 現在のフォームステップ */
   formStep: FormStep;
+
+  /** バリデーションエラーがあるかどうか */
   isValidationError: boolean;
+
+  /** 初回バリデーション確認済みかどうか */
   isInitialValidationCheck: boolean;
+
+  /** 状態更新ディスパッチ関数 */
   dispatch: React.Dispatch<ContactFormAction>;
 };
 
@@ -42,6 +74,7 @@ export type ContactFormContextType = {
  * 3D作品ビュワーで管理する状態。
  * useReducer に渡す state の型。
  */
+/** WorkThreeDState の型定義 */
 export type WorkThreeDState = {
   /** 3Dモデルのロード中フラグ */
   isLoading: boolean;
@@ -82,6 +115,7 @@ export type WorkThreeDAction =
 /**
  * 3D作品ビュワーで使用する DOM ref 群。
  */
+/** WorkThreeDRefs の型定義 */
 export type WorkThreeDRefs = {
   /** Portal セクションのルート要素の ref */
   portalRef: React.MutableRefObject<HTMLElement>;
@@ -100,6 +134,7 @@ export type WorkThreeDRefs = {
  * WorkThreeDContext の公開型。
  * state と dispatch、ref 群の 3 点のみを外部に露出する。
  */
+/** WorkThreeDContextType の型定義 */
 export type WorkThreeDContextType = {
   /** 3D作品ビュワーの状態 */
   state: WorkThreeDState;
@@ -111,11 +146,17 @@ export type WorkThreeDContextType = {
   refs: WorkThreeDRefs;
 };
 
+/** PageHeaderContextType の型定義 */
 export type PageHeaderContextType = {
+  /** ページヘッダー要素の ref */
   pageHeaderRef: React.MutableRefObject<HTMLElement>;
 };
 
+/** WorksContextType の型定義 */
 export type WorksContextType = {
+  /** 選択中のカテゴリフィルターの配列 */
   categories: WorkCategory[];
+
+  /** カテゴリ選択状態を更新するセッター */
   setCategories: React.Dispatch<React.SetStateAction<WorkCategory[]>>;
 };

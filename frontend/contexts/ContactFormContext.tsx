@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useReducer, useContext } from 'react';
-import { FormStep } from '@/types/common';
 import { ContactFormContextType, ContactFormAction } from '@/types/contexts';
 
 type ContactFormState = Omit<ContactFormContextType, 'dispatch'>;
@@ -67,7 +66,9 @@ const contactFormReducer = (
   }
 };
 
+/** Props の型定義 */
 type Props = {
+  /** children */
   children: React.ReactNode;
 };
 

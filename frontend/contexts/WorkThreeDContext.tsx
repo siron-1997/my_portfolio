@@ -7,6 +7,7 @@ import {
   WorkThreeDAction,
 } from '@/types/contexts';
 
+/** Props の型定義 */
 type Props = {
   /** Provider が包むコンテンツ */
   children: React.ReactNode;
