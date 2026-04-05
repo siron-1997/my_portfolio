@@ -9,7 +9,7 @@ type Props = {
   /** progressBar */
   progressBar: HTMLDivElement;
   /** progressStatusRef */
-  progressStatusRef: React.RefObject<HTMLDivElement>;
+  progressStatusRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const progressStatusAnimation = ({

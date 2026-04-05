@@ -1,3 +1,1 @@
-export { ContactForm } from './ContactForm';
-export { default as ProgressStatus } from './ProgressStatus';
-export { default as Sending } from './Sending';
+export { default as ContactClient } from './ContactClient';

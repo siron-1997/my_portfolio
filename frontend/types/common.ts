@@ -70,52 +70,6 @@ export type CareerHistory = Readonly<{
   color: 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
 }>;
 
-/** Contact フォーム関連の型 */
-/** フォームの段階 */
-export type FormStep = 'FIRST_STEP' | 'SECOND_STEP' | 'LAST_STEP';
-
-/** 各ステップの状態 */
-export type StepPointState = 'not_started' | 'current' | 'error' | 'completed';
-
-/** StepPoint の型定義 */
-export type StepPoint = {
-  /** ステップ進捗バーのラベル文字列 */
-  label: string;
-
-  /** ステップの識別名 */
-  name: string;
-
-  /** ステップの表示内容（JSX） */
-  content: React.ReactNode;
-
-  /** ステップの現在状態 */
-  state?: StepPointState;
-};
-
-/** StepPointState の定数オブジェクト */
-export type StepStates = {
-  /** 未開始状態の定数値 */
-  NOT_STARTED: 'not_started';
-
-  /** 現在進行中の定数値 */
-  CURRENT: 'current';
-
-  /** エラー状態の定数値 */
-  ERROR: 'error';
-
-  /** 完了状態の定数値 */
-  COMPLETED: 'completed';
-};
-
-/** StepPointAction の型定義 */
-export type StepPointAction = {
-  /** 更新対象のステップインデックス */
-  index: number;
-
-  /** 設定するステップの状態 */
-  state: StepPointState;
-};
-
 /** GSAP アニメーション設定の型 */
 export type AnimationFrom = Readonly<{
   /** アニメーション開始時の X 方向オフセット（px） */

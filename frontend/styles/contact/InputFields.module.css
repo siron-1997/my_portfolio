@@ -30,14 +30,14 @@
 
 .edit_text_field:focus {
   outline: none;
-  border: 2px solid var(--border-dark-focus) !important;
+  border: 1px solid var(--border-dark-focus) !important;
 }
 
 .default_text_field {
   border: 1px solid var(--border-dark-default);
 }
 .default_text_field:hover {
-  border: 2px solid var(--border-dark-hover);
+  border: 1px solid var(--border-dark-hover);
 }
 
 .textarea {
@@ -70,7 +70,7 @@
   border: 1px solid var(--error-hover);
 }
 .error_text_field:hover {
-  border: 2px solid var(--error-default);
+  border: 1px solid var(--error-default);
 }
 
 .error_text_field {

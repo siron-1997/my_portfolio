@@ -1,20 +1,5 @@
 import React from 'react';
-import { FormStep } from '@/types/common';
 import { WorkCategory } from '@/types/api';
-
-export type ContactFormAction =
-  | { type: 'CHANGE_NAME'; payload: { value: string; isValid: boolean } }
-  | {
-      type: 'CHANGE_EMAIL';
-      payload: { value: string; isValid: boolean; errorMessage: string };
-    }
-  | { type: 'CHANGE_MESSAGE'; payload: { value: string; isValid: boolean } }
-  | { type: 'SET_EMAIL_ERROR_MESSAGE'; payload: string }
-  | { type: 'SET_FORM_STEP'; payload: FormStep }
-  | { type: 'SET_VALIDATION_ERROR'; payload: boolean }
-  | { type: 'SET_INITIAL_VALIDATION_CHECK'; payload: boolean }
-  | { type: 'START_SENDING' }
-  | { type: 'FINISH_SENDING'; payload: { isSended: boolean | undefined } };
 
 /** HomeContextType の型定義 */
 export type HomeContextType = {
@@ -26,48 +11,6 @@ export type HomeContextType = {
 
   /** ローディング状態を更新するセッター */
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-/** ContactFormContextType の型定義 */
-export type ContactFormContextType = {
-  /** 氏名フィールドの入力値 */
-  name: string;
-
-  /** メールアドレスフィールドの入力値 */
-  email: string;
-
-  /** メッセージフィールドの入力値 */
-  message: string;
-
-  /** 氏名が空でないかどうか（true = 有効） */
-  isNotNameEmpty: boolean;
-
-  /** メールアドレスが有効かどうか（true = 有効） */
-  isNotEmailValid: boolean;
-
-  /** メールアドレスのバリデーションエラーメッセージ */
-  emailErrorMessage: string;
-
-  /** メッセージが空でないかどうか（true = 有効） */
-  isNotMessageEmpty: boolean;
-
-  /** 送信処理中かどうか */
-  isSending: boolean;
-
-  /** 送信完了フラグ（true=成功 / false=失敗 / undefined=未送信） */
-  isSended: boolean | undefined;
-
-  /** 現在のフォームステップ */
-  formStep: FormStep;
-
-  /** バリデーションエラーがあるかどうか */
-  isValidationError: boolean;
-
-  /** 初回バリデーション確認済みかどうか */
-  isInitialValidationCheck: boolean;
-
-  /** 状態更新ディスパッチ関数 */
-  dispatch: React.Dispatch<ContactFormAction>;
 };
 
 /**
@@ -150,13 +93,4 @@ export type WorkThreeDContextType = {
 export type PageHeaderContextType = {
   /** ページヘッダー要素の ref */
   pageHeaderRef: React.MutableRefObject<HTMLElement>;
-};
-
-/** WorksContextType の型定義 */
-export type WorksContextType = {
-  /** 選択中のカテゴリフィルターの配列 */
-  categories: WorkCategory[];
-
-  /** カテゴリ選択状態を更新するセッター */
-  setCategories: React.Dispatch<React.SetStateAction<WorkCategory[]>>;
 };
