@@ -16,7 +16,7 @@ type CardsProps = {
   /** contentItems */
   contentItems: NodeListOf<HTMLElement>;
   /** contentsRef */
-  contentsRef: React.RefObject<HTMLDivElement>;
+  ref: React.RefObject<HTMLDivElement | null>;
 };
 
 /** CategoryFilterProps の型定義 */
@@ -35,7 +35,7 @@ type PortalProps = {
   titleRef: React.RefObject<HTMLHeadingElement | null>;
 };
 
-export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => {
+export const contentsAnimation = ({ contentItems, ref }: CardsProps) => {
   const ctx = gsap.context(() => {
     const width = window.innerWidth;
     let point = true;
@@ -84,7 +84,7 @@ export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => 
           break;
       }
     });
-  }, contentsRef);
+  }, ref);
 
   return ctx;
 };

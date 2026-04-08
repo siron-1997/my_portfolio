@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
-import { CategoryFilter, Contents, Portal } from '@/components/works';
+
 import { Container } from '@/components/common';
-import { WorksProvider } from '@/contexts';
+import { Portal, WorksClient } from '@/components/works';
 import { getWorks, getWorkCategories } from '@/services/works';
 
 /** ISR 1時間 */
@@ -15,16 +15,15 @@ export default async function Works() {
   /** ポートフォリオ作品一覧を取得 */
   const worksData = await getWorks();
   /** 作品カテゴリ一覧を取得 */
-  const categoriesData = await getWorkCategories();
+  const workCategoriesData = await getWorkCategories();
 
   return (
     <div className="root_container">
       <Container className="top_container">
+        {/* タイトル */}
         <Portal title="Works" />
-        <WorksProvider>
-          <CategoryFilter data={categoriesData} />
-          <Contents data={worksData} />
-        </WorksProvider>
+        {/* カテゴリフィルターとコンテンツ表示 */}
+        <WorksClient worksDatum={worksData} workCategoriesDatum={workCategoriesData} />
       </Container>
     </div>
   );
