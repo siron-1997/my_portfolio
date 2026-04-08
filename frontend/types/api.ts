@@ -1,7 +1,7 @@
 import { TimePoint } from '@/types/world';
 
 /** Inquiry API Types */
-/** お問い合わせフォーム API (/api/sendGridEmail) のリクエストボディ。 */
+/** お問い合わせフォーム API (/api/contact) のリクエストボディ。 */
 export type InquiryPayload = {
   /** 送信者の氏名 */
   name: string;
