@@ -153,5 +153,6 @@ const Model = React.memo(({ currentWeatherData, timePoint }: Props) => {
 });
 
 Model.displayName = 'Model';
+useGLTF.preload('models/gltf/mountain.glb');
 
 export default Model;

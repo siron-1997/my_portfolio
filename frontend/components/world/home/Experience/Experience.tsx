@@ -49,11 +49,11 @@ type Props = {
   setTimePoint: React.Dispatch<React.SetStateAction<TimePoint>>;
 
   /** Leva ストア */
-  levaStore: ReturnType<typeof useCreateStore>;
+  // levaStore: ReturnType<typeof useCreateStore>;
 };
 
 const Experience = React.memo(
-  ({ currentWeatherData, timePoint, setTimePoint, levaStore }: Props) => {
+  ({ currentWeatherData, timePoint, setTimePoint /** levaStore */ }: Props) => {
     /** ドアの参照 Ref */
     const doorRef = useRef<Group | null>(null);
 
@@ -74,146 +74,146 @@ const Experience = React.memo(
 
     const { scene } = useThree();
 
-    /** ヘルパーの更新（開発環境のみ） */
-    useFrame(() => {
-      if (process.env.NODE_ENV !== 'development') return;
+    // /** ヘルパーの更新（開発環境のみ） */
+    // useFrame(() => {
+    //   if (process.env.NODE_ENV !== 'development') return;
 
-      /** 太陽光ヘルパーの更新 */
-      const sunLightHelper = scene.getObjectByName(
-        'sun_light_helper',
-      ) as DirectionalLightHelper;
-      sunLightHelper?.update();
+    //   /** 太陽光ヘルパーの更新 */
+    //   const sunLightHelper = scene.getObjectByName(
+    //     'sun_light_helper',
+    //   ) as DirectionalLightHelper;
+    //   sunLightHelper?.update();
 
-      /** 雷ヘルパーの更新 */
-      const lightningHelper = scene.getObjectByName(
-        'lightning_helper',
-      ) as PointLightHelper;
-      lightningHelper?.update();
-    });
+    //   /** 雷ヘルパーの更新 */
+    //   const lightningHelper = scene.getObjectByName(
+    //     'lightning_helper',
+    //   ) as PointLightHelper;
+    //   lightningHelper?.update();
+    // });
 
-    /** タイムポイントコントロール（開発環境デバッグ用 leva コントロール） */
-    const { debugTimePoint } = useControls(
-      'タイムポイント',
-      {
-        debugTimePoint: HOME_WORLD_DEBUG_TIME_POINT_CONTROL,
-      },
-      { store: levaStore },
-    );
+    // /** タイムポイントコントロール（開発環境デバッグ用 leva コントロール） */
+    // const { debugTimePoint } = useControls(
+    //   'タイムポイント',
+    //   {
+    //     debugTimePoint: HOME_WORLD_DEBUG_TIME_POINT_CONTROL,
+    //   },
+    //   { store: levaStore },
+    // );
 
-    /** 霧コントロール（開発環境デバッグ用 leva コントロール） */
-    const { fogNear, fogFar } = useControls(
-      '霧',
-      {
-        fogNear: HOME_WORLD_DEBUG_FOG_CONTROLS.near,
-        fogFar: HOME_WORLD_DEBUG_FOG_CONTROLS.far,
-      },
-      { store: levaStore },
-    );
+    // /** 霧コントロール（開発環境デバッグ用 leva コントロール） */
+    // const { fogNear, fogFar } = useControls(
+    //   '霧',
+    //   {
+    //     fogNear: HOME_WORLD_DEBUG_FOG_CONTROLS.near,
+    //     fogFar: HOME_WORLD_DEBUG_FOG_CONTROLS.far,
+    //   },
+    //   { store: levaStore },
+    // );
 
-    /** 雲の表示コントロール（開発環境デバッグ用 leva コントロール） */
-    const { thinCloudVisible, thickCloudVisible } = useControls(
-      '雲',
-      {
-        thinCloudVisible: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudVisible,
-        thickCloudVisible: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudVisible,
-      },
-      { store: levaStore },
-    );
+    // /** 雲の表示コントロール（開発環境デバッグ用 leva コントロール） */
+    // const { thinCloudVisible, thickCloudVisible } = useControls(
+    //   '雲',
+    //   {
+    //     thinCloudVisible: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudVisible,
+    //     thickCloudVisible: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudVisible,
+    //   },
+    //   { store: levaStore },
+    // );
 
-    /** ライトヘルパーの表示コントロール（開発環境デバッグ用 leva コントロール） */
-    const { sunLightHelperVisible, lightningHelperVisible } = useControls(
-      'ライトヘルパー',
-      {
-        sunLightHelperVisible:
-          HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS.sunLightHelperVisible,
-        lightningHelperVisible:
-          HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS.lightningHelperVisible,
-      },
-      { store: levaStore },
-    );
+    // /** ライトヘルパーの表示コントロール（開発環境デバッグ用 leva コントロール） */
+    // const { sunLightHelperVisible, lightningHelperVisible } = useControls(
+    //   'ライトヘルパー',
+    //   {
+    //     sunLightHelperVisible:
+    //       HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS.sunLightHelperVisible,
+    //     lightningHelperVisible:
+    //       HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS.lightningHelperVisible,
+    //   },
+    //   { store: levaStore },
+    // );
 
-    /**
-     * タイムポイントの leva コントロール値を context へ同期する。
-     * 開発環境のみ実行し、本番ビルドでは早期リターンする。
-     */
-    useEffect(() => {
-      if (process.env.NODE_ENV !== 'development') return;
-      setTimePoint(debugTimePoint as TimePoint);
-    }, [setTimePoint, debugTimePoint]);
+    // /**
+    //  * タイムポイントの leva コントロール値を context へ同期する。
+    //  * 開発環境のみ実行し、本番ビルドでは早期リターンする。
+    //  */
+    // useEffect(() => {
+    //   if (process.env.NODE_ENV !== 'development') return;
+    //   setTimePoint(debugTimePoint as TimePoint);
+    // }, [setTimePoint, debugTimePoint]);
 
-    /**
-     * 霧の leva コントロール値を Three.js オブジェクトへ同期する。
-     * 開発環境のみ実行し、本番ビルドでは早期リターンする。
-     */
-    useEffect(() => {
-      if (process.env.NODE_ENV !== 'development' || !fogRef.current) return;
-      fogRef.current.near = fogNear;
-      fogRef.current.far = fogFar;
-    }, [fogNear, fogFar]);
+    // /**
+    //  * 霧の leva コントロール値を Three.js オブジェクトへ同期する。
+    //  * 開発環境のみ実行し、本番ビルドでは早期リターンする。
+    //  */
+    // useEffect(() => {
+    //   if (process.env.NODE_ENV !== 'development' || !fogRef.current) return;
+    //   fogRef.current.near = fogNear;
+    //   fogRef.current.far = fogFar;
+    // }, [fogNear, fogFar]);
 
-    /**
-     * 薄雲・厚雲の表示状態を Three.js オブジェクトへ同期する。
-     * 開発環境のみ実行し、本番ビルドでは早期リターンする。
-     */
-    useEffect(() => {
-      if (process.env.NODE_ENV !== 'development') return;
-      if (thinCloudRef.current) thinCloudRef.current.visible = thinCloudVisible;
-      if (thickCloudRef.current) thickCloudRef.current.visible = thickCloudVisible;
-    }, [thinCloudVisible, thickCloudVisible, timePoint, currentWeatherData]);
+    // /**
+    //  * 薄雲・厚雲の表示状態を Three.js オブジェクトへ同期する。
+    //  * 開発環境のみ実行し、本番ビルドでは早期リターンする。
+    //  */
+    // useEffect(() => {
+    //   if (process.env.NODE_ENV !== 'development') return;
+    //   if (thinCloudRef.current) thinCloudRef.current.visible = thinCloudVisible;
+    //   if (thickCloudRef.current) thickCloudRef.current.visible = thickCloudVisible;
+    // }, [thinCloudVisible, thickCloudVisible, timePoint, currentWeatherData]);
 
-    /**
-     * ライトヘルパーを生成してシーンに追加する。
-     * アンマウント時にシーンからヘルパーを削除する。
-     * 開発環境のみ実行し、本番ビルドでは早期リターンする。
-     */
-    useEffect(() => {
-      /** Three.js コンストラクタに null を渡すと matrixWorld アクセスでクラッシュするため早期リターン */
-      if (
-        process.env.NODE_ENV !== 'development' ||
-        !sunLightRef.current ||
-        !lightningRef.current
-      )
-        return;
+    // /**
+    //  * ライトヘルパーを生成してシーンに追加する。
+    //  * アンマウント時にシーンからヘルパーを削除する。
+    //  * 開発環境のみ実行し、本番ビルドでは早期リターンする。
+    //  */
+    // useEffect(() => {
+    //   /** Three.js コンストラクタに null を渡すと matrixWorld アクセスでクラッシュするため早期リターン */
+    //   if (
+    //     process.env.NODE_ENV !== 'development' ||
+    //     !sunLightRef.current ||
+    //     !lightningRef.current
+    //   )
+    //     return;
 
-      /** 太陽光ヘルパーの生成 */
-      const sunHelper = new DirectionalLightHelper(
-        sunLightRef.current,
-        HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
-      );
-      sunHelper.name = 'sun_light_helper';
-      sunHelper.visible = true;
-      scene.add(sunHelper);
+    //   /** 太陽光ヘルパーの生成 */
+    //   const sunHelper = new DirectionalLightHelper(
+    //     sunLightRef.current,
+    //     HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
+    //   );
+    //   sunHelper.name = 'sun_light_helper';
+    //   sunHelper.visible = true;
+    //   scene.add(sunHelper);
 
-      /** 雷ヘルパーの生成 */
-      const lgHelper = new PointLightHelper(
-        lightningRef.current,
-        HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
-      );
-      lgHelper.name = 'lightning_helper';
-      lgHelper.visible = true;
-      scene.add(lgHelper);
+    //   /** 雷ヘルパーの生成 */
+    //   const lgHelper = new PointLightHelper(
+    //     lightningRef.current,
+    //     HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
+    //   );
+    //   lgHelper.name = 'lightning_helper';
+    //   lgHelper.visible = true;
+    //   scene.add(lgHelper);
 
-      return () => {
-        scene.remove(sunHelper);
-        scene.remove(lgHelper);
-      };
-    }, [scene]);
+    //   return () => {
+    //     scene.remove(sunHelper);
+    //     scene.remove(lgHelper);
+    //   };
+    // }, [scene]);
 
-    /**
-     * ライトヘルパーの表示状態を leva コントロール値に同期する。
-     * 開発環境のみ実行し、本番ビルドでは早期リターンする。
-     */
-    useEffect(() => {
-      if (process.env.NODE_ENV !== 'development') return;
+    // /**
+    //  * ライトヘルパーの表示状態を leva コントロール値に同期する。
+    //  * 開発環境のみ実行し、本番ビルドでは早期リターンする。
+    //  */
+    // useEffect(() => {
+    //   if (process.env.NODE_ENV !== 'development') return;
 
-      /** 太陽光ヘルパーの表示状態を更新 */
-      const sunHelper = scene.getObjectByName('sun_light_helper');
-      if (sunHelper) sunHelper.visible = sunLightHelperVisible;
+    //   /** 太陽光ヘルパーの表示状態を更新 */
+    //   const sunHelper = scene.getObjectByName('sun_light_helper');
+    //   if (sunHelper) sunHelper.visible = sunLightHelperVisible;
 
-      /** 雷ヘルパーの表示状態を更新 */
-      const lgHelper = scene.getObjectByName('lightning_helper');
-      if (lgHelper) lgHelper.visible = lightningHelperVisible;
-    }, [scene, sunLightHelperVisible, lightningHelperVisible]);
+    //   /** 雷ヘルパーの表示状態を更新 */
+    //   const lgHelper = scene.getObjectByName('lightning_helper');
+    //   if (lgHelper) lgHelper.visible = lightningHelperVisible;
+    // }, [scene, sunLightHelperVisible, lightningHelperVisible]);
 
     return (
       <>

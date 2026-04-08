@@ -168,5 +168,7 @@ const Clouds = React.memo(
 );
 
 Clouds.displayName = 'Clouds';
+useTexture.preload('/images/textures/thin_cloud.png');
+useTexture.preload('/images/textures/thick_cloud.png');
 
 export default Clouds;

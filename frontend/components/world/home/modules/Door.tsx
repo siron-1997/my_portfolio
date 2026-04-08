@@ -139,5 +139,6 @@ const Door = React.memo(({ currentWeatherData, timePoint, ref }: Props) => {
 });
 
 Door.displayName = 'Door';
+useGLTF.preload('/models/gltf/door.glb');
 
 export default Door;

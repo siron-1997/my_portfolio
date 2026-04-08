@@ -3,7 +3,7 @@
 import { Canvas } from '@react-three/fiber';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { LevaPanel, useCreateStore } from 'leva';
 import { PCFShadowMap, ReinhardToneMapping } from 'three';
 
@@ -39,7 +39,7 @@ const HomeWorld = React.memo(() => {
   const { coordinates, isPermissionHandled } = useGeolocation(DEFAULT_COORDINATES);
 
   /** Leva のストアを作成 */
-  const levaStore = useCreateStore();
+  // const levaStore = useCreateStore();
 
   /** 天気情報取得副作用 */
   useEffect(() => {
@@ -92,9 +92,9 @@ const HomeWorld = React.memo(() => {
   return (
     <div className={s.home_world}>
       {/** 開発環境のみ leva デバッグパネルを表示。ヘッダー高さ（最大 70px）分を下にオフセット */}
-      {process.env.NODE_ENV === 'development' && (
+      {/* {process.env.NODE_ENV === 'development' && (
         <LevaPanel store={levaStore} titleBar={{ position: { x: 0, y: 70 } }} />
-      )}
+      )} */}
 
       <Canvas
         shadows={{ type: PCFShadowMap }}
@@ -109,19 +109,24 @@ const HomeWorld = React.memo(() => {
         onCreated={() => setIsLoading(() => false)}
       >
         {/** 開発環境のみパフォーマンスモニターを表示。ヘッダー高さ（最大 70px）分を下にオフセット */}
-        {process.env.NODE_ENV === 'development' && (
+        {/* TODO: r3f-perf@7.2.3 が WebGL GPU タイマークエリと Environment のマルチレンダーパスが競合して
+            "INVALID_OPERATION: getQueryParameter: query is currently active" を発生させるため一時無効化 */}
+        {/* {process.env.NODE_ENV === 'development' && (
           <Perf
             position="top-left"
             style={{ top: '70px', position: 'fixed', zIndex: 9999 }}
           />
-        )}
+        )} */}
 
-        <Experience
-          currentWeatherData={currentWeatherData}
-          timePoint={timePoint}
-          setTimePoint={setTimePoint}
-          levaStore={levaStore}
-        />
+        {/** useGLTF 等のサスペンドを Canvas 内部で受け止め、Canvas 自体がアンマウントされないようにする */}
+        <Suspense fallback={null}>
+          <Experience
+            currentWeatherData={currentWeatherData}
+            timePoint={timePoint}
+            setTimePoint={setTimePoint}
+            // levaStore={levaStore}
+          />
+        </Suspense>
       </Canvas>
 
       {/* 雨 */}

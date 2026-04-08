@@ -31,10 +31,11 @@ const Rain = React.memo(({ currentWeatherData }: Props) => {
       return;
     }
 
-    /** 関連する天気を探す */
+    /** 関連する天気を探す (見つからない場合は処理を中断) */
     const currentWeather = weather.find((w) => WEATHER_TYPES.includes(w.main));
     if (!currentWeather) return;
 
+    /** canvas 要素とコンテキストを取得 (取得できない場合は処理を中断) */
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
