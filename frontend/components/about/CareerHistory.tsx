@@ -49,8 +49,7 @@ const CareerHistory = React.memo(() => {
       <Timeline
         sx={{
           padding: 0,
-          /** 年代表示エリアの幅を調整 */
-          /** モバイル表示時は非表示 */
+          /** 年代表示エリアの幅を調整、モバイル表示時は非表示 */
           ...(!(width && width <= 768) && {
             [`& .${timelineOppositeContentClasses.root}`]: {
               flex: 0,
@@ -100,10 +99,12 @@ const CareerHistory = React.memo(() => {
                   </Typography>
                 )}
 
+                {/* タイトル */}
                 <Typography component="h5" variant="h5">
                   {history.title}
                 </Typography>
 
+                {/* 説明 */}
                 <Typography component="p" variant="p" sx={{ whiteSpace: 'pre-wrap' }}>
                   {history.description}
                 </Typography>

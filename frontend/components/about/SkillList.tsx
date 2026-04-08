@@ -115,6 +115,7 @@ const SkillsList = React.memo(() => {
           {/* スキル一覧 */}
           <div className={skillListClassNames}>
             {category.skills.map((skillsChunk, i2) => (
+              /** チャンク化されたスキル配列ごとにリストを生成 */
               <ul key={i2} className={skillListContainerClassNames}>
                 {skillsChunk.map((item, i3) => (
                   <li key={i3} className={skillClassNames}>
