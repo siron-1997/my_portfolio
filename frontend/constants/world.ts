@@ -130,6 +130,7 @@ export const WEATHER_DESCRIPTIONS_THUNDERSTORM_HEAVY = [
   'thunderstorm with heavy rain',
   'heavy thunderstorm',
   'thunderstorm with heavy drizzle',
+  'ragged thunderstorm',
 ] as const;
 
 /** 天気の詳細：雷（すべて） */
@@ -137,7 +138,49 @@ export const WEATHER_DESCRIPTIONS_THUNDERSTORM_ALL = [
   ...WEATHER_DESCRIPTIONS_THUNDERSTORM_LIGHT,
   ...WEATHER_DESCRIPTIONS_THUNDERSTORM_NORMAL,
   ...WEATHER_DESCRIPTIONS_THUNDERSTORM_HEAVY,
-  'ragged thunderstorm',
+] as const;
+
+/** 天気の詳細：霧雨（Drizzle 3xx 全9種） */
+export const WEATHER_DESCRIPTIONS_DRIZZLE = [
+  'light intensity drizzle',
+  'drizzle',
+  'heavy intensity drizzle',
+  'light intensity drizzle rain',
+  'drizzle rain',
+  'heavy intensity drizzle rain',
+  'shower rain and drizzle',
+  'heavy shower rain and drizzle',
+  'shower drizzle',
+] as const;
+
+/** 天気の詳細：雨（弱）- Drizzle を含む */
+export const WEATHER_DESCRIPTIONS_RAIN_LIGHT = [
+  'light rain',
+  'light intensity shower rain',
+  'thunderstorm with light rain',
+  'freezing rain',
+  ...WEATHER_DESCRIPTIONS_DRIZZLE,
+] as const;
+
+/** 天気の詳細：雨（通常） */
+export const WEATHER_DESCRIPTIONS_RAIN_NORMAL = [
+  'moderate rain',
+  'shower rain',
+  'ragged shower rain',
+  'thunderstorm with rain',
+] as const;
+
+/** 天気の詳細：雨（激しい） */
+export const WEATHER_DESCRIPTIONS_RAIN_HEAVY = [
+  'heavy intensity rain',
+  'heavy intensity shower rain',
+  'thunderstorm with heavy rain',
+] as const;
+
+/** 天気の詳細：雨（非常に激しい） */
+export const WEATHER_DESCRIPTIONS_RAIN_VERY_HEAVY = [
+  'very heavy rain',
+  'extreme rain',
 ] as const;
 
 /** 天気の詳細：雨と霧 */
@@ -158,7 +201,7 @@ export const WEATHER_DESCRIPTIONS_RAIN_MIST = [
 
 /**
  * 天気の詳細：大気現象（7xx Atmosphere）。
- * Drizzle (3xx) / Snow (6xx) は未対応のため除外。
+ * Snow (6xx) は未対応のため除外。
  * 対応済み: fog / smoke / haze / dust 系 / squalls / tornado。
  */
 export const WEATHER_DESCRIPTIONS_ATMOSPHERE = [

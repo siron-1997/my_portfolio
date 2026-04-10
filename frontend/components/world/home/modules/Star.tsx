@@ -1,12 +1,18 @@
-import React, { useMemo, useEffect } from 'react';
-import { BufferGeometry, BufferAttribute, PointsMaterial, Points } from 'three';
+import React, { useMemo } from 'react';
+import { MathUtils } from 'three';
+
 import { OpenWeatherCurrentData } from '@/types/api';
 import { TimePoint } from '@/types/world';
 import { useIsIos } from '@/hooks';
 
-/**
- * Star コンポーネントの Props
- */
+type MaterialParams = {
+  /** 星のサイズ */
+  size: number;
+
+  /** 星の透明度 */
+  opacity: number;
+};
+
 type Props = {
   /** Open Weather API から返される現在の天候データのレスポンス全体 */
   currentWeatherData: OpenWeatherCurrentData | null;
@@ -15,70 +21,80 @@ type Props = {
   timePoint: TimePoint;
 };
 
-const Star = React.memo(({ currentWeatherData, timePoint }: Props) => {
-  const isIos = useIsIos();
+/** 星の数 */
+const START_COUNT = 9500;
 
-  const starCount = 9500;
+const Star = React.memo(({ currentWeatherData, timePoint }: Props) => {
+  /** iOS 判定 */
+  const isIos = useIsIos();
 
   /** 雲量を取得。データがない場合は 0 */
   const opacity = currentWeatherData?.clouds?.all || 0;
 
-  /** 星の Points オブジェクトを生成 */
-  const star = useMemo(() => {
+  /** 星の位置を格納する配列 */
+  const positions = useMemo<Float32Array>(() => {
+    const arr = new Float32Array(START_COUNT * 3);
+
     /** 星の位置をランダムに設定 */
-    const positions = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount * 3; i += 3) {
-      positions[i] = Math.random() * 400 - 200;
-      positions[i + 1] = Math.random() * 500 - 250;
-      positions[i + 2] = Math.random() * 50 - 100;
+    for (let i = 0; i < START_COUNT * 3; i += 3) {
+      /** X座標 (-200 から 200 の範囲) */
+      arr[i] = MathUtils.randFloatSpread(400);
+      /** Y座標 (-250 から 250 の範囲) */
+      arr[i + 1] = MathUtils.randFloatSpread(500);
+      /** Z座標 (-100 から -50 の範囲) */
+      arr[i + 2] = Math.random() * 50 - 100;
     }
 
-    /** Geometry を作成 */
-    const starGeom = new BufferGeometry();
-    starGeom.setAttribute('position', new BufferAttribute(positions, 3));
+    return arr;
+  }, []);
 
-    /** Material を作成 */
-    const starMaterial = new PointsMaterial({
-      color: '#fff',
-      /** 昼は非表示 */
-      size: timePoint === 'lunch' ? 0 : 0.35,
-      transparent: true,
-      /** iOS とその他で透明度の計算方法を分ける */
-      opacity: isIos
-        ? 100 - opacity
-        : timePoint === 'night'
-          ? 1 - opacity / 500
-          : timePoint === 'evening'
-            ? 0.4
-            : 0,
-      /** 霧の影響を受けない */
-      fog: false,
-    });
+  /** 星のマテリアルパラメータを計算 */
+  const materialParams = useMemo<MaterialParams>(() => {
+    /** 星のサイズを設定 */
+    const size = timePoint === 'lunch' ? 0 : 0.35;
 
-    /** Points を作成 */
-    const starObj = new Points(starGeom, starMaterial);
-    starObj.name = 'star';
+    /**
+     * IOS の場合
+     * TODO: 100 - opacity は 1 を超える可能性があるため、調査が必要
+     */
+    if (isIos) {
+      return { size, opacity: Math.max(0, 100 - opacity) };
+    }
 
-    return starObj;
-  }, [starCount, timePoint, isIos, opacity]);
+    /** 夜の場合は雲量に応じて徐々に星を見えにくくする */
+    if (timePoint === 'night') {
+      return { size, opacity: Math.max(0, 1 - opacity / 500) };
+    }
 
-  /** コンポーネントのアンマウント時にジオメトリとマテリアルを破棄 */
-  useEffect(() => {
-    return () => {
-      if (star.geometry) {
-        star.geometry.dispose();
-      }
-      if (Array.isArray(star.material)) {
-        star.material.forEach((mat) => mat.dispose());
-      } else {
-        star.material.dispose();
-      }
-    };
-  }, [star]);
+    /** 夕方は固定で半分の明るさ */
+    if (timePoint === 'evening') {
+      return { size, opacity: 0.4 };
+    }
+
+    /** 昼は完全に見えない */
+    return { size, opacity: 0 };
+  }, [timePoint, isIos, opacity]);
 
   return (
     <group renderOrder={1} name="star-container">
-      <primitive object={star} />
+      <points name="star">
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            /** positions 配列を頂点属性として設定。3 は各頂点が x, y, z の 3 要素で構成されていることを示す。 */
+            args={[positions, 3]}
+          />
+        </bufferGeometry>
+
+        <pointsMaterial
+          color="#fff"
+          size={materialParams.size}
+          transparent
+          opacity={materialParams.opacity}
+          fog={false}
+          depthWrite={false}
+        />
+      </points>
     </group>
   );
 });

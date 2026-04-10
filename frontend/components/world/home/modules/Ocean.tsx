@@ -1,8 +1,8 @@
-import { extend, ThreeElement, useThree, useLoader, useFrame } from '@react-three/fiber';
+import { extend, ThreeElement, useThree, useFrame } from '@react-three/fiber';
+import { useTexture } from '@react-three/drei';
 import React, { useEffect, useMemo, useRef } from 'react';
 import {
   Texture,
-  TextureLoader,
   PlaneGeometry,
   RepeatWrapping,
   Vector3,
@@ -24,9 +24,6 @@ declare module '@react-three/fiber' {
   }
 }
 
-/**
- * Ocean コンポーネントの Props
- */
 type Props = {
   /** Open Weather API から返される現在の天候データのレスポンス全体 */
   currentWeatherData: OpenWeatherCurrentData | null;
@@ -65,12 +62,15 @@ type WaterConfig = {
   format: WebGLRenderer;
 };
 
+/** テクスチャーのファイルパス */
+const WATER_NORMALS_TEXTURE = 'images/textures/waternormals.jpg';
+
 const Ocean = React.memo(({ currentWeatherData }: Props) => {
   /** 水面オブジェクトへの参照 Ref */
   const ref = useRef<Water | null>(null);
 
   /** 水面の法線マップを読み込む */
-  const waterNormals = useLoader(TextureLoader, 'images/textures/waternormals.jpg');
+  const waterNormals = useTexture(WATER_NORMALS_TEXTURE);
 
   /** WebGL レンダラー */
   const gl = useThree((state) => state.gl);
@@ -120,6 +120,6 @@ const Ocean = React.memo(({ currentWeatherData }: Props) => {
 
 Ocean.displayName = 'Ocean';
 
-useLoader.preload(TextureLoader, 'images/textures/waternormals.jpg');
+useTexture.preload(WATER_NORMALS_TEXTURE);
 
 export default Ocean;

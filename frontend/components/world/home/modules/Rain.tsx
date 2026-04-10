@@ -4,7 +4,14 @@ import { RainState, RainStateResult } from '@/types/world';
 import { useWindowSize } from '@/hooks';
 import { BREAK_POINTS } from '@/constants/common';
 import { COLOR_PALETTE } from '@/constants/colors';
-import { DEFAULT_WEATHER, WEATHER_TYPES } from '@/constants/world';
+import {
+  DEFAULT_WEATHER,
+  WEATHER_TYPES,
+  WEATHER_DESCRIPTIONS_RAIN_LIGHT,
+  WEATHER_DESCRIPTIONS_RAIN_NORMAL,
+  WEATHER_DESCRIPTIONS_RAIN_HEAVY,
+  WEATHER_DESCRIPTIONS_RAIN_VERY_HEAVY,
+} from '@/constants/world';
 import s from '@/styles/home/HomeWorld.module.css';
 
 /**
@@ -17,7 +24,7 @@ type Props = {
 
 const Rain = React.memo(({ currentWeatherData }: Props) => {
   /** canvas 要素への参照 Ref */
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const ref = useRef<HTMLCanvasElement | null>(null);
 
   /** ウィンドウサイズを取得 */
   const { width, height } = useWindowSize();
@@ -27,7 +34,7 @@ const Rain = React.memo(({ currentWeatherData }: Props) => {
 
   useEffect(() => {
     /** canvas 要素・天気データ・ウィンドウサイズがなければ何もしない */
-    if (!canvasRef.current || !currentWeatherData || !width || !height) {
+    if (!ref.current || !currentWeatherData || !width || !height) {
       return;
     }
 
@@ -36,7 +43,7 @@ const Rain = React.memo(({ currentWeatherData }: Props) => {
     if (!currentWeather) return;
 
     /** canvas 要素とコンテキストを取得 (取得できない場合は処理を中断) */
-    const canvas = canvasRef.current;
+    const canvas = ref.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -118,12 +125,12 @@ const Rain = React.memo(({ currentWeatherData }: Props) => {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [currentWeatherData, weather, width, height, canvasRef]);
+  }, [currentWeatherData, weather, width, height, ref]);
 
   return (
     <div className={s.rain_container}>
       <canvas
-        ref={canvasRef}
+        ref={ref}
         className={s.rain_canvas}
         style={{
           /** 風速に応じて回転角度を設定（雨粒を傾ける） */
@@ -154,47 +161,32 @@ const _getRainState = (config: RainState): RainStateResult => {
   };
 
   /** 雨の強さに応じて色・長さ・速度を変更 */
-  switch (config.currentWeather.description) {
-    /** 弱い雨 */
-    case 'light rain':
-    case 'light intensity shower rain':
-    case 'thunderstorm with light rain':
-    case 'freezing rain':
-      rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.25)`;
-      rainState.length = rainState.length - 0.2;
-      rainState.ySpeed = rainState.ySpeed - 2;
-      break;
+  const desc = config.currentWeather.description;
+  if ((WEATHER_DESCRIPTIONS_RAIN_LIGHT as readonly string[]).includes(desc)) {
+    /** 弱い雨・霧雨（Drizzle を含む） */
+    rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.25)`;
+    rainState.length = rainState.length - 0.2;
+    rainState.ySpeed = rainState.ySpeed - 2;
+  } else if ((WEATHER_DESCRIPTIONS_RAIN_NORMAL as readonly string[]).includes(desc)) {
     /** 通常の雨 */
-    case 'moderate rain':
-    case 'shower rain':
-    case 'ragged shower rain':
-    case 'thunderstorm with rain':
-      rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.20)`;
-      rainState.length = rainState.length + 1;
-      rainState.lineWidth = 2.5;
-      rainState.ySpeed = rainState.ySpeed + 2.5;
-      break;
+    rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.20)`;
+    rainState.length = rainState.length + 1;
+    rainState.lineWidth = 2.5;
+    rainState.ySpeed = rainState.ySpeed + 2.5;
+  } else if ((WEATHER_DESCRIPTIONS_RAIN_HEAVY as readonly string[]).includes(desc)) {
     /** 激しい雨 */
-    case 'heavy intensity rain':
-    case 'heavy intensity shower rain':
-    case 'thunderstorm with heavy rain':
-      rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.20)`;
-      rainState.length = rainState.length + 2;
-      rainState.lineWidth = 3;
-      rainState.xSpeed = rainState.xSpeed + 1;
-      rainState.ySpeed = rainState.ySpeed + 5;
-      break;
+    rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.20)`;
+    rainState.length = rainState.length + 2;
+    rainState.lineWidth = 3;
+    rainState.xSpeed = rainState.xSpeed + 1;
+    rainState.ySpeed = rainState.ySpeed + 5;
+  } else if ((WEATHER_DESCRIPTIONS_RAIN_VERY_HEAVY as readonly string[]).includes(desc)) {
     /** 非常に激しい雨 */
-    case 'very heavy rain':
-    case 'extreme rain':
-      rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.15)`;
-      rainState.length = rainState.length + 3;
-      rainState.lineWidth = 4;
-      rainState.xSpeed = rainState.xSpeed + 2;
-      rainState.ySpeed = rainState.ySpeed + 10;
-      break;
-    default:
-      break;
+    rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.15)`;
+    rainState.length = rainState.length + 3;
+    rainState.lineWidth = 4;
+    rainState.xSpeed = rainState.xSpeed + 2;
+    rainState.ySpeed = rainState.ySpeed + 10;
   }
 
   return rainState;
