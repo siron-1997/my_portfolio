@@ -1,6 +1,6 @@
 'use client';
 
-import React, { type JSX,useEffect } from 'react';
+import React, { type JSX, useEffect } from 'react';
 
 import { portalAnimation } from '@/animations/home';
 import { HOME_PORTAL_TITLE } from '@/constants/home';
