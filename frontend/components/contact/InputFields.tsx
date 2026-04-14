@@ -1,11 +1,12 @@
-import cn from 'classnames';
 import React from 'react';
-import { FormState, UseFormRegister } from 'react-hook-form';
 
-import { ContactFormValues } from '@/constants/contact';
+import cn from 'classnames';
+import { type FormState, type UseFormRegister } from 'react-hook-form';
+
 import Label from '@/components/contact/Label';
-import { FormStep } from '@/types/contact';
+import { type ContactFormValues } from '@/constants/contact';
 import s from '@/styles/contact/InputFields.module.css';
+import { type FormStep } from '@/types/contact';
 
 type Props = {
   /** RHF の register 関数 */
@@ -30,7 +31,8 @@ const InputFields = React.memo(
 
     const inputNameClassNames = cn(s.text_field, {
       /** デフォルトのクラス名 (※確認ステップ以外、かつエラーがない場合) */
-      [s.default_text_field]: !isConfirmStep && !(hasAttemptedAdvance && errors.name),
+      [s.default_text_field]:
+        !isConfirmStep && !(hasAttemptedAdvance && errors.name),
       /** 編集時のクラス名 (※確認ステップ以外でエラーがない場合) */
       [s.edit_text_field]: !isConfirmStep,
       /** エラー発生時のクラス名 (※エラーがある場合) */
@@ -39,7 +41,8 @@ const InputFields = React.memo(
 
     const inputEmailClassNames = cn(s.text_field, {
       /** デフォルトのクラス名 (※確認ステップ以外、かつエラーがない場合) */
-      [s.default_text_field]: !isConfirmStep && !(hasAttemptedAdvance && errors.email),
+      [s.default_text_field]:
+        !isConfirmStep && !(hasAttemptedAdvance && errors.email),
       /** 編集時のクラス名 (※確認ステップ以外でエラーがない場合) */
       [s.edit_text_field]: !isConfirmStep,
       /** エラー発生時のクラス名 (※エラーがある場合) */
@@ -48,7 +51,8 @@ const InputFields = React.memo(
 
     const inputMessageClassNames = cn(s.textarea, {
       /** デフォルトのクラス名 (※確認ステップ以外、かつエラーがない場合) */
-      [s.default_text_field]: !isConfirmStep && !(hasAttemptedAdvance && errors.message),
+      [s.default_text_field]:
+        !isConfirmStep && !(hasAttemptedAdvance && errors.message),
       /** 編集時のクラス名 (※確認ステップ以外でエラーがない場合) */
       [s.edit_text_field]: !isConfirmStep,
       /** エラー発生時のクラス名 (※エラーがある場合) */
@@ -77,7 +81,11 @@ const InputFields = React.memo(
 
         {/* email (メールの入力フィールド) */}
         <div className={s.input_container}>
-          <Label title="E-mail" id="input-email" isConfirmStep={isConfirmStep} />
+          <Label
+            title="E-mail"
+            id="input-email"
+            isConfirmStep={isConfirmStep}
+          />
           <input
             id="input-email"
             type="email"
@@ -95,7 +103,11 @@ const InputFields = React.memo(
 
         {/* message (メッセージの入力フィールド) */}
         <div className={s.input_container}>
-          <Label title="Message" id="input-textarea" isConfirmStep={isConfirmStep} />
+          <Label
+            title="Message"
+            id="input-textarea"
+            isConfirmStep={isConfirmStep}
+          />
           <textarea
             id="input-textarea"
             readOnly={isConfirmStep}

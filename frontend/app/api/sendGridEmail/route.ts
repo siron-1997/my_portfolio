@@ -1,8 +1,10 @@
+import { type NextRequest, NextResponse } from 'next/server';
+
 import sgMail from '@sendgrid/mail';
-import { NextRequest, NextResponse } from 'next/server';
-import { InquiryPayload } from '@/types/api';
+
 import { LOG_MESSAGES } from '@/constants/api';
 import { API_ALLOWED_KEYS } from '@/constants/api';
+import { type InquiryPayload } from '@/types/api';
 
 export async function POST(request: NextRequest) {
   const apiName = 'SendGrid API - Email Sending';
@@ -19,7 +21,10 @@ export async function POST(request: NextRequest) {
     if (isDevelopment) {
       console.error(LOG_MESSAGES.MISSING_ENV_VARIABLE('SENDGRID_API_KEY'));
     }
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Server configuration error' },
+      { status: 500 },
+    );
   }
 
   /** SendGrid の API キーを設定 */
@@ -36,7 +41,10 @@ export async function POST(request: NextRequest) {
       if (isDevelopment) {
         console.error(LOG_MESSAGES.INVALID_KEYS(apiName, invalidKeys));
       }
-      return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid request data' },
+        { status: 400 },
+      );
     }
 
     /** メールアドレスが存在しない場合はエラーを返す */
@@ -44,7 +52,10 @@ export async function POST(request: NextRequest) {
       if (isDevelopment) {
         console.error(LOG_MESSAGES.SENDGRID_MISSING_EMAIL(apiName));
       }
-      return NextResponse.json({ error: 'Email address is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Email address is required' },
+        { status: 400 },
+      );
     }
 
     /** 自動返信メッセージの設定 */
@@ -99,18 +110,29 @@ export async function POST(request: NextRequest) {
       console.log(LOG_MESSAGES.SENDGRID_EMAIL_SENT(apiName, myEmail));
     }
 
-    return NextResponse.json({ message: 'Emails sent successfully' }, { status: 200 });
+    return NextResponse.json(
+      { message: 'Emails sent successfully' },
+      { status: 200 },
+    );
   } catch (error: unknown) {
     if (error instanceof Error) {
       if (isDevelopment) {
         console.error(LOG_MESSAGES.SENDGRID_ERROR(apiName, error.message));
       }
-      return NextResponse.json({ error: 'Failed to send emails' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to send emails' },
+        { status: 500 },
+      );
     } else {
       if (isDevelopment) {
-        console.error(LOG_MESSAGES.SENDGRID_ERROR(apiName, 'An unknown error occurred'));
+        console.error(
+          LOG_MESSAGES.SENDGRID_ERROR(apiName, 'An unknown error occurred'),
+        );
       }
-      return NextResponse.json({ error: 'Failed to send emails' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to send emails' },
+        { status: 500 },
+      );
     }
   }
 }

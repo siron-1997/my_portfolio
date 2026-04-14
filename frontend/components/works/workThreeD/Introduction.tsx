@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import { Typography } from '@mui/material';
 import cn from 'classnames';
 
-import { Container } from '@/components/common';
-import { ToggleButton } from '@/components/works/workThreeD/ToggleButton';
-import { FingerPress } from '@/components/works/workThreeD/FingerPress';
-import { useWorkThreeDContext } from '@/contexts';
 import { introductionAnimation } from '@/animations/workThreeD';
-import { WorkDetail } from '@/types/api';
+import { Container } from '@/components/common';
+import { FingerPress } from '@/components/works/workThreeD/FingerPress';
+import { ToggleButton } from '@/components/works/workThreeD/ToggleButton';
+import { useWorkThreeDContext } from '@/contexts';
 import s from '@/styles/works/workThreeD/Introduction.module.css';
+import { type WorkDetail } from '@/types/api';
 
 /**
  * Introduction コンポーネントの Props。

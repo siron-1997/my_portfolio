@@ -1,22 +1,25 @@
-import React, { useRef, useEffect } from 'react';
-import { useLoader, useFrame } from '@react-three/fiber';
+import { useEffect,useRef } from 'react';
+
+import { useFrame,useLoader } from '@react-three/fiber';
+import type React from 'react';
 import {
-  LoopOnce,
+  type AnimationClip,
   AnimationMixer,
-  Group,
-  AnimationClip,
   FrontSide,
-  Object3D,
-  Mesh,
-  Material,
+  type Group,
+  LoopOnce,
+  type Material,
+  type Mesh,
+  type Object3D,
 } from 'three';
 /* @ts-expect-error three/examples/jsm モジュールに型定義が存在しないため */
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-/* @ts-expect-error three/examples/jsm モジュールに型定義が存在しないため */
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-import { WorkDetail } from '@/types/api';
-import { ModelChildren } from '@/types/world';
+/* @ts-expect-error three/examples/jsm モジュールに型定義が存在しないため */
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+
 import { useWorkThreeDContext } from '@/contexts';
+import { type WorkDetail } from '@/types/api';
+import { type ModelChildren } from '@/types/world';
 
 /** Props の型定義 */
 type Props = {
@@ -34,12 +37,16 @@ const useModel = ({ content, setModelChildren }: Props) => {
   } = useWorkThreeDContext();
 
   /** GLTFLoader でモデルをプロキシ経由で読み込む（Storage URL をクライアントに公開しない） */
-  const gltf = useLoader(GLTFLoader, `/api/supabase/model/${content.key}`, (loader) => {
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('/draco/');
-    dracoLoader.preload();
-    loader.setDRACOLoader(dracoLoader);
-  });
+  const gltf = useLoader(
+    GLTFLoader,
+    `/api/supabase/model/${content.key}`,
+    (loader) => {
+      const dracoLoader = new DRACOLoader();
+      dracoLoader.setDecoderPath('/draco/');
+      dracoLoader.preload();
+      loader.setDRACOLoader(dracoLoader);
+    },
+  );
 
   /** 裏面を非表示 */
   gltf.scene.traverse((child: Object3D) => {
@@ -75,7 +82,8 @@ const useModel = ({ content, setModelChildren }: Props) => {
  * @example
  * normalize(str);
  */
-  const normalize = (str: string) => str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  const normalize = (str: string) =>
+    str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 
   /** 現在のアニメーション名 */
   const currentAnimName = content.controls[currentIndex]?.animation_name || '';

@@ -1,7 +1,9 @@
+import { type NextRequest, NextResponse } from 'next/server';
+
 import { Resend } from 'resend';
-import { NextRequest, NextResponse } from 'next/server';
-import { InquiryPayload } from '@/types/api';
-import { LOG_MESSAGES, API_ALLOWED_KEYS } from '@/constants/api';
+
+import { API_ALLOWED_KEYS,LOG_MESSAGES } from '@/constants/api';
+import { type InquiryPayload } from '@/types/api';
 
 /** ユーザー入力値をメール HTML に埋め込む前にエスケープする */
 const escapeHtml = (str: string) =>
@@ -26,7 +28,10 @@ export async function POST(request: NextRequest) {
     if (isDevelopment) {
       console.error(LOG_MESSAGES.MISSING_ENV_VARIABLE('RESEND_API_KEY'));
     }
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Server configuration error' },
+      { status: 500 },
+    );
   }
 
   const resend = new Resend(apiKey);
@@ -44,7 +49,10 @@ export async function POST(request: NextRequest) {
       if (isDevelopment) {
         console.error(LOG_MESSAGES.INVALID_KEYS(apiName, invalidKeys));
       }
-      return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid request data' },
+        { status: 400 },
+      );
     }
 
     /** メールアドレスが存在しない場合はエラーを返す */
@@ -52,7 +60,10 @@ export async function POST(request: NextRequest) {
       if (isDevelopment) {
         console.error(LOG_MESSAGES.RESEND_MISSING_EMAIL(apiName));
       }
-      return NextResponse.json({ error: 'Email address is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Email address is required' },
+        { status: 400 },
+      );
     }
 
     /** 自動返信メールを送信 */
@@ -111,12 +122,19 @@ export async function POST(request: NextRequest) {
       console.log(LOG_MESSAGES.RESEND_EMAIL_SENT(apiName, myEmail));
     }
 
-    return NextResponse.json({ message: 'Emails sent successfully' }, { status: 200 });
+    return NextResponse.json(
+      { message: 'Emails sent successfully' },
+      { status: 200 },
+    );
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'An unknown error occurred';
+    const message =
+      error instanceof Error ? error.message : 'An unknown error occurred';
     if (isDevelopment) {
       console.error(LOG_MESSAGES.RESEND_ERROR(apiName, message));
     }
-    return NextResponse.json({ error: 'Failed to send emails' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to send emails' },
+      { status: 500 },
+    );
   }
 }

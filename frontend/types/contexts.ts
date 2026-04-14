@@ -1,4 +1,5 @@
-import React from 'react';
+import type React from 'react';
+
 import { WorkCategory } from '@/types/api';
 
 /** HomeContextType の型定義 */

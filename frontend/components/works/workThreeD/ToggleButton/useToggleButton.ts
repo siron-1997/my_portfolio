@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { useWorkThreeDContext } from '@/contexts';
+
 import cn from 'classnames';
+
 import { toggleButtonAnimation } from '@/animations/workThreeD';
+import { useWorkThreeDContext } from '@/contexts';
 import s from '@/styles/common/button/Toggle.module.css';
 
 const useToggleButton = () => {

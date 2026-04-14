@@ -1,6 +1,8 @@
 import React from 'react';
-import { WorkDetail } from '@/types/api';
-import { ModelChildren } from '@/types/world';
+
+import { type WorkDetail } from '@/types/api';
+import { type ModelChildren } from '@/types/world';
+
 import useModel from './useModel';
 
 /** Props の型定義 */

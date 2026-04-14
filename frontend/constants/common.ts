@@ -1,4 +1,7 @@
-import { SiteMapItem, Sns, GsapAnimationConfig } from '@/types/common';
+import { type GsapAnimationConfig,type SiteMapItem, type Sns } from '@/types/common';
+
+/** 開発環境フラグ */
+export const IS_DEV = process.env.NODE_ENV === 'development';
 
 /**
  * 現在地のデフォルト座標（比叡山）

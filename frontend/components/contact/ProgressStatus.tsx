@@ -1,13 +1,14 @@
 'use client';
 
-import { Typography } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 
+import { Typography } from '@mui/material';
+
 import { progressStatusAnimation } from '@/animations/contact';
-import { INTRODUCTION } from '@/constants/contact';
-import { FormStep } from '@/types/contact';
 import StepProgressBar from '@/components/contact/StepProgressBar';
+import { INTRODUCTION } from '@/constants/contact';
 import s from '@/styles/contact/ProgressStatus.module.css';
+import { type FormStep } from '@/types/contact';
 
 type Props = {
   /** 現在のフォームステップ */

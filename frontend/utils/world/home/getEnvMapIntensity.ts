@@ -1,5 +1,6 @@
-import { TimePoint } from '@/types/world';
-import { WeatherItem } from '@/types/api';
+import { type TimePoint } from '@/types/api';
+import { type WeatherItem } from '@/types/api';
+
 import getWeatherCategory from './getWeatherCategory';
 
 type ModelType = 'model' | 'cloud';
@@ -16,19 +17,26 @@ type ModelType = 'model' | 'cloud';
  * @example
  * _setTimePointIntensity(value, timePoint, type);
  */
-const _setTimePointIntensity = (value: number, timePoint: TimePoint, type: ModelType) => {
+const _setTimePointIntensity = (
+  value: number,
+  timePoint: TimePoint,
+  type: ModelType,
+) => {
   let intensity = 0;
 
   /** 時間帯ごとにベース値を調整 */
   switch (timePoint) {
     case 'night':
-      intensity = type === 'model' ? value + 6 : type === 'cloud' ? value + 50 : 0;
+      intensity =
+        type === 'model' ? value + 6 : type === 'cloud' ? value + 50 : 0;
       break;
     case 'evening':
-      intensity = type === 'model' ? value - 2 : type === 'cloud' ? value + 20 : 0;
+      intensity =
+        type === 'model' ? value - 2 : type === 'cloud' ? value + 20 : 0;
       break;
     case 'lunch':
-      intensity = type === 'model' ? value + 12 : type === 'cloud' ? value + 200 : 0;
+      intensity =
+        type === 'model' ? value + 12 : type === 'cloud' ? value + 200 : 0;
       break;
     default:
       break;
@@ -71,7 +79,11 @@ const getEnvMapIntensity = (
       type,
     );
   } else if (category === 'clearSky') {
-    envMapIntensity = _setTimePointIntensity(type === 'model' ? 8.8 : 0, timePoint, type);
+    envMapIntensity = _setTimePointIntensity(
+      type === 'model' ? 8.8 : 0,
+      timePoint,
+      type,
+    );
   }
   return envMapIntensity;
 };

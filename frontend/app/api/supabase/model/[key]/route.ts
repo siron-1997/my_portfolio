@@ -1,5 +1,6 @@
+import { type NextRequest, NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { NextRequest, NextResponse } from 'next/server';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -54,7 +55,10 @@ export async function GET(
     .download(path);
 
   if (downloadError || !fileData) {
-    return NextResponse.json({ error: 'Failed to download model' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to download model' },
+      { status: 500 },
+    );
   }
 
   /** Blob を ReadableStream としてクライアントへストリーミングする */

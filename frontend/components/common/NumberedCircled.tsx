@@ -1,7 +1,8 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
-import { Typography, type SxProps, type Theme } from '@mui/material';
+import { useEffect,useRef } from 'react';
+
+import { type SxProps, type Theme,Typography } from '@mui/material';
 
 import { modelAnimation } from '@/animations/workWorld';
 
@@ -19,16 +20,21 @@ type Props = {
   /** ナビゲーションクリック時のコールバック */
   onClick: () => void;
 
-  /** ナビゲーションを表示するかどうか */
+  /** ナビゲーションの表示フラグ */
   isNavigationVisible: boolean;
 };
 
-const NumberedCircled = ({ index, sx, onClick, isNavigationVisible }: Props) => {
-  const navigationRef = useRef<HTMLSpanElement>(null);
+const NumberedCircled = ({
+  index,
+  sx,
+  onClick,
+  isNavigationVisible,
+}: Props) => {
+  const ref = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
-    const navigation = navigationRef.current;
-    const cleanup = modelAnimation(navigation, isNavigationVisible);
+    const cleanup = modelAnimation(ref.current, isNavigationVisible);
+
     return () => {
       cleanup();
     };
@@ -37,7 +43,7 @@ const NumberedCircled = ({ index, sx, onClick, isNavigationVisible }: Props) => 
   return (
     <Typography
       component="span"
-      ref={navigationRef}
+      ref={ref}
       sx={{
         ...sx,
         display: isNavigationVisible ? 'block' : 'none',

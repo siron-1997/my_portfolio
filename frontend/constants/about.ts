@@ -1,4 +1,4 @@
-import { SectionHeader, Skills, CareerHistory } from '@/types/common';
+import { type CareerHistory,type SectionHeader, type Skills } from '@/types/common';
 
 const path = '/icons/';
 const svg = '.svg';

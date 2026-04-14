@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 
-import { useWorkThreeDContext } from '@/contexts';
 import { portalAnimation } from '@/animations/workThreeD';
-import { WorkDetail } from '@/types/api';
+import { useWorkThreeDContext } from '@/contexts';
+import { type WorkDetail } from '@/types/api';
 
 /**
  * Portal コンポーネントの Props。

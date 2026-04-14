@@ -1,7 +1,8 @@
 'use client';
 
-import { Typography } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
+
+import { Typography } from '@mui/material';
 
 import { portalAnimation } from '@/animations/about';
 

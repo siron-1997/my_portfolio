@@ -1,40 +1,45 @@
 'use client';
 
+import React, { type JSX } from 'react';
 import Image from 'next/image';
+
 import cn from 'classnames';
 
 import s from '@/styles/common/button/Hamburger.module.css';
 
-/**
- * Hamburger コンポーネントの Props。
- * スマートフォン表示時のドロワーを開くハンバーガーメニューボタン。
- */
 type Props = {
-  /** 外部から追加するクラス名 */
+  /** クラス名 */
   className?: string;
 
-  /** ハンバーガーアイコンのサイズ（ピクセル） */
+  /** アイコンのサイズ（px） */
   iconSize: number;
 
-  /** ハンバーガーメニューを開くコールバック */
+  /** ハンバーガーメニューをクリックした際のコールバック */
   onOpen: () => void;
 };
 
-const Hamburger = ({ className, iconSize, onOpen }: Props) => {
-  const classNames = cn(className, s.hamburger);
+/** アイコン画像のファイルパス */
+const ICON_PATH = '/icons/hamburger.svg';
 
-  return (
-    <div className={classNames} onClick={onOpen}>
-      <Image
-        src="/icons/hamburger.svg"
-        alt="hamburger menu"
-        width={iconSize}
-        height={iconSize}
-        quality={1}
-        priority={true}
-      />
-    </div>
-  );
-};
+const Hamburger = React.memo(
+  ({ className, iconSize, onOpen }: Props): JSX.Element => {
+    const classNames = cn(className, s.hamburger);
+
+    return (
+      <div className={classNames} onClick={onOpen}>
+        <Image
+          src={ICON_PATH}
+          alt="hamburger menu"
+          width={iconSize}
+          height={iconSize}
+          quality={1}
+          priority={true}
+        />
+      </div>
+    );
+  },
+);
+
+Hamburger.displayName = 'Hamburger';
 
 export default Hamburger;

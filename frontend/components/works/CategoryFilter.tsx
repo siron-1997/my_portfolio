@@ -1,33 +1,30 @@
 'use client';
 
-import {
-  TextField,
-  InputLabel,
-  Chip,
-  Autocomplete,
-  AutocompleteRenderGetTagProps,
-  AutocompleteRenderInputParams,
-} from '@mui/material';
-import Image from 'next/image';
 import React, {
-  useRef,
-  useEffect,
+  type Dispatch,
+  type JSX,
+  type SetStateAction,
   useCallback,
-  Dispatch,
-  SetStateAction,
-  JSX,
+  useEffect,
+  useRef,
 } from 'react';
+import Image from 'next/image';
+
+import {
+  Autocomplete,
+  type AutocompleteRenderGetTagProps,
+  type AutocompleteRenderInputParams,
+  Chip,
+  InputLabel,
+  TextField,
+} from '@mui/material';
 
 import { categoryFilterAnimation } from '@/animations/works';
 import { BREAK_POINTS } from '@/constants/common';
-import { WorkCategory } from '@/types/api';
 import { useWindowSize } from '@/hooks';
 import s from '@/styles/works/CategoryFilter.module.css';
+import { type WorkCategory } from '@/types/api';
 
-/**
- * CategoryFilter コンポーネントの Props。
- * 作品一覧のカテゴリ絞り込みオートコンプリートフィルター。
- */
 type Props = {
   /** フィルタリング対象のカテゴリデータ配列 */
   data: WorkCategory[];
@@ -59,7 +56,10 @@ const CategoryFilter = React.memo(({ data, setSelectedCategories }: Props) => {
    * @params option カテゴリオブジェクト
    * @returns カテゴリ名
    */
-  const getOptionLabel = useCallback((option: WorkCategory): string => option.name, []);
+  const getOptionLabel = useCallback(
+    (option: WorkCategory): string => option.name,
+    [],
+  );
 
   /** 選択されたカテゴリの配列からチップをレンダリングする関数
    *
@@ -68,7 +68,10 @@ const CategoryFilter = React.memo(({ data, setSelectedCategories }: Props) => {
    * @returns チップ要素の配列
    */
   const renderTags = useCallback(
-    (value: WorkCategory[], getTagProps: AutocompleteRenderGetTagProps): JSX.Element[] =>
+    (
+      value: WorkCategory[],
+      getTagProps: AutocompleteRenderGetTagProps,
+    ): JSX.Element[] =>
       value.map((option, i) => {
         /** key を分離 */
         const { key, ...tagProps } = getTagProps({ index: i });

@@ -1,20 +1,21 @@
 'use client';
 
-import { Close } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import 'react-modern-drawer/dist/index.css';
+
+import React, { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useCallback, useEffect, useState } from 'react';
+
+import { Close } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 import Drawer from 'react-modern-drawer';
 
 import { Container } from '@/components/common';
 import { Hamburger } from '@/components/common';
 import { Navigation } from '@/components/layout';
 import { BREAK_POINTS } from '@/constants/common';
-import { useWindowSize, useIconSize } from '@/hooks';
+import { useIconSize,useWindowSize } from '@/hooks';
 import s from '@/styles/layout/Header.module.css';
-
-import 'react-modern-drawer/dist/index.css';
 
 const Header = () => {
   /** ドロワーの開閉状態 */
@@ -46,7 +47,11 @@ const Header = () => {
 
   return (
     <header className={s.header}>
-      <HeaderRow width={width} iconSize={iconSize} toggleDrawer={toggleDrawer} />
+      <HeaderRow
+        width={width}
+        iconSize={iconSize}
+        toggleDrawer={toggleDrawer}
+      />
 
       <Drawer
         open={isOpen}
@@ -84,32 +89,40 @@ type HeaderRowProps = {
   toggleDrawer: () => void;
 };
 
-const HeaderRow = React.memo(({ width, iconSize, toggleDrawer }: HeaderRowProps) => {
-  return (
-    <Container>
-      <div className={s.header_row}>
-        {/* ロゴ */}
-        <Link href="/">
-          <div className={s.logo}>
-            <Image src="/icons/logo.svg" alt="Logo" priority quality={1} fill />
-          </div>
-        </Link>
+const HeaderRow = React.memo(
+  ({ width, iconSize, toggleDrawer }: HeaderRowProps) => {
+    return (
+      <Container>
+        <div className={s.header_row}>
+          {/* ロゴ */}
+          <Link href="/">
+            <div className={s.logo}>
+              <Image
+                src="/icons/logo.svg"
+                alt="Logo"
+                priority
+                quality={1}
+                fill
+              />
+            </div>
+          </Link>
 
-        {/* width が未定義の間は何も表示しない */}
-        {width !== undefined && (
-          <>
-            {/* モバイル・タブレットの場合はハンバーガーメニューを表示 */}
-            {width > BREAK_POINTS.SM ? (
-              <Navigation />
-            ) : (
-              <Hamburger iconSize={iconSize} onOpen={toggleDrawer} />
-            )}
-          </>
-        )}
-      </div>
-    </Container>
-  );
-});
+          {/* width が未定義の間は何も表示しない */}
+          {width !== undefined && (
+            <>
+              {/* モバイル・タブレットの場合はハンバーガーメニューを表示 */}
+              {width > BREAK_POINTS.SM ? (
+                <Navigation />
+              ) : (
+                <Hamburger iconSize={iconSize} onOpen={toggleDrawer} />
+              )}
+            </>
+          )}
+        </div>
+      </Container>
+    );
+  },
+);
 
 HeaderRow.displayName = 'HeaderRow';
 

@@ -1,9 +1,10 @@
 'use client';
 
+import React, { useCallback } from 'react';
+import Link from 'next/link';
+
 import { Typography } from '@mui/material';
 import cn from 'classnames';
-import Link from 'next/link';
-import React, { useCallback } from 'react';
 
 import { SITE_MAP } from '@/constants/common';
 import s from '@/styles/layout/Navigation.module.css';

@@ -1,8 +1,10 @@
 'use client';
 
 import React from 'react';
+
 import { OrbitControls } from '@react-three/drei';
 import { MathUtils } from 'three';
+
 import useMyControls from './useMyControls';
 
 const MyControls = () => {

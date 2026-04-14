@@ -1,8 +1,8 @@
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
 import { Container } from '@/components/common';
 import { Portal, WorksClient } from '@/components/works';
-import { getWorks, getWorkCategories } from '@/services/works';
+import { getWorkCategories,getWorks } from '@/services/works';
 
 /** ISR 1時間 */
 export const revalidate = 3600;
@@ -23,7 +23,10 @@ export default async function Works() {
         {/* タイトル */}
         <Portal title="Works" />
         {/* カテゴリフィルターとコンテンツ表示 */}
-        <WorksClient worksDatum={worksData} workCategoriesDatum={workCategoriesData} />
+        <WorksClient
+          worksDatum={worksData}
+          workCategoriesDatum={workCategoriesData}
+        />
       </Container>
     </div>
   );

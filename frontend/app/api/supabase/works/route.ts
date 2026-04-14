@@ -1,6 +1,8 @@
+import { type NextRequest, NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { NextRequest, NextResponse } from 'next/server';
-import { WorkSummary } from '@/types/api';
+
+import { type WorkSummary } from '@/types/api';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -38,7 +40,9 @@ export async function GET(req: NextRequest) {
   /** image_url をプロキシ URL に差し替える。GLB と同様に Storage URL をクライアントに非公開にする */
   const result: WorkSummary[] = data.map((row) => ({
     ...row,
-    image_url: row.image_url ? `/api/supabase/image/${row.slug}` : row.image_url,
+    image_url: row.image_url
+      ? `/api/supabase/image/${row.slug}`
+      : row.image_url,
   }));
 
   return NextResponse.json(result);

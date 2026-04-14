@@ -1,43 +1,51 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import React, { type JSX,useEffect } from 'react';
 
-import { useHomeContext } from '@/contexts/homeContext';
 import { portalAnimation } from '@/animations/home';
+import { HOME_PORTAL_TITLE } from '@/constants/home';
 import s from '@/styles/home/Portal.module.css';
 
-const Portal = () => {
+type Props = {
   /** Portal セクションの参照 Ref */
-  const ref = useRef<HTMLDivElement>(null);
+  portalRef: React.RefObject<HTMLDivElement | null>;
 
-  const { portalRef, isLoading } = useHomeContext();
-
-  useEffect(() => {
-    if (!ref.current) return;
-
-    if (isLoading) {
-      window.scrollTo(0, 0);
-      return;
-    }
-
-    /** Portal アニメーションを初期化 */
-    const ctx = portalAnimation({
-      title: ref.current.querySelector('#portal-title')!,
-      portalRef: ref,
-    });
-
-    return () => {
-      ctx.revert();
-    };
-  }, [isLoading]);
-
-  return (
-    <div className={s.portal} ref={ref}>
-      <section>
-        <h1 id="portal-title">Symphony</h1>
-      </section>
-    </div>
-  );
+  /** Canvas の準備状態フラグ */
+  isCanvasReady: boolean;
 };
+
+const Portal = React.memo(
+  ({ portalRef, isCanvasReady }: Props): JSX.Element => {
+    useEffect(() => {
+      if (!portalRef.current) return;
+
+      /** Canvas の準備が完了していない場合はスクロールをリセット */
+      if (!isCanvasReady) {
+        window.scrollTo(0, 0);
+        return;
+      }
+
+      /** Portal アニメーションを初期化 */
+      const ctx = portalAnimation({
+        title: portalRef.current.querySelector('#portal-title')!,
+        portalRef: portalRef,
+      });
+
+      return () => {
+        ctx.revert();
+      };
+    }, [isCanvasReady]);
+
+    return (
+      <div className={s.portal} ref={portalRef}>
+        <section>
+          <h1 id="portal-title">{HOME_PORTAL_TITLE}</h1>
+        </section>
+      </div>
+    );
+  },
+);
+
+Portal.displayName = 'Portal';
 
 export default Portal;

@@ -1,21 +1,23 @@
 'use client';
 
-import { useRef, useEffect, useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect,useRef } from 'react';
+
 import { useFrame, useThree } from '@react-three/fiber';
-import { Vector3, Euler, PerspectiveCamera, Box3, Sphere } from 'three';
-import { WorkDetail } from '@/types/api';
-import { ModelChildren } from '@/types/world';
-import { useWorkThreeDContext } from '@/contexts';
-import { useWindowSize } from '@/hooks';
+import { Box3, type Euler, type PerspectiveCamera, Sphere,type Vector3 } from 'three';
+
 import {
+  controlsAnimation,
   sectionsAnimation,
   viewerToggleAnimation,
-  controlsAnimation,
 } from '@/animations/workWorld';
+import { useWorkThreeDContext } from '@/contexts';
+import { useWindowSize } from '@/hooks';
+import { type WorkDetail } from '@/types/api';
+import { type ModelChildren } from '@/types/world';
 import {
+  generateControlsCameraConfigs,
   getSectionsCameraParams,
   getViwerToggleCameraParams,
-  generateControlsCameraConfigs,
 } from '@/utils/world/work/getCameraParams';
 
 /** Props の型定義 */
@@ -72,7 +74,11 @@ const useMyCamera = ({
   /** セクション・ビュワーモード アニメーション */
   useLayoutEffect(() => {
     /** ブレークポイントに応じて、各セクションのカメラパラメータを取得 */
-    const sectionsCameraParams = getSectionsCameraParams(modelChildren, width, height);
+    const sectionsCameraParams = getSectionsCameraParams(
+      modelChildren,
+      width,
+      height,
+    );
     /** カメラアニメーションを作成 (セクションごとにカメラの位置・アングルを設定) */
     const sectionsAnimations = sectionsAnimation({
       portal: portalRef.current,

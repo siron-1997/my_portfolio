@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef,useState } from 'react';
+
 import { BREAK_POINTS } from '@/constants/common';
 
 /** 画像の表示幅・高さ */
@@ -12,8 +13,7 @@ type ImageSize = {
   pointHeight: number;
 };
 
-/**
- * ブレイクポイント別の画像サイズ設定マップ */
+/** ブレイクポイント別の画像サイズ設定マップ */
 type ImageSizeConfig = {
   /** XS 未満（モバイル）時の画像サイズ */
   sm: ImageSize;
@@ -34,13 +34,12 @@ type ImageSizeConfig = {
   xl3: ImageSize;
 };
 
-/**
- * ウィンドウ幅に応じた画像表示サイズを返すカスタムフック。
+/** ウィンドウ幅に応じた画像表示サイズを返すカスタムフック
+ *
  * 6 段階のブレイクポイント（sm / md / lg / xl / xl2 / xl3）に応じて `config` の対応サイズを返す。
  *
  * @param {ImageSizeConfig} config - 各ブレイクポイントの画像サイズ設定
  * @returns {ImageSize} 現在のウィンドウ幅に対応する画像サイズ
- *
  * @example
  * const size = useImageSize({
  *   sm:  { pointWidth:  80, pointHeight:  60 },
@@ -53,7 +52,10 @@ type ImageSizeConfig = {
  */
 const useImageSize = (config: ImageSizeConfig): ImageSize => {
   /** 画像サイズの状態 */
-  const [sizes, setSizes] = useState<ImageSize>({ pointWidth: 0, pointHeight: 0 });
+  const [sizes, setSizes] = useState<ImageSize>({
+    pointWidth: 0,
+    pointHeight: 0,
+  });
 
   /** config の参照を常に最新に保ちつつ、呼び出し側のオブジェクトリテラル再生成による無限ループを防止 */
   const configRef = useRef(config);
@@ -89,7 +91,6 @@ const useImageSize = (config: ImageSizeConfig): ImageSize => {
   }, []);
 
   useEffect(() => {
-    /** 初回レンダリング時に実行 */
     handleResize();
     window.addEventListener('resize', handleResize);
 

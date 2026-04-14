@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import axios, { AxiosError } from 'axios';
-import { OpenWeatherCurrentData } from '@/types/api';
+import { type NextRequest, NextResponse } from 'next/server';
+
+import axios, { type AxiosError } from 'axios';
+
 import { API_ALLOWED_KEYS } from '@/constants/api';
 import { LOG_MESSAGES } from '@/constants/api';
+import { type OpenWeatherCurrentData } from '@/types/api';
 
 const createResponse = (
   success: boolean,
@@ -60,7 +62,12 @@ const handleUnknownError = (error: unknown, apiName: string) => {
     if (isDevelopment) {
       console.error(LOG_MESSAGES.UNEXPECTED_ERROR(apiName, error.message));
     }
-    return createResponse(false, `Unexpected Error: ${error.message}`, null, 500);
+    return createResponse(
+      false,
+      `Unexpected Error: ${error.message}`,
+      null,
+      500,
+    );
   } else {
     /** 未知のエラー */
     if (isDevelopment) {
@@ -115,7 +122,9 @@ export async function POST(request: NextRequest) {
     /** API キーが設定されていない場合のエラーハンドリング */
     if (!apiKey) {
       if (isDevelopment) {
-        console.error(LOG_MESSAGES.MISSING_ENV_VARIABLE('OPEN_WEATHER_API_KEY'));
+        console.error(
+          LOG_MESSAGES.MISSING_ENV_VARIABLE('OPEN_WEATHER_API_KEY'),
+        );
       }
       return createResponse(false, 'API キーが設定されていません', null, 500);
     }
@@ -148,7 +157,8 @@ export async function POST(request: NextRequest) {
         data.timezone,
       );
 
-      const startSunrise = sunriseTime.getHours() + sunriseTime.getMinutes() / 100;
+      const startSunrise =
+        sunriseTime.getHours() + sunriseTime.getMinutes() / 100;
       const endSunrise = startSunrise + 1;
       const startSunset = sunsetTime.getHours() + sunsetTime.getMinutes() / 100;
       const endSunset = startSunset + 1;
@@ -170,10 +180,20 @@ export async function POST(request: NextRequest) {
     } else {
       if (isDevelopment) {
         console.error(
-          LOG_MESSAGES.API_REQUEST_FAILED(apiName, res.status, res.statusText, url),
+          LOG_MESSAGES.API_REQUEST_FAILED(
+            apiName,
+            res.status,
+            res.statusText,
+            url,
+          ),
         );
       }
-      return createResponse(false, 'APIリクエストに失敗しました', null, res.status);
+      return createResponse(
+        false,
+        'APIリクエストに失敗しました',
+        null,
+        res.status,
+      );
     }
   } catch (error) {
     /** AxiosError の場合の処理 */

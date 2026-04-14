@@ -1,8 +1,8 @@
 import {
+  WEATHER_DESCRIPTIONS_CLEAR_SKY,
   WEATHER_DESCRIPTIONS_THICK_CLOUDS,
   WEATHER_DESCRIPTIONS_THIN_CLOUDS,
-  WEATHER_DESCRIPTIONS_CLEAR_SKY,
-} from '@/constants/world';
+} from '@/constants/home';
 
 /**
  * 天気の視覚的カテゴリ。
@@ -25,18 +25,30 @@ export type WeatherCategory = 'thickCloud' | 'thinCloud' | 'clearSky' | null;
  * const category = getWeatherCategory('clear sky'); // 'clearSky'
  * const category = getWeatherCategory(undefined); // null
  */
-const getWeatherCategory = (description: string | undefined): WeatherCategory => {
+const getWeatherCategory = (
+  description: string | undefined,
+): WeatherCategory => {
   if (!description) return null;
 
-  if ((WEATHER_DESCRIPTIONS_THICK_CLOUDS as readonly string[]).includes(description)) {
+  if (
+    (WEATHER_DESCRIPTIONS_THICK_CLOUDS as readonly string[]).includes(
+      description,
+    )
+  ) {
     return 'thickCloud';
   }
 
-  if ((WEATHER_DESCRIPTIONS_THIN_CLOUDS as readonly string[]).includes(description)) {
+  if (
+    (WEATHER_DESCRIPTIONS_THIN_CLOUDS as readonly string[]).includes(
+      description,
+    )
+  ) {
     return 'thinCloud';
   }
 
-  if ((WEATHER_DESCRIPTIONS_CLEAR_SKY as readonly string[]).includes(description)) {
+  if (
+    (WEATHER_DESCRIPTIONS_CLEAR_SKY as readonly string[]).includes(description)
+  ) {
     return 'clearSky';
   }
 

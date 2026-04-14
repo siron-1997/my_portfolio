@@ -1,9 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { Typography } from '@mui/material';
+
 import { KeyboardArrowDown } from '@mui/icons-material';
+import { Typography } from '@mui/material';
+
 import s from '@/styles/works/workThreeD/FingerPress.module.css';
+
 import useFingerPress from './useFingerPress';
 
 const FingerPress = () => {

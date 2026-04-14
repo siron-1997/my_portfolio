@@ -1,8 +1,10 @@
 'use client';
 
 import React from 'react';
-import { WorkDetail } from '@/types/api';
-import { ModelChildren } from '@/types/world';
+
+import { type WorkDetail } from '@/types/api';
+import { type ModelChildren } from '@/types/world';
+
 import { Model } from './Model';
 import { Navigations } from './Navigations';
 

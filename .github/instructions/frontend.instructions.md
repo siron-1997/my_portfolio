@@ -262,6 +262,23 @@ const handleSelect = useCallback(
 );
 ```
 
+## React フック記述順序
+
+コンポーネント内のフックは以下の順序で記述する。フック呼び出しの順序を統一することで可読性を高め、副作用の依存関係を見つけやすくする。
+
+```
+1. useRef / useContext / useReducer  （外部依存なしの状態・参照）
+2. useState                          （ローカル状態）
+3. カスタムフック                      （useXxx）
+4. useMemo / useCallback             （派生値・メモ化関数）
+5. useEffect                         （副作用） ← JSX の直上に配置
+6. return (...)                      （JSX）
+```
+
+- **`useEffect` は必ず `return` の直上にまとめて配置する**。`useMemo` や `useCallback` と混在させない。
+- `useFrame`（R3F）は `useEffect` と同じ副作用レイヤーとして扱い、`useEffect` の直前に配置する。
+- 複数の `useEffect` がある場合は関連性の薄いものから順に並べ、最も「天気・状態の同期」など外部条件に反応するものを最後（JSX の直前）に置く。
+
 ## 定数
 
 - **命名**: 全べて `UPPER_SNAKE_CASE` で記述する。
@@ -372,6 +389,47 @@ const notoSansJP = localFont({
 .body {
   font-family: var(--font-noto-sans-jp), sans-serif;
 }
+```
+
+## インポート規約
+
+インポートの順序・グループ分けは `eslint-plugin-simple-import-sort` によって自動強制・自動整列される（保存時 ESLint auto-fix で適用）。記述順と空行の挿入は以下のルールに従うこと。
+
+### グループ順序（上から下へ）
+
+```
+1. 副作用インポート（CSS・フォント等）
+2. React / Next.js（フレームワーク）
+3. 外部パッケージ（npm / @スコープパッケージ。ただし @/ は除く）
+4. 内部エイリアス（@/ プレフィックス）
+5. 相対インポート（./・../）
+```
+
+### ルール
+
+- 各グループの間は**必ず空行 1 行**で区切る。
+- 同一グループ内はアルファベット順に並べる。
+- 型のみのインポートは `import type { Foo }` ではなく `import { type Foo }` のインライン形式を使用する（`@typescript-eslint/consistent-type-imports` による強制）。
+- import 並び順は保存時に ESLint auto-fix が自動整列するため、手動でのソートは不要。
+
+```ts
+/** 副作用 */
+import "@/styles/globals.css";
+
+/** React / Next.js */
+import { useCallback, useMemo } from "react";
+import Image from "next/image";
+
+/** 外部パッケージ */
+import axios from "axios";
+import { Canvas } from "@react-three/fiber";
+
+/** 内部エイリアス（@/） */
+import { Button } from "@/components/common";
+import { type WorkItem } from "@/types/api";
+
+/** 相対パス */
+import { helper } from "./utils";
 ```
 
 ## デバッグ・動作確認（Playwright MCP）

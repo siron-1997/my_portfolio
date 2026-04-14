@@ -2,16 +2,21 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
+
 import { Canvas } from '@react-three/fiber';
-import { ACESFilmicToneMapping, PCFShadowMap } from 'three';
 import { Leva } from 'leva';
+import { ACESFilmicToneMapping, PCFShadowMap } from 'three';
+
 import { Experience } from '@/components/world/work/Experience';
-import { WorkDetail } from '@/types/api';
 import s from '@/styles/works/workThreeD/WorkWorld.module.css';
+import { type WorkDetail } from '@/types/api';
+
 import useWorkWorld from './useWorkWorld';
 
 /** r3f-perf は内部で useLayoutEffect + createRoot を使用するため SSR を無効化 */
-const Perf = dynamic(() => import('r3f-perf').then((mod) => mod.Perf), { ssr: false });
+const Perf = dynamic(() => import('r3f-perf').then((mod) => mod.Perf), {
+  ssr: false,
+});
 
 /** Props の型定義 */
 type Props = {

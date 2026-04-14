@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 import CategoryFilter from '@/components/works/CategoryFilter';
 import Contents from '@/components/works/Contents';
-import { WorkCategory, WorkSummary } from '@/types/api';
+import { type WorkCategory, type WorkSummary } from '@/types/api';
 
 type Props = {
   /** 作品一覧で表示するサマリーデータ */
@@ -16,7 +16,9 @@ type Props = {
 
 const WorksClient = React.memo(({ worksDatum, workCategoriesDatum }: Props) => {
   /** 選択されたカテゴリの状態管理 */
-  const [selectedCategories, setSelectedCategories] = useState<WorkCategory[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<WorkCategory[]>(
+    [],
+  );
 
   return (
     <>

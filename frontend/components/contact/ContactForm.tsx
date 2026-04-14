@@ -1,28 +1,29 @@
 'use client';
 
+import React, { useCallback,useEffect } from 'react';
+import Link from 'next/link';
+
 import { Typography } from '@mui/material';
 import axios from 'axios';
 import cn from 'classnames';
-import Link from 'next/link';
-import React, { useEffect, useCallback } from 'react';
 import {
-  FormState,
-  UseFormHandleSubmit,
-  UseFormRegister,
-  UseFormTrigger,
+  type FormState,
+  type UseFormHandleSubmit,
+  type UseFormRegister,
+  type UseFormTrigger,
 } from 'react-hook-form';
 
-import { APP_THEME_COLORS } from '@/constants/colors';
 import { Button } from '@/components/common';
 import InputFields from '@/components/contact/InputFields';
+import { APP_THEME_COLORS } from '@/constants/colors';
 import {
   BUTTON_LABELS,
   CONFIRM_MESSAGE,
-  ContactFormValues,
+  type ContactFormValues,
   RESULT_MESSAGES,
 } from '@/constants/contact';
-import { ContactFormAction, FormStep } from '@/types/contact';
 import s from '@/styles/contact/ContactForm.module.css';
+import { type ContactFormAction, type FormStep } from '@/types/contact';
 
 type Props = {
   /** RHF の register 関数 */
@@ -63,7 +64,8 @@ const ContactForm = React.memo(
     });
 
     /** 送信結果のメッセージ */
-    const result = RESULT_MESSAGES[formState.isSubmitSuccessful ? 'success' : 'failure'];
+    const result =
+      RESULT_MESSAGES[formState.isSubmitSuccessful ? 'success' : 'failure'];
 
     /** 入力内容を検証して「確認」ステップへ進める処理 */
     const handleEndInput = useCallback(async (): Promise<void> => {
@@ -95,15 +97,21 @@ const ContactForm = React.memo(
      *
      * @param data フォームの入力値
      */
-    const onSubmit = handleSubmit(async (data: ContactFormValues): Promise<void> => {
-      try {
-        await axios.post(process.env.NEXT_PUBLIC_BASE_URL + '/api/contact', data, {
-          headers: { 'Content-Type': 'application/json' },
-        });
-      } finally {
-        dispatch({ type: 'FINISH_SENDING' });
-      }
-    });
+    const onSubmit = handleSubmit(
+      async (data: ContactFormValues): Promise<void> => {
+        try {
+          await axios.post(
+            process.env.NEXT_PUBLIC_BASE_URL + '/api/contact',
+            data,
+            {
+              headers: { 'Content-Type': 'application/json' },
+            },
+          );
+        } finally {
+          dispatch({ type: 'FINISH_SENDING' });
+        }
+      },
+    );
 
     /** ブラウザの戻る/更新を検知して警告 */
     useEffect(() => {

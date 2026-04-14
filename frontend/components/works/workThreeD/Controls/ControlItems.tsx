@@ -1,4 +1,4 @@
-import { Typography, ListItem } from '@mui/material';
+import { ListItem,Typography } from '@mui/material';
 
 /** Props の型定義 */
 type Props = {

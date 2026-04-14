@@ -1,26 +1,24 @@
 'use client';
 
+import React, { type JSX,useEffect, useRef } from 'react';
+import Link from 'next/link';
+
 import { CardActions, Typography } from '@mui/material';
 import cn from 'classnames';
-import Link from 'next/link';
-import React, { useRef, useEffect } from 'react';
 
-import { Card, Container } from '@/components/common';
 import { worksAnimation } from '@/animations/home';
-import { WorkSummary } from '@/types/api';
-import { truncateString } from '@/utils';
+import { Card, Container } from '@/components/common';
+import { HOME_WORKS_LEARN_MORE, HOME_WORKS_TITLE } from '@/constants/home';
 import s from '@/styles/home/Works.module.css';
+import { type WorkSummary } from '@/types/api';
+import { truncateString } from '@/utils';
 
-/**
- * Works コンポーネントの Props。
- * ホームページに表示する作品カード一覧セクション。
- */
 type Props = {
   /** ホームページに表示する作品データの配列 */
   data: WorkSummary[];
 };
 
-const Works = React.memo(({ data }: Props) => {
+const Works = React.memo(({ data }: Props): JSX.Element => {
   /** Works セクションの参照 Ref */
   const ref = useRef<HTMLElement | null>(null);
 
@@ -46,7 +44,7 @@ const Works = React.memo(({ data }: Props) => {
       <Container>
         <section ref={ref}>
           {/* タイトル */}
-          <h1 id="works-title">Works</h1>
+          <h1 id="works-title">{HOME_WORKS_TITLE}</h1>
 
           {/* 作品カードのリスト */}
           <div className={s.contents} id="works-cards">
@@ -71,7 +69,7 @@ const Works = React.memo(({ data }: Props) => {
                 variant="navigation"
                 sx={{ fontSize: { xs: 18, sm: 20, fontWeight: 700 } }}
               >
-                Learn More &gt;
+                {HOME_WORKS_LEARN_MORE}
               </Typography>
             </Link>
           </CardActions>

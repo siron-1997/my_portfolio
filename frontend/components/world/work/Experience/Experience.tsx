@@ -1,11 +1,14 @@
 'use client';
 
 import React from 'react';
-import { EffectComposer, DepthOfField } from '@react-three/postprocessing';
+
+import { DepthOfField,EffectComposer } from '@react-three/postprocessing';
+
 import { MyCamera, MyControls, MyModel } from '@/components/world/work/modules';
-import { WorkDetail } from '@/types/api';
 import { WORK_WORLD_ENV_COLORS } from '@/constants/colors';
 import { BREAK_POINTS } from '@/constants/common';
+import { type WorkDetail } from '@/types/api';
+
 import useExperience from './useExperience';
 
 /** Props の型定義 */
@@ -75,7 +78,12 @@ const Experience = ({ content }: Props) => {
       <axesHelper args={[10]} visible={false} />
       <EffectComposer>
         {/** 被写界深度の設定 */}
-        <DepthOfField focusDistance={0} focalLength={0.1} bokehScale={8} height={1080} />
+        <DepthOfField
+          focusDistance={0}
+          focalLength={0.1}
+          bokehScale={8}
+          height={1080}
+        />
       </EffectComposer>
     </>
   );

@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useRef, useReducer, useContext, useMemo } from 'react';
+import React, { useContext, useMemo,useReducer, useRef } from 'react';
+
 import {
-  WorkThreeDContextType,
-  WorkThreeDState,
-  WorkThreeDAction,
+  type WorkThreeDAction,
+  type WorkThreeDContextType,
+  type WorkThreeDState,
 } from '@/types/contexts';
 
 /** Props の型定義 */
@@ -56,15 +57,19 @@ const workThreeDReducer = (
       };
     case 'NAVIGATE_TO':
       /** isInitialControl を false にし、選択インデックスを更新する */
-      return { ...state, isInitialControl: false, currentIndex: action.payload };
+      return {
+        ...state,
+        isInitialControl: false,
+        currentIndex: action.payload,
+      };
     default:
       return state;
   }
 };
 
-const WorkThreeDContext = React.createContext<WorkThreeDContextType | undefined>(
-  undefined,
-);
+const WorkThreeDContext = React.createContext<
+  WorkThreeDContextType | undefined
+>(undefined);
 
 /**
  * 3D作品ビュワーの状態を Provider で提供するコンポーネント。
@@ -86,7 +91,9 @@ export const WorkThreeDProvider: React.FC<Props> = ({ children }) => {
   const value = useMemo(() => ({ state, dispatch, refs }), [state, refs]);
 
   return (
-    <WorkThreeDContext.Provider value={value}>{children}</WorkThreeDContext.Provider>
+    <WorkThreeDContext.Provider value={value}>
+      {children}
+    </WorkThreeDContext.Provider>
   );
 };
 
@@ -100,7 +107,9 @@ export const WorkThreeDProvider: React.FC<Props> = ({ children }) => {
 export const useWorkThreeDContext = (): WorkThreeDContextType => {
   const context = useContext(WorkThreeDContext);
   if (!context) {
-    throw new Error('useWorkThreeDContext must be used within a WorkThreeDProvider');
+    throw new Error(
+      'useWorkThreeDContext must be used within a WorkThreeDProvider',
+    );
   }
   return context;
 };

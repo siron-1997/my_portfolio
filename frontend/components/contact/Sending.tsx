@@ -1,8 +1,9 @@
 'use client';
 
+import React, { useEffect } from 'react';
+
 import { Typography } from '@mui/material';
 import cn from 'classnames';
-import React, { useEffect } from 'react';
 
 import s from '@/styles/contact/Sending.module.css';
 

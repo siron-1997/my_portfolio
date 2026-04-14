@@ -1,18 +1,20 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useReducer } from 'react';
+
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import {
-  contactSchema,
-  ContactFormValues,
-  CONTACT_DEFAULT_VALUES,
-} from '@/constants/contact';
 import { Container } from '@/components/common';
 import ContactForm from '@/components/contact/ContactForm';
 import ProgressStatus from '@/components/contact/ProgressStatus';
-import { ContactFormAction, FormStep } from '@/types/contact';
+import {
+  CONTACT_DEFAULT_VALUES,
+  type ContactFormValues,
+  contactSchema,
+} from '@/constants/contact';
+import { type ContactFormAction, type FormStep } from '@/types/contact';
+
 import Sending from './Sending';
 
 type ContactFormState = {
@@ -67,11 +69,12 @@ const ContactClient = () => {
   const [state, dispatch] = useReducer(contactFormReducer, initialState);
 
   /** react-hook-form のフック */
-  const { register, formState, trigger, handleSubmit } = useForm<ContactFormValues>({
-    resolver: zodResolver(contactSchema),
-    mode: 'onChange',
-    defaultValues: CONTACT_DEFAULT_VALUES,
-  });
+  const { register, formState, trigger, handleSubmit } =
+    useForm<ContactFormValues>({
+      resolver: zodResolver(contactSchema),
+      mode: 'onChange',
+      defaultValues: CONTACT_DEFAULT_VALUES,
+    });
 
   return (
     <>

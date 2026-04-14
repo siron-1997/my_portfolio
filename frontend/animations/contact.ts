@@ -1,5 +1,6 @@
-import React from 'react';
 import { gsap } from 'gsap';
+import type React from 'react';
+
 import { POWER2_OUT_OPACITY_TOP_MOVE } from '@/constants/common';
 
 /** Props の型定義 */

@@ -1,17 +1,18 @@
-import React from 'react';
-import { PerspectiveCamera, Euler, Quaternion, Vector3 } from 'three';
 import { gsap } from 'gsap';
+import type React from 'react';
+import { Euler, type PerspectiveCamera, Quaternion, Vector3 } from 'three';
+
 import { computeArcPosition } from '@/utils/world/work/cameraArc';
 
 /** 弧状補間の横バイアス強度（0=直線, 1=デフォルト） */
 const ARC_BIAS = 0.3;
 import {
-  Position,
-  Rotation,
-  ViewOffset,
-  ControlCameraConfigs,
-  CameraParams,
-  WorkWorldSectionsCameraParams,
+  type CameraParams,
+  type ControlCameraConfigs,
+  type Position,
+  type Rotation,
+  type ViewOffset,
+  type WorkWorldSectionsCameraParams,
 } from '@/types/world';
 
 /**
@@ -180,7 +181,8 @@ const handleReverseComplete = (
 
       /** コントロールセクション要素の絶対位置を取得 */
       const rect = element.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
       const elementTop = rect.top + scrollTop;
 
       /**
@@ -264,11 +266,13 @@ const handleReverseComplete = (
           };
 
       const onStart = () => {
-        if (process.env.NODE_ENV === 'development') console.log('アニメーション再生開始');
+        if (process.env.NODE_ENV === 'development')
+          console.log('アニメーション再生開始');
         forceScroll();
       };
       const onComplete = () => {
-        if (process.env.NODE_ENV === 'development') console.log('アニメーション再生終了');
+        if (process.env.NODE_ENV === 'development')
+          console.log('アニメーション再生終了');
         html.style.overflow = '';
         body.style.overflow = '';
 
@@ -730,7 +734,11 @@ export const controlsAnimation = ({
 
       /** カメラ位置：弧状補間（Arc-Slerp） */
       const startPos = camera.position.clone();
-      const endPos = new Vector3(item.position.x, item.position.y, item.position.z);
+      const endPos = new Vector3(
+        item.position.x,
+        item.position.y,
+        item.position.z,
+      );
       const arcProgress = { value: 0 };
       timeline.to(arcProgress, {
         value: 1,

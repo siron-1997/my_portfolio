@@ -1,7 +1,9 @@
 'use client';
 
 import { Typography } from '@mui/material';
+
 import s from '@/styles/common/button/Toggle.module.css';
+
 import useToggleButton from './useToggleButton';
 
 export const ToggleButton = () => {

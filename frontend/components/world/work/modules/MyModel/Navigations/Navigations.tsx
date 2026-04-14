@@ -1,10 +1,13 @@
 import React from 'react';
+
 import { Html } from '@react-three/drei';
-import { Object3D } from 'three';
+import { type Object3D } from 'three';
+
 import { NumberedCircled } from '@/components/common';
-import { ModelChildren } from '@/types/world';
-import { BREAK_POINTS } from '@/constants/common';
 import { APP_THEME_COLORS } from '@/constants/colors';
+import { BREAK_POINTS } from '@/constants/common';
+import { type ModelChildren } from '@/types/world';
+
 import useNavigations from './useNavigations';
 
 /** Props の型定義 */

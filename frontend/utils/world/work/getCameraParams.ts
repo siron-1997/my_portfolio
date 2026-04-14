@@ -1,25 +1,26 @@
-import { PerspectiveCamera, Object3D } from 'three';
-import {
-  WorkWorldViewerToggleCameraParams,
-  WorkWorldSectionsCameraParams,
-  ControlCameraConfig,
-  ControlCameraConfigs,
-  ModelChildren,
-  ViewOffset,
-  WorkWorldSectionKey,
-} from '@/types/world';
-import { WorkControl } from '@/types/api';
+import { Object3D,PerspectiveCamera } from 'three';
+
 import { BREAK_POINTS } from '@/constants/common';
 import {
-  DEFAULT_SECTION_CAMERA_PARAMS,
-  DEFAULT_CONTROLS_VIEW_OFFSET,
   BREAK_POINT_KEYS,
   BREAK_POINT_MAP,
-  WORK_WORLD_SECTION_CAMERA_BREAKPOINTS,
+  DEFAULT_CONTROLS_VIEW_OFFSET,
+  DEFAULT_SECTION_CAMERA_PARAMS,
   DEFAULT_VIEWER_TOGGLE_CAMERA_PARAMS,
-  WORK_WORLD_VIEWER_TOGGLE_CAMERA_BREAKPOINTS,
+  WORK_WORLD_SECTION_CAMERA_BREAKPOINTS,
   WORK_WORLD_SECTION_MAP,
+  WORK_WORLD_VIEWER_TOGGLE_CAMERA_BREAKPOINTS,
 } from '@/constants/world';
+import { type WorkControl } from '@/types/api';
+import {
+  type ControlCameraConfig,
+  type ControlCameraConfigs,
+  type ModelChildren,
+  type ViewOffset,
+  type WorkWorldSectionKey,
+  type WorkWorldSectionsCameraParams,
+  type WorkWorldViewerToggleCameraParams,
+} from '@/types/world';
 
 export const getSectionsCameraParams = (
   modelChildren: ModelChildren,
@@ -224,7 +225,10 @@ export const generateControlsCameraConfigs = (
   /** controlsItems が渡された場合、animationName 順にソート */
   if (controlsItems && Array.isArray(controlsItems)) {
     configsArray = controlsItems
-      .map((item) => configsArray.find((cfg) => cfg.name === item.animation_name) || null)
+      .map(
+        (item) =>
+          configsArray.find((cfg) => cfg.name === item.animation_name) || null,
+      )
       .filter(Boolean) as ControlCameraConfigs;
   }
 

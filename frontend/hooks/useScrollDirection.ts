@@ -13,7 +13,9 @@ import { useEffect, useState } from 'react';
  */
 const useScrollDirection = (): 'down' | 'up' | '' => {
   /** スクロール方向の状態 */
-  const [scrollDirection, setScrollDirection] = useState<'down' | 'up' | ''>('');
+  const [scrollDirection, setScrollDirection] = useState<'down' | 'up' | ''>(
+    '',
+  );
 
   useEffect(() => {
     let lastScrollTop = window.scrollY;

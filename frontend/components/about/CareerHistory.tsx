@@ -1,20 +1,21 @@
 'use client';
 
-import { Typography } from '@mui/material';
+import React, { useEffect, useRef } from 'react';
+
 import SchoolIcon from '@mui/icons-material/School';
 import WorkIcon from '@mui/icons-material/Work';
 import {
   Timeline,
-  TimelineContent,
   TimelineConnector,
+  TimelineContent,
   TimelineDot,
   TimelineItem,
-  TimelineOppositeContent,
   timelineItemClasses,
+  TimelineOppositeContent,
   timelineOppositeContentClasses,
   TimelineSeparator,
 } from '@mui/lab';
-import React, { useEffect, useRef } from 'react';
+import { Typography } from '@mui/material';
 
 import { careerHistoryAnimation } from '@/animations/about';
 import { CAREER_HISTORIES } from '@/constants/about';
@@ -84,7 +85,11 @@ const CareerHistory = React.memo(() => {
               {/** タイムラインの接続部分 (線とドット) */}
               <TimelineSeparator>
                 <TimelineDot color={history.color}>
-                  {history.iconType === 'school' ? <SchoolIcon /> : <WorkIcon />}
+                  {history.iconType === 'school' ? (
+                    <SchoolIcon />
+                  ) : (
+                    <WorkIcon />
+                  )}
                 </TimelineDot>
 
                 <TimelineConnector />
@@ -105,7 +110,11 @@ const CareerHistory = React.memo(() => {
                 </Typography>
 
                 {/* 説明 */}
-                <Typography component="p" variant="p" sx={{ whiteSpace: 'pre-wrap' }}>
+                <Typography
+                  component="p"
+                  variant="p"
+                  sx={{ whiteSpace: 'pre-wrap' }}
+                >
                   {history.description}
                 </Typography>
               </TimelineContent>

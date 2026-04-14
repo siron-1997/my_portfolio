@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { SectionHeader } from '@/types/common';
-import { StepStates } from '@/types/contact';
+
+import { type SectionHeader } from '@/types/common';
+import { type StepStates } from '@/types/contact';
 
 /** セクションの紹介文 */
 export const INTRODUCTION: SectionHeader = {

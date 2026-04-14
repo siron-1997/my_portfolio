@@ -1,14 +1,21 @@
 'use client';
 
+import React, { type JSX } from 'react';
 import Image from 'next/image';
-import React from 'react';
 
 import { useIconSize } from '@/hooks';
 import s from '@/styles/common/loading/PageLoading.module.css';
 
-const PageLoading = React.memo(() => {
+type Props = {
+  /** ローディング中フラグ */
+  isLoading?: boolean;
+};
+
+const Loading = React.memo(({ isLoading }: Props): JSX.Element => {
   /** アイコンサイズを取得 */
   const iconSize = useIconSize(70, 90, 110);
+
+  if (!isLoading) return <></>;
 
   return (
     <div className={s.page_loading}>
@@ -22,12 +29,13 @@ const PageLoading = React.memo(() => {
           width={iconSize}
           height={iconSize}
           quality={1}
+          priority
         />
       </div>
     </div>
   );
 });
 
-PageLoading.displayName = 'PageLoading';
+Loading.displayName = 'Loading';
 
-export default PageLoading;
+export default Loading;

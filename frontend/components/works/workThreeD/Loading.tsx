@@ -2,12 +2,13 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
+
 import cn from 'classnames';
 
 import { useWorkThreeDContext } from '@/contexts';
 import { useIconSize, useWindowSize } from '@/hooks';
-import { disableScroll } from '@/utils';
 import s from '@/styles/common/loading/ModelViewerLoading.module.css';
+import { disableScroll } from '@/utils';
 
 const Loading = () => {
   const {

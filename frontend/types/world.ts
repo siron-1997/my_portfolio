@@ -1,15 +1,6 @@
-import {
-  Group,
-  Vector3,
-  OrthographicCamera,
-  PerspectiveCamera,
-  PointLight,
-  Mesh,
-  Object3D,
-  MeshStandardMaterial,
-} from 'three';
-import { WeatherItem } from '@/types/api';
-import { WORK_WORLD_SECTION_MAP } from '@/constants/world';
+import { type Group,type Mesh, type Object3D, type PerspectiveCamera, type PointLight } from 'three';
+
+import { type WORK_WORLD_SECTION_MAP } from '@/constants/world';
 
 /** Common 3D Types */
 /**
@@ -43,22 +34,12 @@ export type Rotation = {
 };
 
 /**
- * 3D 空間の始点と終点を持つベクトルパス。
- * カメラアニメーションの移動経路定義に使用する。
- */
-export type VectorPath = Readonly<{
-  /** パスの始点座標 */
-  start: Vector3;
-
-  /** パスの終点座標 */
-  end: Vector3;
-}>;
-
-/**
  * Three.js のモデル子要素。
  * GLTF ロード後のシーングラフに含まれうるオブジェクト型の Union。
  */
-export type ModelChildren = Array<PerspectiveCamera | Mesh | PointLight | Object3D>;
+export type ModelChildren = Array<
+  PerspectiveCamera | Mesh | PointLight | Object3D
+>;
 
 /** Camera Types */
 /**
@@ -98,172 +79,6 @@ export type CameraParams = {
 
   /** カメラのビューポートオフセット設定 */
   viewOffset: ViewOffset;
-};
-
-/**
- * カメラの開始・終了位置。
- * GSAP などのアニメーションライブラリに渡す開始・終了座標のペア。
- */
-export type CameraPositionState = {
-  /** アニメーション開始時のカメラ位置 */
-  startPosition: Vector3;
-
-  /** アニメーション終了時のカメラ位置 */
-  endPosition: Vector3;
-};
-
-/**
- * カメラ位置を動的に設定する際のパラメータ。
- * ウィンドウサイズやモデル位置に応じてカメラを再配置するユーティリティに渡す。
- */
-export type CameraPositionSetter = {
-  /** 位置を設定するカメラオブジェクト */
-  camera: OrthographicCamera | PerspectiveCamera;
-
-  /** シーン内の 3D モデルグループ */
-  models: Group | null;
-
-  /** ビューポートの横幅（px） */
-  width: number;
-
-  /** ビューポートの縦幅（px） */
-  height: number;
-};
-
-/** Home World Specific Types */
-/**
- * Home World のカメラリグのブレークポイント別ポジション。
- * スクロールアニメーションで使用する始点・終点座標をブレークポイントごとに定義する。
- */
-export type HomeWorldRigCameraPositions = Readonly<{
-  /** XS ブレイクポイント用カメラパス */
-  xs: VectorPath;
-
-  /** SM ブレイクポイント用カメラパス群 */
-  sm: {
-    /** 縦持ち（portrait）時のカメラパス */
-    wrap: VectorPath;
-
-    /** 横持ち（landscape）時のカメラパス */
-    side: VectorPath;
-  };
-
-  /** TB ブレイクポイント用カメラパス */
-  tb: VectorPath;
-
-  /** LG ブレイクポイント用カメラパス */
-  lg: VectorPath;
-
-  /** XL ブレイクポイント用カメラパス */
-  xl: VectorPath;
-
-  /** 2XL ブレイクポイント用カメラパス */
-  xxl: VectorPath;
-}>;
-
-/**
- * Home World の雲の表示状態。
- * 天気カテゴリに応じて薄雲・厚雲それぞれの表示を制御する。
- */
-export type CloudState = {
-  /** 薄雲の表示フラグ */
-  thin: boolean;
-
-  /** 厚雲の表示フラグ */
-  thick: boolean;
-};
-
-/**
- * 時間帯の区分。
- * 環境光やマテリアルの強度計算に使用する。
- */
-export type TimePoint = 'evening' | 'night' | 'lunch';
-
-/**
- * 時間帯ごとの空の色。
- * 天気カテゴリ（厚曇り・薄曇り・快晴）と時間帯の組み合わせで背景色を決定する。
- */
-export type TimePointSkyColor = {
-  /** 厚曇り時の空の色 */
-  thickCloud: string;
-
-  /** 薄曇り時の空の色 */
-  thinCloud: string;
-
-  /** 快晴時の空の色 */
-  clearSky: string;
-};
-
-/**
- * 雷の発生状態。
- * 天気の description に基づいて初期化され、useFrame 内で発光強度と出現位置の計算に使用する。
- */
-export type LightningState = {
-  /** 雷の強度を計算する関数 */
-  power: (value: number) => number;
-
-  /** 雷の X 方向発生位置を計算する関数 */
-  positionX: (value: number) => number;
-
-  /** 雷の Z 方向発生位置を計算する関数 */
-  positionZ: (value: number) => number;
-
-  /** 雷エフェクトの表示フラグ */
-  visible: boolean;
-};
-
-/**
- * 雨の描画パラメータ設定。
- * `_getRainState` に渡す入力値。天気 description に応じた色・速度・長さの初期値を含む。
- */
-export type RainState = {
-  /** 雨粒の色（任意） */
-  color?: string;
-
-  /** 現在の天気データ（天気種別の判定に使用） */
-  currentWeather: WeatherItem;
-
-  /** 雨粒の線幅（任意） */
-  lineWidth?: number;
-
-  /** 雨粒の長さ（任意） */
-  length?: number;
-
-  /** 雨粒の X 方向移動速度（任意） */
-  xSpeed?: number;
-
-  /** 雨粒の Y 方向落下速度（任意） */
-  ySpeed?: number;
-};
-
-/**
- * 雨の描画パラメータ結果。
- * `_getRainState` の戻り値。Canvas 描画ループで直接参照する。
- */
-export type RainStateResult = {
-  /** 雨粒の色 */
-  color: string;
-
-  /** 雨粒の線幅 */
-  lineWidth: number;
-
-  /** 雨粒の長さ */
-  length: number;
-
-  /** 雨粒の X 方向移動速度 */
-  xSpeed: number;
-
-  /** 雨粒の Y 方向落下速度 */
-  ySpeed: number;
-};
-
-/**
- * Home World の山のマテリアルマップ。
- * マテリアル名をキーとして `MeshStandardMaterial` インスタンスを保持する。
- * @deprecated Blender 側への roughness ベイク対応後に削除予定。
- */
-export type HomeWorldMountainMaterials = {
-  [key: string]: MeshStandardMaterial;
 };
 
 /** Work World Specific Types */

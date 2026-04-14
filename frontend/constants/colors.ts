@@ -1,4 +1,8 @@
-import { AppThemeColors, TimePointColorSet, WorkWorldColorSet } from '@/types/colors';
+import {
+  type AppThemeColors,
+  type TimePointColorSet,
+  type WorkWorldColorSet,
+} from '@/types/colors';
 
 /** 共通のカラーパレット */
 export const COLOR_PALETTE = {

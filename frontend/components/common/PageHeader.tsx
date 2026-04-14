@@ -3,10 +3,6 @@ import cn from 'classnames';
 import { Container } from '@/components/common';
 import s from '@/styles/common/PageHeader.module.css';
 
-/**
- * PageHeader コンポーネントの Props。
- * 各ページ上部に配置するヘッダー領域（figure + figcaption 構造）。
- */
 type Props = {
   /** figure 要素の HTML ID（スクロールアンカー等に使用） */
   id: string;
@@ -21,7 +17,12 @@ type Props = {
   children: React.ReactNode;
 };
 
-const PageHeader = ({ id, children, figureClassName, figcaptionClassName }: Props) => {
+const PageHeader = ({
+  id,
+  children,
+  figureClassName,
+  figcaptionClassName,
+}: Props) => {
   const figureClassNames = cn(s.figure, figureClassName);
   const figcaptionClassNames = cn(s.figcaption, figcaptionClassName);
 

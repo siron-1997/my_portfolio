@@ -1,12 +1,13 @@
-import React from 'react';
 import { gsap } from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import { getScrollTriggerOption } from '@/utils';
+import type React from 'react';
+
 import {
   BACK_OUT_OPACITY_LEFT_MOVE,
   POWER2_OUT_OPACITY_LEFT_MOVE,
   POWER2_OUT_OPACITY_RIGHT_MOVE,
 } from '@/constants/common';
+import { getScrollTriggerOption } from '@/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -55,7 +56,10 @@ type CareerHistoryProps = {
  * @param titleRef - ポータルタイトル全体の ref
  * @returns gsap.Context
  */
-export const portalAnimation = ({ title, titleRef }: PortalProps): gsap.Context => {
+export const portalAnimation = ({
+  title,
+  titleRef,
+}: PortalProps): gsap.Context => {
   const ctx = gsap.context(() => {
     gsap.fromTo(title, BACK_OUT_OPACITY_LEFT_MOVE.from, {
       ...BACK_OUT_OPACITY_LEFT_MOVE.to,
@@ -141,6 +145,7 @@ export const skillsListAnimation = ({
 };
 
 /** キャリアヒストリーのアニメーション
+ *
  * @param elements - キャリアヒストリーの要素群
  * @param careerHistoryRef - キャリアヒストリー全体の ref
  * @returns gsap.Context
@@ -150,6 +155,7 @@ export const careerHistoryAnimation = ({
   careerHistoryRef,
 }: CareerHistoryProps): gsap.Context => {
   const ctx = gsap.context(() => {
+    /** キャリアヒストリーの要素ごとのアニメーション */
     Array.from(elements).forEach((element: Element, i: number) => {
       gsap.fromTo(element, POWER2_OUT_OPACITY_LEFT_MOVE.from, {
         ...POWER2_OUT_OPACITY_LEFT_MOVE.to,

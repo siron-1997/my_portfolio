@@ -1,16 +1,17 @@
 'use client';
 
+import React, { useEffect, useMemo,useRef } from 'react';
+import Image from 'next/image';
+
 import { Typography } from '@mui/material';
 import cn from 'classnames';
-import Image from 'next/image';
-import React, { useEffect, useRef, useMemo } from 'react';
 
 import { skillsListAnimation } from '@/animations/about';
 import { SKILLS } from '@/constants/about';
 import { BREAK_POINTS } from '@/constants/common';
 import { useIconSize, useWindowSize } from '@/hooks';
-import { Skills, Skill } from '@/types/common';
 import s from '@/styles/about/SkillList.module.css';
+import { type Skill,type Skills } from '@/types/common';
 
 type ChunkedSkills = Omit<Skills, 'skills'> & {
   /** チャンク化されたスキル配列 */
@@ -34,7 +35,10 @@ const SkillsList = React.memo(() => {
   /** スキルリストのクラス名 */
   const skillListClassNames = cn(s.skill_list, 'skill-list');
   /** スキルリストのコンテナクラス名 */
-  const skillListContainerClassNames = cn(s.skill_list_container, 'skill-list-container');
+  const skillListContainerClassNames = cn(
+    s.skill_list_container,
+    'skill-list-container',
+  );
   /** スキルアイテムのクラス名 */
   const skillClassNames = cn(s.skill, {
     /** スキルアイテムがアクティブかどうか */

@@ -1,4 +1,4 @@
-import { GetWorksParams, WorkSummary, WorkCategory } from '@/types/api';
+import { type GetWorksParams, type WorkCategory,type WorkSummary } from '@/types/api';
 
 /**
  * ポートフォリオ作品一覧を取得する。
@@ -10,7 +10,9 @@ import { GetWorksParams, WorkSummary, WorkCategory } from '@/types/api';
  * @example
  * await getWorks({});
  */
-export async function getWorks({ limit }: GetWorksParams = {}): Promise<WorkSummary[]> {
+export async function getWorks({ limit }: GetWorksParams = {}): Promise<
+  WorkSummary[]
+> {
   try {
     const url = new URL(`${process.env.BASE_URL}/api/supabase/works`);
     if (limit) {
@@ -43,9 +45,12 @@ export async function getWorks({ limit }: GetWorksParams = {}): Promise<WorkSumm
  */
 export async function getWorkCategories(): Promise<WorkCategory[]> {
   try {
-    const res = await fetch(`${process.env.BASE_URL}/api/supabase/work-categories`, {
-      cache: 'no-store',
-    });
+    const res = await fetch(
+      `${process.env.BASE_URL}/api/supabase/work-categories`,
+      {
+        cache: 'no-store',
+      },
+    );
 
     if (!res.ok) {
       if (process.env.NODE_ENV === 'development') {

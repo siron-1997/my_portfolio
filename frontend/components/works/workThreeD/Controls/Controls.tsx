@@ -1,13 +1,15 @@
 'use client';
 
-import { Typography, List } from '@mui/material';
+import { List,Typography } from '@mui/material';
+
 import { Container } from '@/components/common';
-import { WorkControl, WorkDetail } from '@/types/api';
-import { BREAK_POINTS } from '@/constants/common';
 import { APP_THEME_COLORS } from '@/constants/colors';
+import { BREAK_POINTS } from '@/constants/common';
+import s from '@/styles/works/workThreeD/Controls.module.css';
+import { type WorkControl, type WorkDetail } from '@/types/api';
+
 import ControlItems from './ControlItems';
 import useControls from './useControls';
-import s from '@/styles/works/workThreeD/Controls.module.css';
 
 /** Props の型定義 */
 type Props = {
@@ -16,7 +18,8 @@ type Props = {
 };
 
 const Controls = ({ content }: Props) => {
-  const { width, controlsRef, currentIndex, rootClassNames, handleClick } = useControls();
+  const { width, controlsRef, currentIndex, rootClassNames, handleClick } =
+    useControls();
 
   return (
     <div className={rootClassNames} id="controls" ref={controlsRef}>

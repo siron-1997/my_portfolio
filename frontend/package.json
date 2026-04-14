@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -47,6 +48,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.14",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
     "prettier": "^3.8.1",
     "typescript": "^5"
   },

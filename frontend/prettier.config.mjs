@@ -9,7 +9,7 @@ const config = {
   /** インデント幅 */
   tabWidth: 2,
   /** 1行の最大文字数 */
-  printWidth: 90,
+  printWidth: 80,
   /** 複数行の末尾カンマ（Git diff をクリーンに保つ） */
   trailingComma: 'all',
   /** オブジェクトの波括弧内にスペースを入れる: { foo } */

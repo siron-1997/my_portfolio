@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useMemo,useRef } from 'react';
 
 import { contentsAnimation } from '@/animations/works';
 import { Card } from '@/components/common';
-import { WorkCategory, WorkSummary } from '@/types/api';
-import { truncateString } from '@/utils';
 import s from '@/styles/works/Contents.module.css';
+import { type WorkCategory, type WorkSummary } from '@/types/api';
+import { truncateString } from '@/utils';
 
 type Props = {
   /** 作品一覧で表示するサマリーデータ */

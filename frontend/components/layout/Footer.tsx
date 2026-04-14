@@ -1,11 +1,11 @@
 'use client';
 
-import Image from 'next/image';
 import React from 'react';
+import Image from 'next/image';
 
 import { Container } from '@/components/common';
-import { useIconSize } from '@/hooks';
 import { SNS_LIST } from '@/constants/common';
+import { useIconSize } from '@/hooks';
 import s from '@/styles/layout/Footer.module.css';
 
 const Footer = React.memo(() => {

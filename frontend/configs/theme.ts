@@ -1,7 +1,8 @@
-import React from 'react';
 import { createTheme } from '@mui/material/styles';
-import { BREAK_POINTS } from '@/constants/common';
+import type React from 'react';
+
 import { APP_THEME_COLORS } from '@/constants/colors';
+import { BREAK_POINTS } from '@/constants/common';
 
 declare module '@mui/material/styles' {
   interface TypographyVariants {
@@ -78,9 +79,11 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: ['var(--font-noto-sans-jp)', 'var(--font-roboto)', 'sans-serif'].join(
-      ',',
-    ),
+    fontFamily: [
+      'var(--font-noto-sans-jp)',
+      'var(--font-roboto)',
+      'sans-serif',
+    ].join(','),
     logo: {
       fontSize: 30,
       lineHeight: 1,

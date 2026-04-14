@@ -1,12 +1,15 @@
+import '@/styles/globals.css';
+
+import localFont from 'next/font/local';
 import Script from 'next/script';
+
 import type { Metadata } from 'next';
 import NextTopLoader from 'nextjs-toploader';
-import { Footer, Header } from '@/components/layout';
-import { ThemeProviderWrapper } from '@/contexts';
+
 import { ScrollToTop } from '@/components/common';
+import { Footer, Header } from '@/components/layout';
 import { APP_THEME_COLORS, COLOR_PALETTE } from '@/constants/colors';
-import localFont from 'next/font/local';
-import '@/styles/globals.css';
+import { ThemeProviderWrapper } from '@/contexts';
 
 declare global {
   interface Window {
@@ -17,13 +20,34 @@ declare global {
 
 const notoSansJP = localFont({
   src: [
-    { path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Black.woff2', weight: '900' },
-    { path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Bold.woff2', weight: '700' },
-    { path: '../public/fonts/Noto_Sans_JP/NotoSansJP-ExtraBold.woff2', weight: '800' },
-    { path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Light.woff2', weight: '300' },
-    { path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Medium.woff2', weight: '500' },
-    { path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Regular.woff2', weight: '400' },
-    { path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Thin.woff2', weight: '100' },
+    {
+      path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Black.woff2',
+      weight: '900',
+    },
+    {
+      path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Bold.woff2',
+      weight: '700',
+    },
+    {
+      path: '../public/fonts/Noto_Sans_JP/NotoSansJP-ExtraBold.woff2',
+      weight: '800',
+    },
+    {
+      path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Light.woff2',
+      weight: '300',
+    },
+    {
+      path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Medium.woff2',
+      weight: '500',
+    },
+    {
+      path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Regular.woff2',
+      weight: '400',
+    },
+    {
+      path: '../public/fonts/Noto_Sans_JP/NotoSansJP-Thin.woff2',
+      weight: '100',
+    },
   ],
   variable: '--font-noto-sans-jp',
   display: 'swap',
@@ -112,7 +136,10 @@ export default function RootLayout({
           href="/images/favicons/safari-pinned-tab.svg"
           color="#5bbad5"
         />
-        <meta name="msapplication-TileColor" content={COLOR_PALETTE.faviconTileColor} />
+        <meta
+          name="msapplication-TileColor"
+          content={COLOR_PALETTE.faviconTileColor}
+        />
         <meta name="theme-color" content={COLOR_PALETTE.white} />
         {googleAnalyticsId && (
           <>

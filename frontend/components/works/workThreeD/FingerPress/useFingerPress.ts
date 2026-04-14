@@ -1,8 +1,9 @@
-import { useRef, useEffect } from 'react';
-import { useWorkThreeDContext } from '@/contexts';
-import { useWindowSize, useIconSize } from '@/hooks';
+import { useEffect,useRef } from 'react';
+
 import { fingerPressAnimation } from '@/animations/workThreeD';
 import { BREAK_POINTS } from '@/constants/common';
+import { useWorkThreeDContext } from '@/contexts';
+import { useIconSize,useWindowSize } from '@/hooks';
 
 const useFingerPress = () => {
   const fingerPressRef = useRef<HTMLDivElement>(null!);

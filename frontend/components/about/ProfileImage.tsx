@@ -1,8 +1,9 @@
 'use client';
 
-import cn from 'classnames';
-import Image from 'next/image';
 import React, { useEffect, useRef } from 'react';
+import Image from 'next/image';
+
+import cn from 'classnames';
 
 import { profileImageAnimation } from '@/animations/about';
 import s from '@/styles/about/ProfileImage.module.css';

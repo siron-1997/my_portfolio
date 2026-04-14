@@ -1,12 +1,13 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import getScrollTriggerOption from '@/utils/gsap';
+
 import {
-  POWER2_OUT_OPACITY_TOP_MOVE,
+  POWER2_OUT_OPACITY_BOTTOM_MOVE,
   POWER2_OUT_OPACITY_LEFT_MOVE,
   POWER2_OUT_OPACITY_RIGHT_MOVE,
-  POWER2_OUT_OPACITY_BOTTOM_MOVE,
+  POWER2_OUT_OPACITY_TOP_MOVE,
 } from '@/constants/common';
+import getScrollTriggerOption from '@/utils/gsap';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -89,17 +90,26 @@ export const controlsAnimation = ({
       if (list) {
         gsap.fromTo(list, POWER2_OUT_OPACITY_LEFT_MOVE.from, {
           ...POWER2_OUT_OPACITY_LEFT_MOVE.to,
-          ...getScrollTriggerOption({ delay: 0.4, element: list, markers: false }),
+          ...getScrollTriggerOption({
+            delay: 0.4,
+            element: list,
+            markers: false,
+          }),
         });
       }
     }
     /* コントロールリスト MB */
     if (listMB.style.display !== 'none') {
-      const list: HTMLUListElement | null = listMB.querySelector('#controls-mb-text');
+      const list: HTMLUListElement | null =
+        listMB.querySelector('#controls-mb-text');
       if (list) {
         gsap.fromTo(list, POWER2_OUT_OPACITY_RIGHT_MOVE.from, {
           ...POWER2_OUT_OPACITY_RIGHT_MOVE.to,
-          ...getScrollTriggerOption({ delay: 0.4, element: list, markers: false }),
+          ...getScrollTriggerOption({
+            delay: 0.4,
+            element: list,
+            markers: false,
+          }),
         });
         /* コントロールバー */
         gsap.fromTo(
@@ -107,7 +117,11 @@ export const controlsAnimation = ({
           POWER2_OUT_OPACITY_TOP_MOVE.from,
           {
             ...POWER2_OUT_OPACITY_TOP_MOVE.to,
-            ...getScrollTriggerOption({ delay: 0.4, element: listMB, markers: false }),
+            ...getScrollTriggerOption({
+              delay: 0.4,
+              element: listMB,
+              markers: false,
+            }),
           },
         );
       }
@@ -128,17 +142,29 @@ export const introductionAnimation = ({
     /* 見出し */
     gsap.fromTo(title, POWER2_OUT_OPACITY_TOP_MOVE.from, {
       ...POWER2_OUT_OPACITY_TOP_MOVE.to,
-      ...getScrollTriggerOption({ delay: 0.4, element: section, markers: false }),
+      ...getScrollTriggerOption({
+        delay: 0.4,
+        element: section,
+        markers: false,
+      }),
     });
     /* 説明文 */
     gsap.fromTo(text, POWER2_OUT_OPACITY_TOP_MOVE.from, {
       ...POWER2_OUT_OPACITY_TOP_MOVE.to,
-      ...getScrollTriggerOption({ delay: 0.4, element: section, markers: false }),
+      ...getScrollTriggerOption({
+        delay: 0.4,
+        element: section,
+        markers: false,
+      }),
     });
     /* トグルボタン */
     gsap.fromTo(toggleButton, POWER2_OUT_OPACITY_BOTTOM_MOVE.from, {
       ...POWER2_OUT_OPACITY_BOTTOM_MOVE.to,
-      ...getScrollTriggerOption({ delay: 0.8, element: section, markers: false }),
+      ...getScrollTriggerOption({
+        delay: 0.8,
+        element: section,
+        markers: false,
+      }),
     });
   }, introductionRef);
 
@@ -213,7 +239,14 @@ export const fingerPressAnimation = ({
       arrowIconAnimation.fromTo(
         text.children[1],
         { y: 0 },
-        { y: 20, duration: 1.2, delay: 1.2, yoyo: true, repeat: -1, ease: 'none' },
+        {
+          y: 20,
+          duration: 1.2,
+          delay: 1.2,
+          yoyo: true,
+          repeat: -1,
+          ease: 'none',
+        },
       );
     }
   }, fingerPressRef);

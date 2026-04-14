@@ -1,13 +1,14 @@
-import React from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import getScrollTriggerOption from '@/utils/gsap';
+import type React from 'react';
+
 import { BREAK_POINTS } from '@/constants/common';
 import {
-  BACK_OUT_OPACITY_RIGHT_MOVE,
   BACK_OUT_OPACITY_LEFT_MOVE,
+  BACK_OUT_OPACITY_RIGHT_MOVE,
   POWER4_OUT_OPACITY_TOP_MOVE,
 } from '@/constants/common';
+import getScrollTriggerOption from '@/utils/gsap';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -75,7 +76,9 @@ export const contentsAnimation = ({ contentItems, ref }: CardsProps) => {
 
       switch (true) {
         /** tb */
-        case (i + 1) % 2 === 0 && width >= BREAK_POINTS.XS && width < BREAK_POINTS.SM:
+        case (i + 1) % 2 === 0 &&
+          width >= BREAK_POINTS.XS &&
+          width < BREAK_POINTS.SM:
         /** pc */
         case (i + 1) % 3 === 0 && width >= BREAK_POINTS.SM:
           point = !point;

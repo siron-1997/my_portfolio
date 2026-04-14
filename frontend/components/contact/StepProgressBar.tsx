@@ -1,14 +1,15 @@
 'use client';
 
+import React from 'react';
+import Image from 'next/image';
+
 import { Typography } from '@mui/material';
 import cn from 'classnames';
-import Image from 'next/image';
-import React from 'react';
 
 import { STEP_LABELS, STEP_STATUS } from '@/constants/contact';
-import { FormStep, StepPointState } from '@/types/contact';
 import { useIconSize } from '@/hooks';
 import s from '@/styles/contact/StepProgressBar.module.css';
+import { type FormStep, type StepPointState } from '@/types/contact';
 
 type Props = {
   /** 現在のフォームステップ */
@@ -75,7 +76,11 @@ const getStepStates = (
         STEP_STATUS.NOT_STARTED,
       ];
     case 'CONFIRM':
-      return [STEP_STATUS.COMPLETED, STEP_STATUS.CURRENT, STEP_STATUS.NOT_STARTED];
+      return [
+        STEP_STATUS.COMPLETED,
+        STEP_STATUS.CURRENT,
+        STEP_STATUS.NOT_STARTED,
+      ];
     case 'RESULT':
       return [
         STEP_STATUS.COMPLETED,
@@ -121,7 +126,11 @@ const StepProgressBar = React.memo(
     /** ステップのラベルを取得 */
     const labels = getStepLabels(formStep, isSubmitSuccessful);
     /** ステップの状態を取得 */
-    const states = getStepStates(formStep, hasValidationError, isSubmitSuccessful);
+    const states = getStepStates(
+      formStep,
+      hasValidationError,
+      isSubmitSuccessful,
+    );
     /** 現在アクティブなステップのインデックスを取得 */
     const activeIndex = getActiveIndex(formStep);
 
@@ -164,7 +173,9 @@ const StepProgressBar = React.memo(
                 )}
 
                 {/* ラベル */}
-                <div className={cn(s.step_label, labelClassName)}>{labels[i]}</div>
+                <div className={cn(s.step_label, labelClassName)}>
+                  {labels[i]}
+                </div>
               </li>
             );
           })}
@@ -172,7 +183,11 @@ const StepProgressBar = React.memo(
 
         {/* モバイル時に表示する現在アクティブなステップのラベル */}
         <div className={cn(s.step_content, contentClassName)}>
-          <Typography component="p" variant="p" className={currentStepClassName}>
+          <Typography
+            component="p"
+            variant="p"
+            className={currentStepClassName}
+          >
             {labels[activeIndex]}
           </Typography>
         </div>

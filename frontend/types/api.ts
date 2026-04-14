@@ -1,4 +1,8 @@
-import { TimePoint } from '@/types/world';
+/**
+ * 時間帯の区分。
+ * 環境光やマテリアルの強度計算に使用する。
+ */
+export type TimePoint = 'evening' | 'night' | 'lunch';
 
 /** Inquiry API Types */
 /** お問い合わせフォーム API (/api/contact) のリクエストボディ。 */
