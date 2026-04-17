@@ -1,80 +1,38 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type React from 'react';
-import type { OrthographicCamera, PerspectiveCamera,Vector3 } from 'three';
-import { type Group, Material,MathUtils, type Mesh } from 'three';
+import type { OrthographicCamera, PerspectiveCamera, Vector3 } from 'three';
+import { type Group, Material, MathUtils, type Mesh } from 'three';
 
 import {
   POWER2_OUT_OPACITY_LEFT_MOVE,
   POWER2_OUT_OPACITY_TOP_MOVE,
+  IS_DEV,
 } from '@/constants/common';
 import getScrollTriggerOption from '@/utils/gsap';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ---------- Portal ----------
-
-/** ポータルセクションのアニメーションプロパティ */
+/** Portal セクションのアニメーションプロパティ */
 type PortalAnimationProps = {
-  /** ポータルのタイトル要素 */
+  /** Portal のタイトル要素 */
   title: HTMLHeadingElement;
 
-  /** ポータルセクションの参照 Ref */
+  /** Portal セクションの参照 Ref */
   portalRef: React.RefObject<HTMLDivElement | null>;
 };
 
-// ---------- Works ----------
-
 /** Works セクションのアニメーションプロパティ */
 type WorksAnimationProps = {
-  /** Works セクションの見出し要素 */
+  /** Works 見出し要素 */
   title: HTMLHeadingElement;
+
   /** カードコンテナ要素 */
   cards: HTMLDivElement;
+
   /** Works セクションの参照 Ref */
   worksRef: React.RefObject<HTMLElement | null>;
 };
-
-export const portalAnimation = ({ title, portalRef }: PortalAnimationProps) => {
-  const ctx = gsap.context(() => {
-    gsap.fromTo(title, POWER2_OUT_OPACITY_TOP_MOVE.from, {
-      ...POWER2_OUT_OPACITY_TOP_MOVE.to,
-      delay: 1.5,
-    });
-  }, portalRef);
-
-  return ctx;
-};
-
-export const worksAnimation = ({
-  title,
-  cards,
-  worksRef,
-}: WorksAnimationProps) => {
-  const ctx = gsap.context(() => {
-    /* Works見出し */
-    gsap.fromTo(title, POWER2_OUT_OPACITY_TOP_MOVE.from, {
-      ...POWER2_OUT_OPACITY_TOP_MOVE.to,
-      ...getScrollTriggerOption({
-        element: worksRef.current!,
-        start: 'top bottom',
-      }),
-    });
-    /* Works カード */
-    gsap.fromTo(cards, POWER2_OUT_OPACITY_LEFT_MOVE.from, {
-      ...POWER2_OUT_OPACITY_LEFT_MOVE.to,
-      ...getScrollTriggerOption({
-        element: cards,
-        start: '20% bottom',
-        delay: 0.8,
-      }),
-    });
-  });
-
-  return ctx;
-};
-
-// ---------- RigCamera ----------
 
 /** カメラリグのスクロールアニメーションプロパティ */
 type RigCameraAnimationProps = {
@@ -112,6 +70,46 @@ type RigCameraAnimationProps = {
   doorHideRainThresholdDeg: number;
 };
 
+/** Portal アニメーションの初期化処理 */
+export const portalAnimation = ({
+  title,
+  portalRef,
+}: PortalAnimationProps): gsap.Context => {
+  return gsap.context(() => {
+    gsap.fromTo(title, POWER2_OUT_OPACITY_TOP_MOVE.from, {
+      ...POWER2_OUT_OPACITY_TOP_MOVE.to,
+      delay: 1.5,
+    });
+  }, portalRef);
+};
+
+/** Works アニメーションの初期化処理 */
+export const worksAnimation = ({
+  title,
+  cards,
+  worksRef,
+}: WorksAnimationProps): gsap.Context => {
+  return gsap.context(() => {
+    /* タイトル */
+    gsap.fromTo(title, POWER2_OUT_OPACITY_TOP_MOVE.from, {
+      ...POWER2_OUT_OPACITY_TOP_MOVE.to,
+      ...getScrollTriggerOption({
+        element: worksRef.current!,
+        start: 'top bottom',
+      }),
+    });
+    /* カードコンテナー */
+    gsap.fromTo(cards, POWER2_OUT_OPACITY_LEFT_MOVE.from, {
+      ...POWER2_OUT_OPACITY_LEFT_MOVE.to,
+      ...getScrollTriggerOption({
+        element: cards,
+        start: '20% bottom',
+        delay: 0.8,
+      }),
+    });
+  });
+};
+
 export const rigCameraAnimation = ({
   startPosition,
   endPosition,
@@ -124,45 +122,23 @@ export const rigCameraAnimation = ({
   doorAnimEnd,
   onInsideRoomChange,
   doorHideRainThresholdDeg,
-}: RigCameraAnimationProps) => {
-  const ctx = gsap.context(() => {
-    /** カメラ位置アニメーション */
-    const cameraAnimation = gsap.timeline({
-      scrollTrigger: {
-        trigger: portal,
-        start: 'top',
-        markers: process.env.NODE_ENV === 'development',
-        scrub: 0.7,
-        toggleActions: 'play pause resume pause',
-      },
-      defaults: {
-        duration: 0.7,
-        ease: 'power2.out',
-      },
-    });
+}: RigCameraAnimationProps): gsap.Context => {
+  return gsap.context(() => {
+    /** 前回のスクロール位置 */
+    let prevScrollTop = window.scrollY;
 
-    /** ドア開閉アニメーション */
-    const doorAnimation = gsap.timeline({
-      scrollTrigger: {
-        trigger: portal,
-        start: `${doorAnimStart}%`,
-        end: `${doorAnimEnd}%`,
-        markers: process.env.NODE_ENV === 'development',
-        scrub: true,
-        toggleActions: 'play pause resume pause',
-      },
-    });
-
-    let lastScrollTop = window.scrollY;
     /** 直前の屋内状態を保持し、変化時のみコールバックを呼び出す */
     let isCurrentlyInside = false;
 
     const handleDoorUpdate = () => {
-      const scrollTop = window.scrollY;
+      /** 現在のスクロール位置 */
+      const currentScrollTop = window.scrollY;
+
+      /** 雨を非表示にするドアの回転角しきい値（ラジアン） */
       const thresholdRad = MathUtils.degToRad(doorHideRainThresholdDeg);
 
-      /** スクロールダウン */
-      if (scrollTop > lastScrollTop) {
+      /** スクロールダウン時 */
+      if (currentScrollTop > prevScrollTop) {
         /** 扇の角度が 0° より大きく、かつ部屋のマテリアルがインスタンスの場合、部屋を表示 */
         if (
           door.rotation.y > MathUtils.degToRad(0) &&
@@ -173,7 +149,7 @@ export const rigCameraAnimation = ({
         }
 
         /** スクロールアップ */
-      } else if (scrollTop < lastScrollTop) {
+      } else if (currentScrollTop < prevScrollTop) {
         /** 扇の角度が 0°、かつ部屋のマテリアルがインスタンスの場合、部屋を非表示 */
         if (
           door.rotation.y === MathUtils.degToRad(0) &&
@@ -191,9 +167,35 @@ export const rigCameraAnimation = ({
         onInsideRoomChange?.(nowInside);
       }
 
-      /** スクロール位置を更新 */
-      lastScrollTop = scrollTop;
+      prevScrollTop = currentScrollTop;
     };
+
+    /** カメラ位置アニメーション */
+    const cameraAnimation = gsap.timeline({
+      scrollTrigger: {
+        trigger: portal,
+        start: 'top',
+        markers: IS_DEV,
+        scrub: 0.7,
+        toggleActions: 'play pause resume pause',
+      },
+      defaults: {
+        duration: 0.7,
+        ease: 'power2.out',
+      },
+    });
+
+    /** ドア開閉アニメーション */
+    const doorAnimation = gsap.timeline({
+      scrollTrigger: {
+        trigger: portal,
+        start: `${doorAnimStart}%`,
+        end: `${doorAnimEnd}%`,
+        markers: IS_DEV,
+        scrub: true,
+        toggleActions: 'play pause resume pause',
+      },
+    });
 
     cameraAnimation.fromTo(
       camera.position,
@@ -205,6 +207,4 @@ export const rigCameraAnimation = ({
       onUpdate: () => handleDoorUpdate(),
     });
   }, ref);
-
-  return ctx;
 };

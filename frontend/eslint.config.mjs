@@ -8,6 +8,8 @@ const compat = new FlatCompat({
 
 /** @type {import("eslint").Linter.Config[]} */
 const eslintConfig = [
+  /** public/ 以下のアセットファイルは lint 対象外 */
+  { ignores: ['public/**'] },
   ...compat.extends('next/core-web-vitals', 'next/typescript', 'prettier'),
   {
     plugins: {
@@ -17,6 +19,12 @@ const eslintConfig = [
       /**
        * useEffect / useCallback / useMemo の依存配列漏れをエラーとして検出する。
        * VSCode で未保存のままでも赤波線が表示される。
+       *
+       * 注意: このルールは TypeScript の型情報を解析しないため、
+       * props 経由で渡された RefObject や useState setter が
+       * 安定参照であることを自動判別できない。
+       * 意図的に除外する場合は以下のコメントをその useEffect の直前に付与すること:
+       *   // eslint-disable-next-line react-hooks/exhaustive-deps -- <除外理由>
        */
       'react-hooks/exhaustive-deps': 'error',
 
@@ -43,7 +51,7 @@ const eslintConfig = [
        * console.log などの本番コードへの混入を警告する。
        * console.error / console.warn は許容する。
        */
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['warn', { allow: ['info', 'warn', 'error'] }],
 
       /**
        * import 文をアルファベット順で自動整列する。

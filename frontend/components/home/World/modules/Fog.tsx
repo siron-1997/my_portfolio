@@ -1,9 +1,9 @@
 'use client';
 
-import React, { type JSX,useEffect, useRef } from 'react';
+import React, { type JSX, useEffect, useRef } from 'react';
 
 import type { useCreateStore } from 'leva';
-import { buttonGroup,useControls } from 'leva';
+import { buttonGroup, useControls } from 'leva';
 import { type Fog as ThreeFog } from 'three';
 
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';
@@ -108,7 +108,7 @@ const Fog = React.memo(
     useEffect(() => {
       if (!IS_DEV) return;
       levaStore.set({ '霧.debugFar': defaults.far }, false);
-    }, [humidity, levaStore]);
+    }, [humidity, levaStore, defaults.far]);
 
     /** 霧の状態をデバッグ設定と同期する (開発環境のみ) */
     useEffect(() => {

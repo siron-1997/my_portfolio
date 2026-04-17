@@ -1,15 +1,18 @@
 'use client';
 
-import React, { type JSX,useEffect, useMemo } from 'react';
+import React, { type JSX, useEffect, useMemo } from 'react';
 
 import type { useCreateStore } from 'leva';
-import { buttonGroup,useControls } from 'leva';
+import { buttonGroup, useControls } from 'leva';
 import { MathUtils } from 'three';
 
+import { IS_DEV } from '@/constants/common';
 import {
   HOME_WORLD_DEBUG_STAR_CONTROLS,
   HOME_WORLD_DEFAULT_STAR_COLOR,
   HOME_WORLD_DEFAULT_STAR_COUNT,
+  HOME_WORLD_SCENE_NAME_STAR,
+  HOME_WORLD_SCENE_NAME_STAR_CONTAINER,
 } from '@/constants/home';
 import { useIsIos } from '@/hooks';
 import { type OpenWeatherCurrentData } from '@/types/api';
@@ -25,8 +28,6 @@ type Props = {
   /** Leva ストア */
   levaStore: ReturnType<typeof useCreateStore>;
 };
-
-import { IS_DEV } from '@/constants/common';
 
 const Star = React.memo(
   ({ currentWeatherData, timePoint, levaStore }: Props): JSX.Element => {
@@ -154,11 +155,22 @@ const Star = React.memo(
         },
         false,
       );
-    }, [timePoint, cloudAll, levaStore]);
+    }, [
+      timePoint,
+      cloudAll,
+      levaStore,
+      defaults.visible,
+      defaults.opacity,
+      defaults.size,
+    ]);
 
     return (
-      <group renderOrder={1} name="star-container" visible={visible}>
-        <points name="star">
+      <group
+        renderOrder={1}
+        name={HOME_WORLD_SCENE_NAME_STAR_CONTAINER}
+        visible={visible}
+      >
+        <points name={HOME_WORLD_SCENE_NAME_STAR}>
           <bufferGeometry>
             <bufferAttribute
               attach="attributes-position"

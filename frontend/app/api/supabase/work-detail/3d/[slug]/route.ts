@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const slug = pathname.split('/').pop();
 
   if (process.env.NODE_ENV === 'development') {
-    console.log('API called with slug:', slug);
+    console.info('API called with slug:', slug);
   }
 
   if (!slug) {

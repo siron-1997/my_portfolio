@@ -1,20 +1,30 @@
 'use client';
 
-import React, { type JSX,useMemo } from 'react';
+import React, { type JSX, useMemo } from 'react';
 
 import { useGLTF } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { BackSide, type Group,MathUtils, type Mesh, type MeshStandardMaterial } from 'three';
+import {
+  BackSide,
+  type Group,
+  MathUtils,
+  type Mesh,
+  type MeshStandardMaterial,
+} from 'three';
 
 import { COLOR_PALETTE } from '@/constants/colors';
 import {
   DEFAULT_WEATHER,
+  ENV_MAP_MODEL_TYPE_MODEL,
   HOME_WORLD_DOOR_MODEL_PATH,
+  HOME_WORLD_SCENE_NAME_DOOR,
+  HOME_WORLD_SCENE_NAME_DOOR_CONTAINER,
+  HOME_WORLD_SCENE_NAME_DOOR_LIGHT,
   WEATHER_TYPES,
 } from '@/constants/home';
 import { type OpenWeatherCurrentData } from '@/types/api';
 import { type TimePoint } from '@/types/api';
-import { getEnvMapIntensity } from '@/utils/world/home';
+import { getEnvMapIntensity } from '@/utils/world';
 
 type Props = {
   /** Open Weather API から返される現在の天候データのレスポンス全体 */
@@ -52,14 +62,19 @@ const Door = React.memo(
 
     /** 環境光の輝度を取得 */
     const envMapIntensity = useMemo(
-      () => getEnvMapIntensity(currentWeather!, timePoint, 'model'),
+      () =>
+        getEnvMapIntensity(
+          currentWeather!,
+          timePoint,
+          ENV_MAP_MODEL_TYPE_MODEL,
+        ),
       [currentWeather, timePoint],
     );
 
     return (
       <group
         ref={ref}
-        name="Door"
+        name={HOME_WORLD_SCENE_NAME_DOOR}
         scale={[groupScale, groupScale, groupScale]}
         rotation-y={MathUtils.degToRad(-90)}
         position={[-3.6, 0.002, 4.2]}
@@ -80,7 +95,10 @@ const Door = React.memo(
         </mesh>
 
         {/* 扉 */}
-        <group name="door-container" position={[1.2, 0, 5.9]}>
+        <group
+          name={HOME_WORLD_SCENE_NAME_DOOR_CONTAINER}
+          position={[1.2, 0, 5.9]}
+        >
           {/* ドアノブ */}
           <mesh
             name={nodes.handle.name}
@@ -139,7 +157,7 @@ const Door = React.memo(
         </mesh>
 
         <pointLight
-          name="door-light"
+          name={HOME_WORLD_SCENE_NAME_DOOR_LIGHT}
           power={50}
           color={COLOR_PALETTE.doorLight}
           distance={0.8}

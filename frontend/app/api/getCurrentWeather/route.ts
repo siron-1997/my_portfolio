@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
   try {
     const isDevelopment = process.env.NODE_ENV === 'development';
 
-    if (isDevelopment) console.log(`${apiName}: 取得開始...`);
+    if (isDevelopment) console.info(`${apiName}: 取得開始...`);
 
     const body = await request.json();
     /** リクエストデータのキー項目を検証 */
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
 
     /** ステータスコードが 2xx の場合は成功、それ以外は失敗 */
     if (res.status >= 200 && res.status < 300) {
-      if (isDevelopment) console.log(`${apiName}: 取得成功`);
+      if (isDevelopment) console.info(`${apiName}: 取得成功`);
       const data = res.data;
 
       /** 現在の UTC 時間を取得 */

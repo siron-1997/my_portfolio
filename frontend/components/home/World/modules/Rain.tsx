@@ -1,15 +1,16 @@
 'use client';
 
-import React, { type JSX,useEffect, useRef } from 'react';
+import React, { type JSX, useEffect, useRef } from 'react';
 
 import type { useCreateStore } from 'leva';
-import { buttonGroup,useControls } from 'leva';
+import { buttonGroup, useControls } from 'leva';
 
 import { COLOR_PALETTE } from '@/constants/colors';
 import { BREAK_POINTS, IS_DEV } from '@/constants/common';
 import {
   DEFAULT_WEATHER,
   HOME_WORLD_DEBUG_RAIN_CONTROLS,
+  WEATHER_DESCRIPTION_LIGHT_RAIN,
   WEATHER_DESCRIPTIONS_RAIN_HEAVY,
   WEATHER_DESCRIPTIONS_RAIN_LIGHT,
   WEATHER_DESCRIPTIONS_RAIN_NORMAL,
@@ -135,7 +136,7 @@ const Rain = React.memo(
         },
         false,
       );
-    }, [rainFall, levaStore]);
+    }, [rainFall, levaStore, defaults.visible, defaults.rainAmount]);
 
     useEffect(() => {
       /** canvas 要素・ウィンドウサイズがなければ何もしない */
@@ -160,7 +161,12 @@ const Rain = React.memo(
       const currentWeather: WeatherItem | undefined =
         weather.find((w) => WEATHER_TYPES.includes(w.main)) ??
         (IS_DEV
-          ? { id: 0, main: 'Rain', description: 'light rain', icon: '' }
+          ? {
+              id: 0,
+              main: 'Rain',
+              description: WEATHER_DESCRIPTION_LIGHT_RAIN,
+              icon: '',
+            }
           : undefined);
 
       if (!currentWeather) return;

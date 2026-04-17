@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 
 import { useFrame, useThree } from '@react-three/fiber';
 import type { useCreateStore } from 'leva';
-import { buttonGroup,useControls } from 'leva';
+import { buttonGroup, useControls } from 'leva';
 import { type PointLight, PointLightHelper } from 'three';
 
 import { COLOR_PALETTE } from '@/constants/colors';
@@ -17,6 +17,10 @@ import {
   HOME_WORLD_LIGHTNING_DEFAULT_THRESHOLD,
   HOME_WORLD_LIGHTNING_POSITION_UPDATE_THRESHOLD,
   HOME_WORLD_LIGHTNING_POWER_CONTINUATION_THRESHOLD,
+  HOME_WORLD_SCENE_NAME_LIGHTNING,
+  THUNDERSTORM_TYPE_HEAVY,
+  THUNDERSTORM_TYPE_LIGHT,
+  THUNDERSTORM_TYPE_NORMAL,
   WEATHER_DESCRIPTIONS_THUNDERSTORM_ALL,
   WEATHER_DESCRIPTIONS_THUNDERSTORM_HEAVY,
   WEATHER_DESCRIPTIONS_THUNDERSTORM_LIGHT,
@@ -177,11 +181,11 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
 
     /** デバッグ用の雷雨タイプが指定されている場合は、「天気の説明に基づく雷の発生パラメータ」を上書きする */
     switch (debugThunderstormType) {
-      case 'light':
+      case THUNDERSTORM_TYPE_LIGHT:
         return LIGHTNING_STATE_LIGHT;
-      case 'normal':
+      case THUNDERSTORM_TYPE_NORMAL:
         return LIGHTNING_STATE_NORMAL;
-      case 'heavy':
+      case THUNDERSTORM_TYPE_HEAVY:
         return LIGHTNING_STATE_HEAVY;
     }
 
@@ -264,11 +268,10 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
   useEffect(() => {
     if (!IS_DEV) return;
     levaStore.set({ '雷.debugVisible': defaults.visible }, false);
-  }, [currentWeather?.description, levaStore]);
-
+  }, [currentWeather?.description, levaStore, defaults.visible]);
   return (
     <pointLight
-      name="lightning"
+      name={HOME_WORLD_SCENE_NAME_LIGHTNING}
       color={COLOR_PALETTE.lightning}
       intensity={800000}
       distance={80}

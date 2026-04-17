@@ -1,6 +1,12 @@
 'use client';
 
-import React, { type JSX,type RefObject, useEffect, useMemo, useRef } from 'react';
+import React, {
+  type JSX,
+  type RefObject,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 
 import { BakeShadows } from '@react-three/drei';
 import type { useCreateStore } from 'leva';
@@ -25,11 +31,14 @@ import {
   HOME_WORLD_DEBUG_TIME_POINT_CONTROL,
   HOME_WORLD_DEBUG_WEATHER_CONFIGS,
   HOME_WORLD_DEBUG_WEATHER_DESCRIPTION_LABELS,
+  HOME_WORLD_SCENE_NAME_MODELS,
+  WEATHER_CATEGORY_CLEAR_SKY,
+  WEATHER_DESCRIPTION_CLEAR_SKY,
   WEATHER_TYPES,
 } from '@/constants/home';
 import { type OpenWeatherCurrentData, type WeatherItem } from '@/types/api';
 import { type TimePoint } from '@/types/api';
-import { getWeatherCategory, type WeatherCategory } from '@/utils/world/home';
+import { getWeatherCategory, type WeatherCategory } from '@/utils/world';
 
 type Props = {
   /** portal 要素の参照 Ref */
@@ -82,7 +91,7 @@ const Experience = React.memo(
         desc,
       )
         ? desc
-        : 'clear sky';
+        : WEATHER_DESCRIPTION_CLEAR_SKY;
     }, [currentWeather]);
 
     /** デバッグ用天気説明のオプションを取得 */
@@ -189,7 +198,7 @@ const Experience = React.memo(
 
     /** デバッグ上書き後の雲カテゴリ */
     const effectiveWeatherCategory = useMemo<WeatherCategory>(() => {
-      if (!effectiveCurrentWeather) return 'clearSky';
+      if (!effectiveCurrentWeather) return WEATHER_CATEGORY_CLEAR_SKY;
       /** デバッグ上書き後の天気説明に基づいて雲カテゴリを取得 */
       return getWeatherCategory(effectiveCurrentWeather.description);
     }, [effectiveCurrentWeather]);
@@ -240,7 +249,7 @@ const Experience = React.memo(
         />
 
         {/** メイン */}
-        <group name="models">
+        <group name={HOME_WORLD_SCENE_NAME_MODELS}>
           {/** 地形 */}
           <Model
             currentWeatherData={effectiveCurrentWeatherData}

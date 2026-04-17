@@ -1,11 +1,16 @@
 'use client';
 
-import React, { type JSX,useEffect, useMemo, useRef } from 'react';
+import React, { type JSX, useEffect, useMemo, useRef } from 'react';
 
 import { useTexture } from '@react-three/drei';
-import { extend, type ThreeElement, useFrame,useThree } from '@react-three/fiber';
+import {
+  extend,
+  type ThreeElement,
+  useFrame,
+  useThree,
+} from '@react-three/fiber';
 import type { useCreateStore } from 'leva';
-import { buttonGroup,useControls } from 'leva';
+import { buttonGroup, useControls } from 'leva';
 import {
   MathUtils,
   PlaneGeometry,
@@ -18,10 +23,12 @@ import {
 import { Water } from 'three/examples/jsm/objects/Water';
 
 import { COLOR_PALETTE } from '@/constants/colors';
+import { IS_DEV } from '@/constants/common';
 import {
   HOME_WORLD_DEBUG_OCEAN_CONTROLS,
   HOME_WORLD_OCEAN_GEOMETRY_SIZE,
   HOME_WORLD_OCEAN_TEXTURE_SIZE,
+  HOME_WORLD_SCENE_NAME_WATER,
   HOME_WORLD_WATER_NORMALS_TEXTURE,
 } from '@/constants/home';
 import { type OpenWeatherCurrentData } from '@/types/api';
@@ -75,8 +82,6 @@ type WaterConfig = {
   /** WebGL レンダラー */
   format: WebGLRenderer;
 };
-
-import { IS_DEV } from '@/constants/common';
 
 const Ocean = React.memo(
   ({ currentWeatherData, levaStore }: Props): JSX.Element => {
@@ -188,10 +193,14 @@ const Ocean = React.memo(
     useEffect(() => {
       if (!IS_DEV) return;
       levaStore.set({ '水面.debugVisible': defaults.visible }, false);
-    }, [currentWeatherData?.rain, levaStore]);
+    }, [currentWeatherData?.rain, levaStore, defaults.visible]);
 
     return (
-      <group name="water" visible={visible} position-y={-0.095}>
+      <group
+        name={HOME_WORLD_SCENE_NAME_WATER}
+        visible={visible}
+        position-y={-0.095}
+      >
         <water
           ref={ref}
           args={[geom, config]}

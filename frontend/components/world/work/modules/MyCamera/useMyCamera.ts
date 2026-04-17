@@ -1,9 +1,15 @@
 'use client';
 
-import { useEffect, useLayoutEffect,useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 import { useFrame, useThree } from '@react-three/fiber';
-import { Box3, type Euler, type PerspectiveCamera, Sphere,type Vector3 } from 'three';
+import {
+  Box3,
+  type Euler,
+  type PerspectiveCamera,
+  Sphere,
+  type Vector3,
+} from 'three';
 
 import {
   controlsAnimation,
@@ -118,6 +124,7 @@ const useMyCamera = ({
     modelChildren,
     portalRef,
     setIsNavigationVisible,
+     
     toggleButtonRef,
     width,
   ]);

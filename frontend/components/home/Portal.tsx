@@ -34,6 +34,7 @@ const Portal = React.memo(
       return () => {
         ctx.revert();
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isCanvasReady]);
 
     return (

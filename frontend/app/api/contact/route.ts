@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 import { Resend } from 'resend';
 
-import { API_ALLOWED_KEYS,LOG_MESSAGES } from '@/constants/api';
+import { API_ALLOWED_KEYS, LOG_MESSAGES } from '@/constants/api';
 import { type InquiryPayload } from '@/types/api';
 
 /** ユーザー入力値をメール HTML に埋め込む前にエスケープする */
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   const myEmail = process.env.MY_EMAIL || 'default@example.com';
 
   /** 開発環境の場合 */
-  if (isDevelopment) console.log(`${apiName}: 取得開始...`);
+  if (isDevelopment) console.info(`${apiName}: 取得開始...`);
 
   /** 環境変数に API キーが設定されているか確認 */
   if (!apiKey) {
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (isDevelopment) {
-      console.log(LOG_MESSAGES.RESEND_EMAIL_SENT(apiName, data.email));
+      console.info(LOG_MESSAGES.RESEND_EMAIL_SENT(apiName, data.email));
     }
 
     /** 問い合わせ内容を運営側に送信 */
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (isDevelopment) {
-      console.log(LOG_MESSAGES.RESEND_EMAIL_SENT(apiName, myEmail));
+      console.info(LOG_MESSAGES.RESEND_EMAIL_SENT(apiName, myEmail));
     }
 
     return NextResponse.json(

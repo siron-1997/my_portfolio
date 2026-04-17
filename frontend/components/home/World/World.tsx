@@ -22,7 +22,7 @@ import { Loading } from '@/components/common';
 import Experience from '@/components/home/World/Experience';
 import { Rain } from '@/components/home/World/modules';
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';
-import { DEFAULT_COORDINATES } from '@/constants/common';
+import { DEFAULT_COORDINATES, IS_DEV } from '@/constants/common';
 import { useGeolocation } from '@/hooks';
 import s from '@/styles/home/HomeWorld.module.css';
 import { type OpenWeatherCurrentData } from '@/types/api';
@@ -97,22 +97,17 @@ const World = React.memo(
             },
           },
         );
-
         /** 取得に成功したとき */
         if (res.data.success) {
           setCurrentWeatherData(res.data.data.data);
           setTimePoint(res.data.data.timePoint);
         } else {
           /** 取得に失敗したとき */
-          if (process.env.NODE_ENV === 'development') {
-            console.error('API response error:', res.data.message);
-          }
+          if (IS_DEV) console.error('API response error:', res.data.message);
         }
       } catch (error) {
         /** 取得中にエラーが発生した場合の処理 */
-        if (process.env.NODE_ENV === 'development') {
-          console.error('current weather data error', error);
-        }
+        if (IS_DEV) console.error('current weather data error', error);
       } finally {
         setHasWeatherFetched(true);
       }
@@ -133,7 +128,7 @@ const World = React.memo(
         {!isCanvasReady && <Loading isLoading />}
 
         {/** 開発環境のみ Leva デバッグパネルを表示。ヘッダー高さ分を下にオフセット */}
-        {process.env.NODE_ENV === 'development' &&
+        {IS_DEV &&
           createPortal(
             <LevaPanel
               store={levaStore}
@@ -157,7 +152,7 @@ const World = React.memo(
             onCreated={() => setIsCanvasReady(true)}
           >
             {/** 開発環境のみパフォーマンスモニターを表示。ヘッダー高さ分を下にオフセット */}
-            {process.env.NODE_ENV === 'development' && (
+            {IS_DEV && (
               <Perf
                 position="top-left"
                 style={{ top: '70px', position: 'fixed', zIndex: 9999 }}

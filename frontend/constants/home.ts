@@ -58,6 +58,29 @@ export const HOME_WORLD_THICK_CLOUD_TEXTURE =
  *  天気データデフォルト値
  * ============================================ */
 
+/** ============================================
+ *  環境光モデル種別
+ * ============================================ */
+
+/** 環境光モデル種別：山・ドアなどのシーンモデル */
+export const ENV_MAP_MODEL_TYPE_MODEL = 'model' as const;
+
+/** 環境光モデル種別：雲メッシュ */
+export const ENV_MAP_MODEL_TYPE_CLOUD = 'cloud' as const;
+
+/** ============================================
+ *  天気カテゴリ
+ * ============================================ */
+
+/** 天気カテゴリ：厚い雲（雨・霧・雷など視程に影響する天気全般） */
+export const WEATHER_CATEGORY_THICK_CLOUD = 'thickCloud' as const;
+
+/** 天気カテゴリ：薄い雲（少量〜中量の雲） */
+export const WEATHER_CATEGORY_THIN_CLOUD = 'thinCloud' as const;
+
+/** 天気カテゴリ：快晴 */
+export const WEATHER_CATEGORY_CLEAR_SKY = 'clearSky' as const;
+
 /** 天気のデフォルト値 */
 export const DEFAULT_WEATHER: WeatherItem[] = [
   { id: 0, main: 'Clear', description: 'clear sky', icon: '' },
@@ -646,6 +669,22 @@ export const HOME_WORLD_DEBUG_STAR_CONTROLS = {
   },
 };
 
+/** ============================================
+ *  雷雨タイプ
+ * ============================================ */
+
+/** なし（雷なし） */
+export const THUNDERSTORM_TYPE_NONE = 'none' as const;
+
+/** 軽い雷雨 */
+export const THUNDERSTORM_TYPE_LIGHT = 'light' as const;
+
+/** 普通の雷雨 */
+export const THUNDERSTORM_TYPE_NORMAL = 'normal' as const;
+
+/** 激しい雷雨 */
+export const THUNDERSTORM_TYPE_HEAVY = 'heavy' as const;
+
 /** Home World デバッグ用：太陽光コントロール */
 export const HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS = {
   color: { label: '太陽光の色' },
@@ -656,8 +695,13 @@ export const HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS = {
 export const HOME_WORLD_DEBUG_LIGHTNING_CONTROLS = {
   visible: { value: false, label: '雷表示' },
   thunderstormType: {
-    value: 'none',
-    options: ['none', 'light', 'normal', 'heavy'] as const,
+    value: THUNDERSTORM_TYPE_NONE,
+    options: [
+      THUNDERSTORM_TYPE_NONE,
+      THUNDERSTORM_TYPE_LIGHT,
+      THUNDERSTORM_TYPE_NORMAL,
+      THUNDERSTORM_TYPE_HEAVY,
+    ] as const,
     label: '雷雨タイプ',
   },
   occurrenceProbability: {
@@ -702,3 +746,73 @@ export const HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS = {
     label: '雨消去 角度 (°)',
   },
 };
+
+/** ============================================
+ *  シーンオブジェクト名（Three.js Object3D.name / R3F name prop）
+ * ============================================ */
+
+/** シーン全体のモデルグループ */
+export const HOME_WORLD_SCENE_NAME_MODELS = 'models' as const;
+
+/** カメラリグのコンテナグループ */
+export const HOME_WORLD_SCENE_NAME_CAMERA_CONTAINER =
+  'camera-container' as const;
+
+/** 山モデルのグループ */
+export const HOME_WORLD_SCENE_NAME_MOUNTAIN = 'mountain' as const;
+
+/** 雲グループ */
+export const HOME_WORLD_SCENE_NAME_CLOUDS = 'clouds' as const;
+
+/** 薄雲メッシュ */
+export const HOME_WORLD_SCENE_NAME_THIN_CLOUD = 'thin cloud' as const;
+
+/** 厚雲メッシュ */
+export const HOME_WORLD_SCENE_NAME_THICK_CLOUD = 'thick cloud' as const;
+
+/** 星のコンテナグループ */
+export const HOME_WORLD_SCENE_NAME_STAR_CONTAINER = 'star-container' as const;
+
+/** 星のポイントメッシュ */
+export const HOME_WORLD_SCENE_NAME_STAR = 'star' as const;
+
+/** 水面グループ */
+export const HOME_WORLD_SCENE_NAME_WATER = 'water' as const;
+
+/** ドアグループ */
+export const HOME_WORLD_SCENE_NAME_DOOR = 'Door' as const;
+
+/** ドアのコンテナグループ */
+export const HOME_WORLD_SCENE_NAME_DOOR_CONTAINER = 'door-container' as const;
+
+/** ドアのポイントライト */
+export const HOME_WORLD_SCENE_NAME_DOOR_LIGHT = 'door-light' as const;
+
+/** 環境キューブメッシュ */
+export const HOME_WORLD_SCENE_NAME_ENV_CUBE = 'env cube' as const;
+
+/** 雷のポイントライト */
+export const HOME_WORLD_SCENE_NAME_LIGHTNING = 'lightning' as const;
+
+/** 太陽光ヘルパー */
+export const HOME_WORLD_SCENE_NAME_SUN_LIGHT_HELPER =
+  'sun_light_helper' as const;
+
+/** ============================================
+ *  天気の説明（個別定数）
+ * ============================================ */
+
+/** 快晴 */
+export const WEATHER_DESCRIPTION_CLEAR_SKY = 'clear sky' as const;
+
+/** 少し曇り */
+export const WEATHER_DESCRIPTION_FEW_CLOUDS = 'few clouds' as const;
+
+/** 所々曇り */
+export const WEATHER_DESCRIPTION_SCATTERED_CLOUDS = 'scattered clouds' as const;
+
+/** 所々雲の切れ間が見える */
+export const WEATHER_DESCRIPTION_BROKEN_CLOUDS = 'broken clouds' as const;
+
+/** 小雨（弱い雨 / フォールバック用） */
+export const WEATHER_DESCRIPTION_LIGHT_RAIN = 'light rain' as const;

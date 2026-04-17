@@ -1,17 +1,21 @@
 'use client';
 
-import React, { type JSX,useEffect, useMemo } from 'react';
+import React, { type JSX, useEffect, useMemo } from 'react';
 
 import { useTexture } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import type { useCreateStore } from 'leva';
-import { buttonGroup,useControls } from 'leva';
+import { buttonGroup, useControls } from 'leva';
 import { FrontSide, MathUtils, RepeatWrapping, type Vector3 } from 'three';
 
 import { BREAK_POINTS, IS_DEV } from '@/constants/common';
 import {
   DEFAULT_WEATHER,
+  ENV_MAP_MODEL_TYPE_CLOUD,
   HOME_WORLD_DEBUG_CLOUD_CONTROLS,
+  HOME_WORLD_SCENE_NAME_CLOUDS,
+  HOME_WORLD_SCENE_NAME_THICK_CLOUD,
+  HOME_WORLD_SCENE_NAME_THIN_CLOUD,
   HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP,
   HOME_WORLD_THICK_CLOUD_CONFIG_MOBILE,
   HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE,
@@ -23,6 +27,8 @@ import {
   HOME_WORLD_THIN_CLOUD_GEOMETRY_SIZE,
   HOME_WORLD_THIN_CLOUD_OPACITY_DIVISOR,
   HOME_WORLD_THIN_CLOUD_TEXTURE,
+  WEATHER_CATEGORY_THICK_CLOUD,
+  WEATHER_CATEGORY_THIN_CLOUD,
   WEATHER_TYPES,
 } from '@/constants/home';
 import { useIsIos, useWindowSize } from '@/hooks';
@@ -32,7 +38,7 @@ import {
   getEnvMapIntensity,
   getWeatherCategory,
   type WeatherCategory,
-} from '@/utils/world/home';
+} from '@/utils/world';
 
 type CloudConfig = {
   /** デバイスに応じたスケール */
@@ -90,9 +96,9 @@ const Clouds = React.memo(
 
     /** 雲コントロールのデフォルト値 */
     const defaults = {
-      thinCloudVisible: weatherCategory === 'thinCloud',
+      thinCloudVisible: weatherCategory === WEATHER_CATEGORY_THIN_CLOUD,
       thinCloudOpacity: cloudsAll / HOME_WORLD_THIN_CLOUD_OPACITY_DIVISOR,
-      thickCloudVisible: weatherCategory === 'thickCloud',
+      thickCloudVisible: weatherCategory === WEATHER_CATEGORY_THICK_CLOUD,
       thickCloudOpacity: cloudsAll / HOME_WORLD_THICK_CLOUD_OPACITY_DIVISOR,
     };
 
@@ -160,7 +166,12 @@ const Clouds = React.memo(
 
     /** 環境光の輝度を取得 */
     const envMapIntensity = useMemo<number>(
-      () => getEnvMapIntensity(currentWeather!, timePoint, 'cloud'),
+      () =>
+        getEnvMapIntensity(
+          currentWeather!,
+          timePoint,
+          ENV_MAP_MODEL_TYPE_CLOUD,
+        ),
       [currentWeather, timePoint],
     );
 
@@ -221,13 +232,21 @@ const Clouds = React.memo(
         },
         false,
       );
-    }, [weatherCategory, cloudsAll, levaStore]);
+    }, [
+      weatherCategory,
+      cloudsAll,
+      levaStore,
+      defaults.thinCloudVisible,
+      defaults.thinCloudOpacity,
+      defaults.thickCloudVisible,
+      defaults.thickCloudOpacity,
+    ]);
 
     return (
-      <group name="clouds" renderOrder={2}>
+      <group name={HOME_WORLD_SCENE_NAME_CLOUDS} renderOrder={2}>
         {/* 薄雲 */}
         <mesh
-          name="thin cloud"
+          name={HOME_WORLD_SCENE_NAME_THIN_CLOUD}
           visible={thinCloudVisible}
           scale={thinCloudConfig.scale}
           position={thinCloudConfig.position}
@@ -259,7 +278,7 @@ const Clouds = React.memo(
 
         {/* 厚雲 */}
         <mesh
-          name="thick cloud"
+          name={HOME_WORLD_SCENE_NAME_THICK_CLOUD}
           visible={thickCloudVisible}
           scale={thickCloudConfig.scale}
           position={thickCloudConfig.position}

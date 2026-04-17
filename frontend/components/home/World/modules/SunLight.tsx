@@ -4,19 +4,28 @@ import React, { type JSX, useEffect, useMemo, useRef } from 'react';
 
 import { useFrame, useThree } from '@react-three/fiber';
 import type { useCreateStore } from 'leva';
-import { buttonGroup,useControls } from 'leva';
+import { buttonGroup, useControls } from 'leva';
 import { type DirectionalLight, DirectionalLightHelper } from 'three';
 
+import { IS_DEV } from '@/constants/common';
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';
 import {
   HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS,
   HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
   HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS,
+  HOME_WORLD_SCENE_NAME_SUN_LIGHT_HELPER,
   HOME_WORLD_SHADOW_CAMERA_HALF_SIZE,
   HOME_WORLD_SHADOW_MAP_SIZE,
+  WEATHER_CATEGORY_CLEAR_SKY,
+  WEATHER_CATEGORY_THICK_CLOUD,
+  WEATHER_CATEGORY_THIN_CLOUD,
+  WEATHER_DESCRIPTION_BROKEN_CLOUDS,
+  WEATHER_DESCRIPTION_CLEAR_SKY,
+  WEATHER_DESCRIPTION_FEW_CLOUDS,
+  WEATHER_DESCRIPTION_SCATTERED_CLOUDS,
 } from '@/constants/home';
 import { type TimePoint } from '@/types/api';
-import { type WeatherCategory } from '@/utils/world/home';
+import { type WeatherCategory } from '@/utils/world';
 
 type Props = {
   /** 天気カテゴリ */
@@ -32,10 +41,8 @@ type Props = {
   levaStore: ReturnType<typeof useCreateStore>;
 };
 
-import { IS_DEV } from '@/constants/common';
-
 /** 太陽光ヘルパーの名前 */
-const SUN_LIGHT_HELPER_NAME = 'sun_light_helper';
+const SUN_LIGHT_HELPER_NAME = HOME_WORLD_SCENE_NAME_SUN_LIGHT_HELPER;
 
 const SunLight = React.memo(
   ({
@@ -65,21 +72,21 @@ const SunLight = React.memo(
     const defaultSunIntensity = useMemo<number>(() => {
       const base = (() => {
         /** 厚雲の場合 */
-        if (weatherCategory === 'thickCloud') return 2.2;
+        if (weatherCategory === WEATHER_CATEGORY_THICK_CLOUD) return 2.2;
 
         /** それ以外の天気カテゴリの場合は、詳細な天気情報に基づいて強度を設定 */
         switch (currentWeatherDescription) {
           /** 所々雲の切れ間が見える */
-          case 'broken clouds':
+          case WEATHER_DESCRIPTION_BROKEN_CLOUDS:
             return 2.6;
           /** 所々曇り */
-          case 'scattered clouds':
+          case WEATHER_DESCRIPTION_SCATTERED_CLOUDS:
             return 3.0;
           /** 少し曇り */
-          case 'few clouds':
+          case WEATHER_DESCRIPTION_FEW_CLOUDS:
             return 3.4;
           /** 快晴 */
-          case 'clear sky':
+          case WEATHER_DESCRIPTION_CLEAR_SKY:
             return 3.6;
           default:
             return 0;
@@ -102,9 +109,9 @@ const SunLight = React.memo(
     /** 太陽光の色を天気カテゴリ・時間帯から計算する */
     const defaultSunColor = useMemo<string>(() => {
       const c = TIME_POINT_ENV_COLORS[timePoint];
-      if (weatherCategory === 'thickCloud') return c.thickCloud;
-      if (weatherCategory === 'thinCloud') return c.thinCloud;
-      if (weatherCategory === 'clearSky') return c.clearSky;
+      if (weatherCategory === WEATHER_CATEGORY_THICK_CLOUD) return c.thickCloud;
+      if (weatherCategory === WEATHER_CATEGORY_THIN_CLOUD) return c.thinCloud;
+      if (weatherCategory === WEATHER_CATEGORY_CLEAR_SKY) return c.clearSky;
       return c.clearSky;
     }, [weatherCategory, timePoint]);
 
@@ -175,7 +182,14 @@ const SunLight = React.memo(
         },
         false,
       );
-    }, [timePoint, weatherCategory, currentWeatherDescription, levaStore]);
+    }, [
+      timePoint,
+      weatherCategory,
+      currentWeatherDescription,
+      levaStore,
+      defaultSunColor,
+      defaultSunIntensity,
+    ]);
 
     /** ライトヘルパーの表示状態を leve コントロール値に同期する (開発環境のみ) */
     useEffect(() => {

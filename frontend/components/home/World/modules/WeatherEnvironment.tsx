@@ -6,6 +6,7 @@ import { Environment } from '@react-three/drei';
 import { BackSide } from 'three';
 
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';
+import { HOME_WORLD_SCENE_NAME_ENV_CUBE } from '@/constants/home';
 import { type TimePoint } from '@/types/api';
 
 type Props = {
@@ -16,7 +17,7 @@ type Props = {
 const WeatherEnvironment = React.memo(({ timePoint }: Props): JSX.Element => {
   return (
     <Environment background>
-      <mesh name="env cube">
+      <mesh name={HOME_WORLD_SCENE_NAME_ENV_CUBE}>
         <boxGeometry args={[200, 200, 200]} />
 
         <meshBasicMaterial

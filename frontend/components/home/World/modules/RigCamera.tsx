@@ -16,10 +16,11 @@ import { buttonGroup, useControls } from 'leva';
 import { Group, MathUtils, Mesh, Vector3 } from 'three';
 
 import { rigCameraAnimation } from '@/animations/home';
-import { BREAK_POINTS,IS_DEV } from '@/constants/common';
+import { BREAK_POINTS, IS_DEV } from '@/constants/common';
 import {
   HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS,
   HOME_WORLD_RIG_CAMERA_POSITIONS,
+  HOME_WORLD_SCENE_NAME_CAMERA_CONTAINER,
 } from '@/constants/home';
 import { useWindowSize } from '@/hooks';
 
@@ -316,7 +317,7 @@ const RigCamera = React.memo(
     ]);
 
     return (
-      <group name="camera-container" ref={ref}>
+      <group name={HOME_WORLD_SCENE_NAME_CAMERA_CONTAINER} ref={ref}>
         <CameraShake
           maxYaw={0.01}
           maxPitch={0.01}
