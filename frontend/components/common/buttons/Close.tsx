@@ -1,9 +1,12 @@
+'use client';
+
 import React, { type JSX } from 'react';
 import Image from 'next/image';
 
 import cn from 'classnames';
 
 import { useIconSize } from '@/hooks';
+import { CLOSE_ICON_PATH } from '@/constants/common';
 import s from '@/styles/common/button/Close.module.css';
 
 type Props = {
@@ -14,9 +17,6 @@ type Props = {
   onClose: () => void;
 };
 
-/** アイコン画像のファイルパス */
-const ICON_PATH = '/icons/close.svg';
-
 const Close = React.memo(({ className, onClose }: Props): JSX.Element => {
   /** アイコンサイズを取得 */
   const iconSize = useIconSize(35, 40, 50);
@@ -24,9 +24,16 @@ const Close = React.memo(({ className, onClose }: Props): JSX.Element => {
   const rootClassNames = cn(className, s.close);
 
   return (
-    <div className={rootClassNames} onClick={onClose}>
+    <div
+      className={rootClassNames}
+      onClick={onClose}
+      role="button"
+      tabIndex={0}
+      aria-label="閉じる"
+      onKeyDown={(e) => e.key === 'Enter' && onClose()}
+    >
       <Image
-        src={ICON_PATH}
+        src={CLOSE_ICON_PATH}
         alt="close"
         width={iconSize}
         height={iconSize}

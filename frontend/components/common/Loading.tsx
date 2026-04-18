@@ -1,10 +1,12 @@
 'use client';
 
-import React, { type JSX } from 'react';
+import React, { type JSX, useEffect } from 'react';
 import Image from 'next/image';
 
 import { useIconSize } from '@/hooks';
+import { LOADING_ICON_PATH } from '@/constants/common';
 import s from '@/styles/common/loading/PageLoading.module.css';
+import { disableScroll } from '@/utils';
 
 type Props = {
   /** ローディング中フラグ */
@@ -15,6 +17,11 @@ const Loading = React.memo(({ isLoading }: Props): JSX.Element => {
   /** アイコンサイズを取得 */
   const iconSize = useIconSize(70, 90, 110);
 
+  /** ローディング中はスクロールを禁止する */
+  useEffect(() => {
+    return disableScroll(isLoading ?? false);
+  }, [isLoading]);
+
   if (!isLoading) return <></>;
 
   return (
@@ -24,7 +31,7 @@ const Loading = React.memo(({ isLoading }: Props): JSX.Element => {
         <div className={s.loading_text}>Loading...</div>
         {/* アイコン */}
         <Image
-          src="/icons/circle_loading.svg"
+          src={LOADING_ICON_PATH}
           alt="loading"
           width={iconSize}
           height={iconSize}

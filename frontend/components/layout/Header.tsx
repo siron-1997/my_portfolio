@@ -14,7 +14,7 @@ import { Container } from '@/components/common';
 import { Hamburger } from '@/components/common';
 import { Navigation } from '@/components/layout';
 import { BREAK_POINTS } from '@/constants/common';
-import { useIconSize,useWindowSize } from '@/hooks';
+import { useIconSize, useWindowSize } from '@/hooks';
 import s from '@/styles/layout/Header.module.css';
 
 const Header = () => {
@@ -23,6 +23,7 @@ const Header = () => {
 
   /** アイコンサイズを取得 */
   const iconSize = useIconSize(40, 50, 50);
+
   /** ウィンドウ幅を取得 */
   const { width } = useWindowSize();
 
@@ -80,7 +81,7 @@ const Header = () => {
 
 type HeaderRowProps = {
   /** ウィンドウ幅 */
-  width: number | undefined;
+  width: number;
 
   /** アイコンサイズ */
   iconSize: number;
@@ -107,17 +108,14 @@ const HeaderRow = React.memo(
             </div>
           </Link>
 
-          {/* width が未定義の間は何も表示しない */}
-          {width !== undefined && (
-            <>
-              {/* モバイル・タブレットの場合はハンバーガーメニューを表示 */}
-              {width > BREAK_POINTS.SM ? (
-                <Navigation />
-              ) : (
-                <Hamburger iconSize={iconSize} onOpen={toggleDrawer} />
-              )}
-            </>
-          )}
+          <>
+            {/* モバイル・タブレットの場合はハンバーガーメニューを表示 */}
+            {width > BREAK_POINTS.SM ? (
+              <Navigation />
+            ) : (
+              <Hamburger iconSize={iconSize} onOpen={toggleDrawer} />
+            )}
+          </>
         </div>
       </Container>
     );

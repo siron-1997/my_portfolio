@@ -1,11 +1,11 @@
 'use client';
 
-import { useCallback,useEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useState } from 'react';
 
 import { BREAK_POINTS } from '@/constants/common';
 
 /**
- * ウィンドウ幅に応じたアイコンサイズを返すカスタムフック。
+ * ウィンドウ幅に応じたアイコンサイズを返すカスタムフック
  * ブレイクポイント（XS / SM）を基準に mb・tb・pc の 3 段階でサイズを切り替える。
  *
  * @param {number} mb - モバイル（ウィンドウ幅 < XS）時のアイコンサイズ（px）
@@ -17,8 +17,8 @@ import { BREAK_POINTS } from '@/constants/common';
  * const iconSize = useIconSize(35, 40, 50);
  */
 const useIconSize = (mb: number, tb: number, pc: number): number => {
-  /** アイコンサイズの状態 */
-  const [iconSize, setIconSize] = useState<number>(0);
+  /** アイコンサイズの状態。 */
+  const [iconSize, setIconSize] = useState<number>(mb);
 
   const resize = useCallback((): void => {
     const width = window.innerWidth;
@@ -39,8 +39,7 @@ const useIconSize = (mb: number, tb: number, pc: number): number => {
     }
   }, [mb, tb, pc]);
 
-  useEffect(() => {
-    /** 初回レンダリング時に実行 */
+  useLayoutEffect(() => {
     resize();
     window.addEventListener('resize', resize);
 

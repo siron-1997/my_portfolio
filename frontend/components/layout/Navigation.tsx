@@ -9,10 +9,6 @@ import cn from 'classnames';
 import { SITE_MAP } from '@/constants/common';
 import s from '@/styles/layout/Navigation.module.css';
 
-/**
- * Navigation コンポーネントの Props。
- * ヘッダーとドロワーで共用するナビゲーションリンクリスト。
- */
 type Props = {
   /** ナビゲーション要素に追加するクラス名 */
   className?: string;
@@ -22,14 +18,11 @@ type Props = {
 };
 
 const Navigation = React.memo(({ className, closeDrawer }: Props) => {
-  /** クラス名を結合 */
   const classNames = cn(className, s.navigation);
 
   /** リンククリック時にドロワーを閉じる */
   const handleClick = useCallback(() => {
-    if (!closeDrawer) {
-      return;
-    }
+    if (!closeDrawer) return;
     closeDrawer();
   }, [closeDrawer]);
 

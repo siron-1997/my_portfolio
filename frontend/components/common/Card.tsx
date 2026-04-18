@@ -20,13 +20,13 @@ import s from '@/styles/common/Card.module.css';
 import p from '@/styles/page.module.css';
 
 type Props = {
-  /** image */
+  /** カード画像の URL */
   image?: string;
 
-  /** link */
+  /** リンク先のパス */
   link?: string;
 
-  /** alt */
+  /** 画像の代替テキスト */
   alt?: string;
 
   /** カードのタイトル */
@@ -102,8 +102,6 @@ const CustomCard = React.memo(
                 width={pointWidth}
                 height={pointHeight}
                 quality={100}
-                placeholder="blur"
-                blurDataURL={image}
               />
             </Link>
           </CardMedia>

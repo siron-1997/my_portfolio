@@ -1,11 +1,20 @@
 .page_loading {
   display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   top: 0;
+  bottom: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  right: 0;
   z-index: 9999;
+  background: radial-gradient(
+    circle,
+    #090e37 7%,
+    #1b073d 51%,
+    #1e0928 84%,
+    #150624 100%
+  );
 }
 
 .page_loading_container {
@@ -14,6 +23,7 @@
   align-items: center;
   gap: 20px;
 }
+
 .loading_text {
   font-size: 35px;
   font-weight: 700;
@@ -21,19 +31,6 @@
   color: #fff;
   opacity: 0.9;
   margin-bottom: 12px;
-}
-
-.page_loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 8500;
-  background: radial-gradient(circle, #090e37 7%, #1b073d 51%, #1e0928 84%, #150624 100%);
 }
 
 @media screen and (min-width: 768px) {

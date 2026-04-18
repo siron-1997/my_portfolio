@@ -1,19 +1,12 @@
 'use client';
 
-import React, { type JSX,useCallback, useEffect, useState } from 'react';
+import React, { type JSX, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 
+import { SCROLL_TO_TOP_ICON_PATH } from '@/constants/common';
 import s from '@/styles/common/button/ScrollToTop.module.css';
 
-type Props = {
-  /** isViewerActive */
-  isViewerActive: boolean;
-};
-
-/** アイコン画像のファイルパス */
-const ICON_PATH = '/icons/keyboard_arrow_up_24.svg';
-
-const ScrollToTop = React.memo(({ isViewerActive }: Props): JSX.Element => {
+const ScrollToTop = React.memo((): JSX.Element => {
   /** ボタンの表示フラグ */
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
@@ -42,13 +35,14 @@ const ScrollToTop = React.memo(({ isViewerActive }: Props): JSX.Element => {
       className={s.scroll_to_top}
       onClick={handleScrollToTop}
       style={{
-        zIndex: isViewerActive ? 0 : 1000,
+        zIndex: 1000,
         opacity: isVisible ? 1 : 0,
+        pointerEvents: isVisible ? 'auto' : 'none',
         transition: 'all 0.25s',
       }}
     >
       <Image
-        src={ICON_PATH}
+        src={SCROLL_TO_TOP_ICON_PATH}
         alt="Move To Top"
         width={25}
         height={25}

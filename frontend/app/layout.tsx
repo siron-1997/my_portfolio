@@ -182,7 +182,7 @@ export default function RootLayout({
         <ThemeProviderWrapper notoSansJP={notoSansJP} roboto={roboto}>
           <main>{children}</main>
         </ThemeProviderWrapper>
-        <ScrollToTop isViewerActive={false} />
+        <ScrollToTop />
         <Footer />
       </body>
     </html>

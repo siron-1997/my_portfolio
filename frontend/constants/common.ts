@@ -1,4 +1,8 @@
-import { type GsapAnimationConfig,type SiteMapItem, type Sns } from '@/types/common';
+import {
+  type GsapAnimationConfig,
+  type SiteMapItem,
+  type Sns,
+} from '@/types/common';
 
 /** 開発環境フラグ */
 export const IS_DEV = process.env.NODE_ENV === 'development';
@@ -27,6 +31,12 @@ export const SITE_MAP: SiteMapItem[] = [
   { href: '/works', title: 'Works' },
   { href: '/contact', title: 'Contact' },
 ];
+
+/** アイコン画像のファイルパス */
+export const LOADING_ICON_PATH = '/icons/circle_loading.svg';
+export const CLOSE_ICON_PATH = '/icons/close.svg';
+export const HAMBURGER_ICON_PATH = '/icons/hamburger.svg';
+export const SCROLL_TO_TOP_ICON_PATH = '/icons/keyboard_arrow_up_24.svg';
 
 /**  SNSリスト */
 export const SNS_LIST: Sns[] = [

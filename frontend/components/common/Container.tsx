@@ -2,10 +2,6 @@ import cn from 'classnames';
 
 import s from '@/styles/common/Container.module.css';
 
-/**
- * Container コンポーネントの Props。
- * ページコンテンツの最大幅やパディングを統一するラッパー要素。
- */
 type Props = {
   /** コンテナ内に表示する子要素 */
   children?: React.ReactNode;

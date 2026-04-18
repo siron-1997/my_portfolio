@@ -14,8 +14,10 @@ const Footer = React.memo(() => {
 
   /** サイト公開年（著作権表記の開始年） */
   const startYear = 2023;
+
   /** 現在の年（ビルド時ではなくレンダリング時に評価される） */
   const currentYear = new Date().getFullYear();
+
   /** 著作権表記。開始年と現在年が異なる場合は範囲表記にする */
   const copyright =
     currentYear === startYear
@@ -44,6 +46,7 @@ const Footer = React.memo(() => {
               </a>
             ))}
           </div>
+
           <div className={s.copyright}>
             <p>
               {'\u00A9'} {copyright}
