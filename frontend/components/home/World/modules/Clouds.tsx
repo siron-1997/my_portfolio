@@ -4,8 +4,7 @@ import React, { type JSX, useEffect, useMemo } from 'react';
 
 import { useTexture } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import type { useCreateStore } from 'leva';
-import { buttonGroup, useControls } from 'leva';
+import { buttonGroup, type useCreateStore, useControls } from 'leva';
 import { FrontSide, MathUtils, RepeatWrapping, type Vector3 } from 'three';
 
 import { BREAK_POINTS, IS_DEV } from '@/constants/common';
@@ -32,8 +31,7 @@ import {
   WEATHER_TYPES,
 } from '@/constants/home';
 import { useIsIos, useWindowSize } from '@/hooks';
-import { type OpenWeatherCurrentData } from '@/types/api';
-import { type TimePoint } from '@/types/api';
+import { type OpenWeatherCurrentData, type TimePoint } from '@/types/api';
 import {
   getEnvMapIntensity,
   getWeatherCategory,
@@ -168,7 +166,7 @@ const Clouds = React.memo(
     const envMapIntensity = useMemo<number>(
       () =>
         getEnvMapIntensity(
-          currentWeather!,
+          currentWeather ?? DEFAULT_WEATHER[0],
           timePoint,
           ENV_MAP_MODEL_TYPE_CLOUD,
         ),

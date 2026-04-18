@@ -9,8 +9,7 @@ import {
   useFrame,
   useThree,
 } from '@react-three/fiber';
-import type { useCreateStore } from 'leva';
-import { buttonGroup, useControls } from 'leva';
+import { buttonGroup, type useCreateStore, useControls } from 'leva';
 import {
   MathUtils,
   PlaneGeometry,

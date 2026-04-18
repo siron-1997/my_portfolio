@@ -67,7 +67,7 @@ const Works = React.memo(({ data }: Props): JSX.Element => {
             <Link href="/works">
               <Typography
                 variant="navigation"
-                sx={{ fontSize: { xs: 18, sm: 20, fontWeight: 700 } }}
+                sx={{ fontSize: { xs: 18, sm: 20 }, fontWeight: 700 }}
               >
                 {HOME_WORKS_LEARN_MORE}
               </Typography>

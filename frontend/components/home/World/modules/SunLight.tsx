@@ -1,11 +1,20 @@
 'use client';
 
-import React, { type JSX, useEffect, useMemo, useRef } from 'react';
+import React, {
+  type JSX,
+  type RefObject,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 
-import { useFrame, useThree } from '@react-three/fiber';
-import type { useCreateStore } from 'leva';
-import { buttonGroup, useControls } from 'leva';
-import { type DirectionalLight, DirectionalLightHelper } from 'three';
+import { useHelper } from '@react-three/drei';
+import { buttonGroup, type useCreateStore, useControls } from 'leva';
+import {
+  type DirectionalLight,
+  DirectionalLightHelper,
+  type Object3D,
+} from 'three';
 
 import { IS_DEV } from '@/constants/common';
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';
@@ -13,9 +22,20 @@ import {
   HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS,
   HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
   HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS,
-  HOME_WORLD_SCENE_NAME_SUN_LIGHT_HELPER,
+  HOME_WORLD_SHADOW_CAMERA_FAR,
   HOME_WORLD_SHADOW_CAMERA_HALF_SIZE,
+  HOME_WORLD_SHADOW_CAMERA_NEAR,
   HOME_WORLD_SHADOW_MAP_SIZE,
+  HOME_WORLD_SHADOW_NORMAL_BIAS,
+  HOME_WORLD_SHADOW_RADIUS,
+  HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_BROKEN_CLOUDS,
+  HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_CLEAR_SKY,
+  HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_FEW_CLOUDS,
+  HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_SCATTERED_CLOUDS,
+  HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_THICK_CLOUD,
+  HOME_WORLD_SUN_LIGHT_INTENSITY_OFFSET_LUNCH,
+  HOME_WORLD_SUN_LIGHT_INTENSITY_OFFSET_NIGHT,
+  HOME_WORLD_SUN_LIGHT_POSITION,
   WEATHER_CATEGORY_CLEAR_SKY,
   WEATHER_CATEGORY_THICK_CLOUD,
   WEATHER_CATEGORY_THIN_CLOUD,
@@ -41,9 +61,6 @@ type Props = {
   levaStore: ReturnType<typeof useCreateStore>;
 };
 
-/** 太陽光ヘルパーの名前 */
-const SUN_LIGHT_HELPER_NAME = HOME_WORLD_SCENE_NAME_SUN_LIGHT_HELPER;
-
 const SunLight = React.memo(
   ({
     weatherCategory,
@@ -52,42 +69,29 @@ const SunLight = React.memo(
     levaStore,
   }: Props): JSX.Element => {
     /** 太陽光の参照 Ref */
-    const ref = useRef<DirectionalLight | null>(null);
-
-    /** シーンの参照 */
-    const scene = useThree((state) => state.scene);
-
-    /** ライトヘルパーの更新（開発環境のみ） */
-    useFrame(() => {
-      if (!IS_DEV) return;
-
-      const helper = scene.getObjectByName(
-        SUN_LIGHT_HELPER_NAME,
-      ) as DirectionalLightHelper;
-
-      helper?.update();
-    });
+    const ref = useRef<DirectionalLight>(null);
 
     /** 太陽光の輝度を天気・時間帯から計算する */
     const defaultSunIntensity = useMemo<number>(() => {
       const base = (() => {
         /** 厚雲の場合 */
-        if (weatherCategory === WEATHER_CATEGORY_THICK_CLOUD) return 2.2;
+        if (weatherCategory === WEATHER_CATEGORY_THICK_CLOUD)
+          return HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_THICK_CLOUD;
 
         /** それ以外の天気カテゴリの場合は、詳細な天気情報に基づいて強度を設定 */
         switch (currentWeatherDescription) {
           /** 所々雲の切れ間が見える */
           case WEATHER_DESCRIPTION_BROKEN_CLOUDS:
-            return 2.6;
+            return HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_BROKEN_CLOUDS;
           /** 所々曇り */
           case WEATHER_DESCRIPTION_SCATTERED_CLOUDS:
-            return 3.0;
+            return HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_SCATTERED_CLOUDS;
           /** 少し曇り */
           case WEATHER_DESCRIPTION_FEW_CLOUDS:
-            return 3.4;
+            return HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_FEW_CLOUDS;
           /** 快晴 */
           case WEATHER_DESCRIPTION_CLEAR_SKY:
-            return 3.6;
+            return HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_CLEAR_SKY;
           default:
             return 0;
         }
@@ -98,9 +102,9 @@ const SunLight = React.memo(
         case 'evening':
           return base;
         case 'night':
-          return base + 0.6;
+          return base + HOME_WORLD_SUN_LIGHT_INTENSITY_OFFSET_NIGHT;
         case 'lunch':
-          return base - 0.8;
+          return base - HOME_WORLD_SUN_LIGHT_INTENSITY_OFFSET_LUNCH;
         default:
           return 0;
       }
@@ -152,24 +156,18 @@ const SunLight = React.memo(
     /** 太陽光の輝度 */
     const intensity = IS_DEV ? debugIntensity : defaultSunIntensity;
 
-    /** ライトヘルパーを生成してシーンに追加 (開発環境のみ) */
+    /** 太陽光ヘルパー（開発環境のみ） */
+    const sunLightHelperRef = useHelper(
+      IS_DEV ? (ref as RefObject<Object3D>) : null,
+      DirectionalLightHelper,
+      HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
+    );
+
+    /** ライトヘルパーの表示状態を leva コントロール値に同期する (開発環境のみ) */
     useEffect(() => {
-      if (!IS_DEV || !ref.current) return;
-
-      /** 太陽光ヘルパー */
-      const helper = new DirectionalLightHelper(
-        ref.current,
-        HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
-      );
-      helper.name = SUN_LIGHT_HELPER_NAME;
-      helper.visible = true;
-      scene.add(helper);
-
-      return () => {
-        scene.remove(helper);
-        helper.dispose();
-      };
-    }, [scene]);
+      if (!IS_DEV || !sunLightHelperRef.current) return;
+      sunLightHelperRef.current.visible = helperVisible;
+    }, [sunLightHelperRef, helperVisible]);
 
     /** 時間帯・天気が変わったときに太陽光の色と輝度をリセットする (開発環境のみ) */
     useEffect(() => {
@@ -191,33 +189,25 @@ const SunLight = React.memo(
       defaultSunIntensity,
     ]);
 
-    /** ライトヘルパーの表示状態を leve コントロール値に同期する (開発環境のみ) */
-    useEffect(() => {
-      if (!IS_DEV) return;
-
-      const helper = scene.getObjectByName(SUN_LIGHT_HELPER_NAME);
-      if (helper) helper.visible = helperVisible;
-    }, [scene, helperVisible]);
-
     return (
       <directionalLight
         ref={ref}
         castShadow
         color={color}
         intensity={intensity}
-        position={[50, 50, 50]}
+        position={HOME_WORLD_SUN_LIGHT_POSITION}
         shadow-mapSize={[
           HOME_WORLD_SHADOW_MAP_SIZE,
           HOME_WORLD_SHADOW_MAP_SIZE,
         ]}
-        shadow-camera-near={1}
-        shadow-camera-far={100}
+        shadow-camera-near={HOME_WORLD_SHADOW_CAMERA_NEAR}
+        shadow-camera-far={HOME_WORLD_SHADOW_CAMERA_FAR}
         shadow-camera-left={-HOME_WORLD_SHADOW_CAMERA_HALF_SIZE}
         shadow-camera-right={HOME_WORLD_SHADOW_CAMERA_HALF_SIZE}
         shadow-camera-top={HOME_WORLD_SHADOW_CAMERA_HALF_SIZE}
         shadow-camera-bottom={-HOME_WORLD_SHADOW_CAMERA_HALF_SIZE}
-        shadow-radius={10}
-        shadow-normalBias={0.11}
+        shadow-radius={HOME_WORLD_SHADOW_RADIUS}
+        shadow-normalBias={HOME_WORLD_SHADOW_NORMAL_BIAS}
       />
     );
   },

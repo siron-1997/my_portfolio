@@ -2,8 +2,7 @@
 
 import React, { type JSX, useEffect, useRef } from 'react';
 
-import type { useCreateStore } from 'leva';
-import { buttonGroup, useControls } from 'leva';
+import { buttonGroup, type useCreateStore, useControls } from 'leva';
 
 import { COLOR_PALETTE } from '@/constants/colors';
 import { BREAK_POINTS, IS_DEV } from '@/constants/common';

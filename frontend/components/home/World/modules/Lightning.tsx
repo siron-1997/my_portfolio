@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { type RefObject, useEffect, useMemo, useRef } from 'react';
 
-import { useFrame, useThree } from '@react-three/fiber';
-import type { useCreateStore } from 'leva';
-import { buttonGroup, useControls } from 'leva';
-import { type PointLight, PointLightHelper } from 'three';
+import { useHelper } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import { buttonGroup, type useCreateStore, useControls } from 'leva';
+import { type PointLight, PointLightHelper, type Object3D } from 'three';
 
 import { COLOR_PALETTE } from '@/constants/colors';
 import { IS_DEV } from '@/constants/common';
@@ -15,7 +15,14 @@ import {
   HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
   HOME_WORLD_DEBUG_LIGHTNING_CONTROLS,
   HOME_WORLD_LIGHTNING_DEFAULT_THRESHOLD,
+  HOME_WORLD_LIGHTNING_LIGHT_DECAY,
+  HOME_WORLD_LIGHTNING_LIGHT_DEFAULT_POSITION,
+  HOME_WORLD_LIGHTNING_LIGHT_DISTANCE,
+  HOME_WORLD_LIGHTNING_LIGHT_INTENSITY,
   HOME_WORLD_LIGHTNING_POSITION_UPDATE_THRESHOLD,
+  HOME_WORLD_LIGHTNING_POSITION_X_RANGE,
+  HOME_WORLD_LIGHTNING_POSITION_Y,
+  HOME_WORLD_LIGHTNING_POSITION_Z_RANGE,
   HOME_WORLD_LIGHTNING_POWER_CONTINUATION_THRESHOLD,
   HOME_WORLD_SCENE_NAME_LIGHTNING,
   THUNDERSTORM_TYPE_HEAVY,
@@ -70,10 +77,7 @@ const LIGHTNING_STATE_HEAVY: LightningState = {
 
 const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
   /** 雷の参照 Ref */
-  const ref = useRef<PointLight | null>(null);
-
-  /** シーンの参照 */
-  const scene = useThree((state) => state.scene);
+  const ref = useRef<PointLight>(null);
 
   /** 天気情報リスト（API 成功時は取得値、未取得・失敗時はデフォルト値） */
   const weather = currentWeatherData?.weather ?? DEFAULT_WEATHER;
@@ -228,9 +232,13 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
        */
       if (ref.current.power < HOME_WORLD_LIGHTNING_POSITION_UPDATE_THRESHOLD) {
         ref.current.position.set(
-          occurrenceProbability.positionX(350),
-          5,
-          occurrenceProbability.positionZ(25),
+          occurrenceProbability.positionX(
+            HOME_WORLD_LIGHTNING_POSITION_X_RANGE,
+          ),
+          HOME_WORLD_LIGHTNING_POSITION_Y,
+          occurrenceProbability.positionZ(
+            HOME_WORLD_LIGHTNING_POSITION_Z_RANGE,
+          ),
         );
       }
       /** 発光輝度をランダムに設定する（大きい値は次フレームで収束処理が継続する） */
@@ -238,31 +246,23 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
     }
   });
 
-  /** ライトヘルパーを生成してシーンに追加 (開発環境のみ) */
-  useEffect(() => {
-    if (!IS_DEV || !ref.current) return;
-
-    const helper = new PointLightHelper(
-      ref.current,
-      HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
-    );
-    helper.name = 'lightning_helper';
-    helper.visible = true;
-    scene.add(helper);
-
-    return () => {
-      scene.remove(helper);
-      helper.dispose();
-    };
-  }, [scene]);
+  /**
+   * 雷ライトヘルパー（開発環境のみ生成）。
+   * IS_DEV が false のとき null を渡すことでヘルパーの生成を抑制する。
+   * update() と scene への追加/削除は useHelper が内部で自動管理する。
+   * React 19 で useRef<T>(null) の current が T | null 型になるため、drei の旧型定義との不一致を型アサーションで解消する。
+   */
+  const lightningHelperRef = useHelper(
+    IS_DEV ? (ref as RefObject<Object3D>) : null,
+    PointLightHelper,
+    HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
+  );
 
   /** ライトヘルパーの表示状態を leva コントロール値に同期 (開発環境のみ) */
   useEffect(() => {
-    if (!IS_DEV) return;
-
-    const helper = scene.getObjectByName('lightning_helper');
-    if (helper) helper.visible = helperVisible;
-  }, [helperVisible, scene]);
+    if (!IS_DEV || !lightningHelperRef.current) return;
+    lightningHelperRef.current.visible = helperVisible;
+  }, [lightningHelperRef, helperVisible]);
 
   /** 天気説明が変わったときに雷の表示状態をリセットする（開発環境のみ） */
   useEffect(() => {
@@ -273,10 +273,10 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
     <pointLight
       name={HOME_WORLD_SCENE_NAME_LIGHTNING}
       color={COLOR_PALETTE.lightning}
-      intensity={800000}
-      distance={80}
-      decay={2}
-      position={[-20, 70, -10]}
+      intensity={HOME_WORLD_LIGHTNING_LIGHT_INTENSITY}
+      distance={HOME_WORLD_LIGHTNING_LIGHT_DISTANCE}
+      decay={HOME_WORLD_LIGHTNING_LIGHT_DECAY}
+      position={HOME_WORLD_LIGHTNING_LIGHT_DEFAULT_POSITION}
       castShadow
       ref={ref}
     />

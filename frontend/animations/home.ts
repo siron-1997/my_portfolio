@@ -137,27 +137,24 @@ export const rigCameraAnimation = ({
       /** 雨を非表示にするドアの回転角しきい値（ラジアン） */
       const thresholdRad = MathUtils.degToRad(doorHideRainThresholdDeg);
 
-      /** スクロールダウン時 */
-      if (currentScrollTop > prevScrollTop) {
-        /** 扇の角度が 0° より大きく、かつ部屋のマテリアルがインスタンスの場合、部屋を表示 */
-        if (
-          door.rotation.y > MathUtils.degToRad(0) &&
-          room.material instanceof Material
-        ) {
-          room.material.opacity = 1;
-          room.material.needsUpdate = true;
-        }
+      /** スクロールダウン時で扉の角度が 0° より大きい場合 */
+      if (
+        currentScrollTop > prevScrollTop &&
+        door.rotation.y > MathUtils.degToRad(0) &&
+        room.material instanceof Material
+      ) {
+        room.material.opacity = 1;
+        room.material.needsUpdate = true;
+      }
 
-        /** スクロールアップ */
-      } else if (currentScrollTop < prevScrollTop) {
-        /** 扇の角度が 0°、かつ部屋のマテリアルがインスタンスの場合、部屋を非表示 */
-        if (
-          door.rotation.y === MathUtils.degToRad(0) &&
-          room.material instanceof Material
-        ) {
-          room.material.opacity = 0;
-          room.material.needsUpdate = true;
-        }
+      /** スクロールアップ時で扉の角度が 0° の場合 */
+      if (
+        currentScrollTop < prevScrollTop &&
+        door.rotation.y === MathUtils.degToRad(0) &&
+        room.material instanceof Material
+      ) {
+        room.material.opacity = 0;
+        room.material.needsUpdate = true;
       }
 
       /** 扇の回転角がしきい値を超えたときのみ屋内外状態の切り替えを通知する */
@@ -171,40 +168,37 @@ export const rigCameraAnimation = ({
     };
 
     /** カメラ位置アニメーション */
-    const cameraAnimation = gsap.timeline({
-      scrollTrigger: {
-        trigger: portal,
-        start: 'top',
-        markers: IS_DEV,
-        scrub: 0.7,
-        toggleActions: 'play pause resume pause',
-      },
-      defaults: {
-        duration: 0.7,
-        ease: 'power2.out',
-      },
-    });
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: portal,
+          start: 'top',
+          markers: IS_DEV,
+          scrub: 0.7,
+          toggleActions: 'play pause resume pause',
+        },
+        defaults: {
+          duration: 0.7,
+          ease: 'power2.out',
+        },
+      })
+      .fromTo(camera.position, { ...startPosition }, { ...endPosition });
 
     /** ドア開閉アニメーション */
-    const doorAnimation = gsap.timeline({
-      scrollTrigger: {
-        trigger: portal,
-        start: `${doorAnimStart}%`,
-        end: `${doorAnimEnd}%`,
-        markers: IS_DEV,
-        scrub: true,
-        toggleActions: 'play pause resume pause',
-      },
-    });
-
-    cameraAnimation.fromTo(
-      camera.position,
-      { ...startPosition },
-      { ...endPosition },
-    );
-    doorAnimation.to(door.rotation, {
-      y: MathUtils.degToRad(100),
-      onUpdate: () => handleDoorUpdate(),
-    });
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: portal,
+          start: `${doorAnimStart}%`,
+          end: `${doorAnimEnd}%`,
+          markers: IS_DEV,
+          scrub: true,
+          toggleActions: 'play pause resume pause',
+        },
+      })
+      .to(door.rotation, {
+        y: MathUtils.degToRad(100),
+        onUpdate: () => handleDoorUpdate(),
+      });
   }, ref);
 };

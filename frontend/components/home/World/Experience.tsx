@@ -9,8 +9,7 @@ import React, {
 } from 'react';
 
 import { BakeShadows } from '@react-three/drei';
-import type { useCreateStore } from 'leva';
-import { useControls } from 'leva';
+import { type useCreateStore, useControls } from 'leva';
 import { type Group } from 'three';
 
 import {
@@ -36,9 +35,19 @@ import {
   WEATHER_DESCRIPTION_CLEAR_SKY,
   WEATHER_TYPES,
 } from '@/constants/home';
-import { type OpenWeatherCurrentData, type WeatherItem } from '@/types/api';
-import { type TimePoint } from '@/types/api';
+import {
+  type OpenWeatherCurrentData,
+  type TimePoint,
+  type WeatherItem,
+} from '@/types/api';
 import { getWeatherCategory, type WeatherCategory } from '@/utils/world';
+
+/** デバッグ用天気説明のオプション（定数のため、コンポーネント外でモジュール単位でメモ化） */
+const WEATHER_DESCRIPTION_OPTIONS: Record<string, string> = Object.fromEntries(
+  Object.entries(HOME_WORLD_DEBUG_WEATHER_DESCRIPTION_LABELS).map(
+    ([desc, label]) => [label, desc],
+  ),
+);
 
 type Props = {
   /** portal 要素の参照 Ref */
@@ -94,17 +103,6 @@ const Experience = React.memo(
         : WEATHER_DESCRIPTION_CLEAR_SKY;
     }, [currentWeather]);
 
-    /** デバッグ用天気説明のオプションを取得 */
-    const weatherDescriptionOptions = useMemo<Record<string, string>>(
-      () =>
-        Object.fromEntries(
-          Object.entries(HOME_WORLD_DEBUG_WEATHER_DESCRIPTION_LABELS).map(
-            ([desc, label]) => [label, desc],
-          ),
-        ),
-      [],
-    );
-
     /** タイムポイント・天気コントロール（開発環境デバッグ用） */
     const {
       debugTimePoint,
@@ -122,7 +120,7 @@ const Experience = React.memo(
         /** API 取得済みの天気説明を初期値として設定する */
         debugWeatherDescription: {
           value: defaultWeatherDescription,
-          options: weatherDescriptionOptions,
+          options: WEATHER_DESCRIPTION_OPTIONS,
           label: '天気の説明',
         },
         /** 天気説明に対応する代表的な雲量を初期値として設定する */

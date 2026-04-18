@@ -85,18 +85,10 @@ const World = React.memo(
     /** 現在の天気情報を取得する処理 */
     const fetchCurrentWeatherData = useCallback(async (): Promise<void> => {
       try {
-        const res = await axios.post(
-          '/api/getCurrentWeather',
-          {
-            latitude: coordinates.latitude,
-            longitude: coordinates.longitude,
-          },
-          {
-            headers: {
-              'Cache-Control': 'max-age=3600',
-            },
-          },
-        );
+        const res = await axios.post('/api/getCurrentWeather', {
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+        });
         /** 取得に成功したとき */
         if (res.data.success) {
           setCurrentWeatherData(res.data.data.data);
@@ -117,6 +109,11 @@ const World = React.memo(
       /** 位置情報の共有操作が完了していない場合は取得を中断 */
       if (!isPermissionHandled) return;
       fetchCurrentWeatherData();
+
+      /** 1時間ごとに天気情報を再取得する */
+      const intervalId = setInterval(fetchCurrentWeatherData, 60 * 60 * 1000);
+
+      return () => clearInterval(intervalId);
     }, [isPermissionHandled, fetchCurrentWeatherData]);
 
     /** 天気情報取得前はローディングを表示 */

@@ -11,8 +11,7 @@ import React, {
 
 import { CameraShake } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import type { useCreateStore } from 'leva';
-import { buttonGroup, useControls } from 'leva';
+import { buttonGroup, type useCreateStore, useControls } from 'leva';
 import { Group, MathUtils, Mesh, Vector3 } from 'three';
 
 import { rigCameraAnimation } from '@/animations/home';
@@ -21,6 +20,9 @@ import {
   HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS,
   HOME_WORLD_RIG_CAMERA_POSITIONS,
   HOME_WORLD_SCENE_NAME_CAMERA_CONTAINER,
+  HOME_WORLD_SCENE_NAME_DOOR_CONTAINER,
+  HOME_WORLD_SCENE_NAME_MODELS,
+  HOME_WORLD_SCENE_NAME_ROOM,
 } from '@/constants/home';
 import { useWindowSize } from '@/hooks';
 
@@ -53,6 +55,7 @@ const RigCamera = React.memo(
 
     /** シーンの参照 */
     const scene = useThree((state) => state.scene);
+
     /** カメラの参照 */
     const camera = useThree((state) => state.camera);
 
@@ -197,23 +200,31 @@ const RigCamera = React.memo(
       { store: levaStore },
     );
 
-    /**
-     * debugRainHideThreshold 変更時、現在のドア回転角と即時比較して雨表示状態を更新する（開発環境のみ）。
-     * useLayoutEffect による GSAP リセット後、スクラブが現在スクロール位置に追いつくまで 1 フレーム待つ。
-     */
     useEffect(() => {
       if (!IS_DEV) return;
+
+      /** ドアの回転角を取得して雨表示状態を更新 */
       const raf = requestAnimationFrame(() => {
         if (!doorRef.current) return;
+
+        /** ドアコンテナを取得 */
         const door = doorRef.current.children.find(
-          (c) => c instanceof Group && c.name === 'door-container',
+          (c) =>
+            c instanceof Group &&
+            c.name === HOME_WORLD_SCENE_NAME_DOOR_CONTAINER,
         );
+
         if (!(door instanceof Group)) return;
+
+        /** 雨表示状態を更新 */
         onInsideRoomChange(
           door.rotation.y >= MathUtils.degToRad(debugRainHideThreshold),
         );
       });
-      return () => cancelAnimationFrame(raf);
+
+      return () => {
+        cancelAnimationFrame(raf);
+      };
     }, [debugRainHideThreshold, doorRef, onInsideRoomChange]);
 
     /** ブレークポイント変更時にスライダーを当該 BP のデフォルト値にリセットする（開発環境のみ） */
@@ -240,15 +251,18 @@ const RigCamera = React.memo(
 
       /** シーン内のモデルグループを取得 */
       const models = scene.children.find(
-        (c) => c instanceof Group && c.name === 'models',
+        (c) => c instanceof Group && c.name === HOME_WORLD_SCENE_NAME_MODELS,
       );
 
-      /** 扉コンテナと部屋メッシュを取得（入口チェック済みのため optional chaining 不要） */
+      /** 扉コンテナを取得 */
       const door = doorRef.current.children.find(
-        (c) => c instanceof Group && c.name === 'door-container',
+        (c) =>
+          c instanceof Group && c.name === HOME_WORLD_SCENE_NAME_DOOR_CONTAINER,
       );
+
+      /** 部屋を取得 */
       const room = doorRef.current.children.find(
-        (c) => c instanceof Mesh && c.name === 'room',
+        (c) => c instanceof Mesh && c.name === HOME_WORLD_SCENE_NAME_ROOM,
       );
 
       if (
@@ -258,22 +272,33 @@ const RigCamera = React.memo(
       )
         return;
 
-      /** デバッグ上書きまたはブレークポイント定数からカメラ設定を決定する */
+      /** カメラの開始位置を取得 */
       const startPos = IS_DEV
         ? new Vector3(debugStartX, debugStartY, debugStartZ)
         : currentBpConfig.start.clone();
+
+      /** カメラの終了位置を取得 */
       const endPos = IS_DEV
         ? new Vector3(debugEndX, debugEndY, debugEndZ)
         : currentBpConfig.end.clone();
+
+      /** モデルのY座標を取得 */
       const modelsY = IS_DEV
         ? debugModelsOffsetY
         : currentBpConfig.modelsOffsetY;
+
+      /** ドアの開始位置を取得 */
       const doorStart = IS_DEV ? debugDoorStart : currentBpConfig.doorStart;
+
+      /** ドアの終了位置を取得 */
       const doorEnd = IS_DEV ? debugDoorEnd : currentBpConfig.doorEnd;
+
+      /** 雨表示の閾値を取得 */
       const rainThreshold = IS_DEV
         ? debugRainHideThreshold
         : HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS.rainHideThreshold.value;
 
+      /** カメラの位置を設定 */
       camera.position.copy(startPos);
       models.position.y = modelsY;
 

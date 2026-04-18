@@ -2,8 +2,7 @@
 
 import React, { type JSX, useEffect, useMemo } from 'react';
 
-import type { useCreateStore } from 'leva';
-import { buttonGroup, useControls } from 'leva';
+import { buttonGroup, type useCreateStore, useControls } from 'leva';
 import { MathUtils } from 'three';
 
 import { IS_DEV } from '@/constants/common';
@@ -15,8 +14,7 @@ import {
   HOME_WORLD_SCENE_NAME_STAR_CONTAINER,
 } from '@/constants/home';
 import { useIsIos } from '@/hooks';
-import { type OpenWeatherCurrentData } from '@/types/api';
-import { type TimePoint } from '@/types/api';
+import { type OpenWeatherCurrentData, type TimePoint } from '@/types/api';
 
 type Props = {
   /** Open Weather API から返される現在の天候データのレスポンス全体 */
@@ -44,10 +42,10 @@ const Star = React.memo(
 
       /**
        * IOS の場合
-       * TODO: 100 - opacity は 1 を超える可能性があるため、調査が必要
+       * 雲量に応じて星の透明度を 0〜1 の範囲で算出する（雲量100% で不透明度0）
        */
       if (isIos) {
-        return { size, opacity: Math.max(0, 100 - cloudAll) };
+        return { size, opacity: Math.max(0, (100 - cloudAll) / 100) };
       }
 
       /** 夜の場合は雲量に応じて徐々に星を見えにくくする */
@@ -118,12 +116,16 @@ const Star = React.memo(
 
     /** 表示状態 */
     const visible = IS_DEV ? debugVisible : defaults.visible;
+
     /** 星の色 */
     const color = IS_DEV ? debugColor : defaults.color;
+
     /** 星の透明度 */
     const opacity = IS_DEV ? debugOpacity : defaultParams.opacity;
+
     /** 星のサイズ */
     const size = IS_DEV ? debugSize : defaultParams.size;
+
     /** 星の数 */
     const count = IS_DEV ? debugCount : HOME_WORLD_DEFAULT_STAR_COUNT;
 

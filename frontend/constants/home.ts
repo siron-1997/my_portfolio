@@ -402,6 +402,73 @@ export const HOME_WORLD_SHADOW_MAP_SIZE = 512;
 /** 影のカメラ範囲（正方形の半サイズ） */
 export const HOME_WORLD_SHADOW_CAMERA_HALF_SIZE = 20;
 
+/** シャドウカメラのニアクリップ距離 */
+export const HOME_WORLD_SHADOW_CAMERA_NEAR = 1;
+
+/** シャドウカメラのファークリップ距離 */
+export const HOME_WORLD_SHADOW_CAMERA_FAR = 100;
+
+/** シャドウのぼかし半径 */
+export const HOME_WORLD_SHADOW_RADIUS = 10;
+
+/** シャドウのノーマルバイアス（セルフシャドウのアクネ抑制） */
+export const HOME_WORLD_SHADOW_NORMAL_BIAS = 0.11;
+
+/** 太陽光の位置 */
+export const HOME_WORLD_SUN_LIGHT_POSITION = [50, 50, 50] as const;
+
+/** ============================================
+ *  太陽光輝度パラメータ
+ * ============================================ */
+
+/** 太陽光輝度ベース：厚雲 */
+export const HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_THICK_CLOUD = 2.2;
+
+/** 太陽光輝度ベース：所々雲の切れ間（broken clouds） */
+export const HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_BROKEN_CLOUDS = 2.6;
+
+/** 太陽光輝度ベース：所々曇り（scattered clouds） */
+export const HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_SCATTERED_CLOUDS = 3.0;
+
+/** 太陽光輝度ベース：少し曇り（few clouds） */
+export const HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_FEW_CLOUDS = 3.4;
+
+/** 太陽光輝度ベース：快晴（clear sky） */
+export const HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_CLEAR_SKY = 3.6;
+
+/** 太陽光輝度オフセット：夜（夜の方が明るく補正） */
+export const HOME_WORLD_SUN_LIGHT_INTENSITY_OFFSET_NIGHT = 0.6;
+
+/** 太陽光輝度オフセット：昼（昼は暗く補正） */
+export const HOME_WORLD_SUN_LIGHT_INTENSITY_OFFSET_LUNCH = 0.8;
+
+/** ============================================
+ *  雷ライトパラメータ
+ * ============================================ */
+
+/** 雷ポイントライトの輝度 */
+export const HOME_WORLD_LIGHTNING_LIGHT_INTENSITY = 800000;
+
+/** 雷ポイントライトの有効距離 */
+export const HOME_WORLD_LIGHTNING_LIGHT_DISTANCE = 80;
+
+/** 雷ポイントライトの減衰係数 */
+export const HOME_WORLD_LIGHTNING_LIGHT_DECAY = 2;
+
+/** 雷ポイントライトのデフォルト位置 */
+export const HOME_WORLD_LIGHTNING_LIGHT_DEFAULT_POSITION = [
+  -20, 70, -10,
+] as const;
+
+/** 雷落下位置の X 軸分散範囲（positionX 関数の引数 v） */
+export const HOME_WORLD_LIGHTNING_POSITION_X_RANGE = 350;
+
+/** 雷落下位置の Z 軸分散範囲（positionZ 関数の引数 v） */
+export const HOME_WORLD_LIGHTNING_POSITION_Z_RANGE = 25;
+
+/** 雷落下位置の Y 座標 */
+export const HOME_WORLD_LIGHTNING_POSITION_Y = 5;
+
 /** 厚雲の最大不透明度を約 91% に抑えるための除数（iOS 以外で使用） */
 export const HOME_WORLD_THICK_CLOUD_OPACITY_DIVISOR = 110;
 
@@ -797,6 +864,9 @@ export const HOME_WORLD_SCENE_NAME_LIGHTNING = 'lightning' as const;
 /** 太陽光ヘルパー */
 export const HOME_WORLD_SCENE_NAME_SUN_LIGHT_HELPER =
   'sun_light_helper' as const;
+
+/** 部屋のメッシュ（ドアモデル内） */
+export const HOME_WORLD_SCENE_NAME_ROOM = 'room' as const;
 
 /** ============================================
  *  天気の説明（個別定数）
