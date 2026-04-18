@@ -7,7 +7,7 @@ import {
   POWER2_OUT_OPACITY_RIGHT_MOVE,
   POWER2_OUT_OPACITY_TOP_MOVE,
 } from '@/constants/common';
-import getScrollTriggerOption from '@/utils/gsap';
+import { getScrollTriggerOption } from '@/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 

@@ -9,11 +9,10 @@ import {
   POWER2_OUT_OPACITY_TOP_MOVE,
   IS_DEV,
 } from '@/constants/common';
-import getScrollTriggerOption from '@/utils/gsap';
+import { getScrollTriggerOption } from '@/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/** Portal セクションのアニメーションプロパティ */
 type PortalAnimationProps = {
   /** Portal のタイトル要素 */
   title: HTMLHeadingElement;
@@ -22,7 +21,6 @@ type PortalAnimationProps = {
   portalRef: React.RefObject<HTMLDivElement | null>;
 };
 
-/** Works セクションのアニメーションプロパティ */
 type WorksAnimationProps = {
   /** Works 見出し要素 */
   title: HTMLHeadingElement;
@@ -34,7 +32,6 @@ type WorksAnimationProps = {
   worksRef: React.RefObject<HTMLElement | null>;
 };
 
-/** カメラリグのスクロールアニメーションプロパティ */
 type RigCameraAnimationProps = {
   /** アニメーション開始カメラ座標 */
   startPosition: Vector3;
@@ -70,7 +67,12 @@ type RigCameraAnimationProps = {
   doorHideRainThresholdDeg: number;
 };
 
-/** Portal アニメーションの初期化処理 */
+/**
+ * Portal アニメーションの初期化処理
+ * ページ表示時にタイトルが上からフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
 export const portalAnimation = ({
   title,
   portalRef,
@@ -83,7 +85,12 @@ export const portalAnimation = ({
   }, portalRef);
 };
 
-/** Works アニメーションの初期化処理 */
+/**
+ * Works アニメーションの初期化処理
+ * ページ表示時にタイトルが上から、カードコンテナが左右交互にフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
 export const worksAnimation = ({
   title,
   cards,
@@ -110,6 +117,12 @@ export const worksAnimation = ({
   });
 };
 
+/**
+ * カメラリグのアニメーション初期化処理
+ * スクロールに応じてカメラが移動し、ドアが開閉するアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
 export const rigCameraAnimation = ({
   startPosition,
   endPosition,
