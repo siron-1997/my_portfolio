@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef,useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { BREAK_POINTS } from '@/constants/common';
 
@@ -34,7 +34,8 @@ type ImageSizeConfig = {
   xl3: ImageSize;
 };
 
-/** ウィンドウ幅に応じた画像表示サイズを返すカスタムフック
+/**
+ * ウィンドウ幅に応じた画像表示サイズを返すカスタムフック。
  *
  * 6 段階のブレイクポイント（sm / md / lg / xl / xl2 / xl3）に応じて `config` の対応サイズを返す。
  *

@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useRef,useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+import { IS_DEV } from '@/constants/common';
 
 /** 緯度・経度の座標ペア */
 type Coordinates = {
@@ -20,7 +22,8 @@ type GeolocationResult = {
   isPermissionHandled: boolean;
 };
 
-/** ブラウザの Geolocation API で現在地の座標を取得するカスタムフック
+/**
+ * ブラウザの Geolocation API で現在地の座標を取得するカスタムフック。
  *
  * 許可拒否・非対応ブラウザの場合は defaultCoordinates を使用する。
  *
@@ -58,7 +61,7 @@ const useGeolocation = (defaultCoordinates: Coordinates): GeolocationResult => {
         },
         /** 位置情報の取得に失敗した場合 */
         () => {
-          if (process.env.NODE_ENV === 'development') {
+          if (IS_DEV) {
             console.warn(
               '位置情報の取得に失敗しました。デフォルト値を使用します。',
             );
@@ -70,7 +73,7 @@ const useGeolocation = (defaultCoordinates: Coordinates): GeolocationResult => {
         },
       );
     } else {
-      if (process.env.NODE_ENV === 'development') {
+      if (IS_DEV) {
         console.warn(
           'このブラウザは位置情報をサポートしていません。デフォルト値を使用します。',
         );

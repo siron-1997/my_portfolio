@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * 現在のデバイスが iOS（iPad / iPhone / iPod）かどうかを判定するカスタムフック。
- * IE11 の誤検知防止のため MSStream プロパティを併用して判定する。
+ * iOS 13 以降の iPad は UA が macOS と同一になるため、
+ * `navigator.maxTouchPoints` を併用して判定する。
  *
  * @returns {boolean} iOS デバイスの場合 true
  *
@@ -16,11 +17,13 @@ const useIsIos = (): boolean => {
   const [isIos, setIsIos] = useState<boolean>(false);
 
   useEffect(() => {
-    /** MSStream は IE11 以下にのみ存在するプロパティで、iOS の誤検知防止に使用する */
-    const w = window as Window & { MSStream?: unknown };
-
-    /** iOS デバイスかどうかを判定 */
-    setIsIos(/iPad|iPhone|iPod/.test(navigator.userAgent) && !w.MSStream);
+    /** iOS デバイスかどうかを判定する。
+     * iOS 13+ の iPad は UA が "Macintosh" になるため、
+     * navigator.maxTouchPoints でタッチ対応を併せて確認する。 */
+    setIsIos(
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
+    );
   }, []);
 
   return isIos;
