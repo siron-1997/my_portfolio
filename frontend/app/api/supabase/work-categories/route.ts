@@ -1,17 +1,23 @@
 import { NextResponse } from 'next/server';
 
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/services/supabase';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
-
+/**
+ * 作品カテゴリ一覧を取得するAPIエンドポイント
+ * `v_work_categories` ビューから全カテゴリを取得して返す。
+ *
+ * @returns 作品カテゴリ一覧 JSON
+ */
 export async function GET() {
+  /** Supabase クエリの作成 */
   const { data, error } = await supabase.from('v_work_categories').select('*');
 
+  /** エラー発生 */
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json(data);

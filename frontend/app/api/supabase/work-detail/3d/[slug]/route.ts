@@ -1,18 +1,14 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import { IS_DEV } from '@/constants/common';
+import { supabase } from '@/services/supabase';
 
 export async function GET(req: NextRequest) {
   /** URL から slug を取得 */
   const { pathname } = req.nextUrl;
   const slug = pathname.split('/').pop();
 
-  if (process.env.NODE_ENV === 'development') {
+  if (IS_DEV) {
     console.info('API called with slug:', slug);
   }
 
@@ -26,10 +22,13 @@ export async function GET(req: NextRequest) {
     .eq('key', slug);
 
   if (error) {
-    if (process.env.NODE_ENV === 'development') {
+    if (IS_DEV) {
       console.error('Supabase error:', error);
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 },
+    );
   }
 
   /** model_url はプロキシ経由で配信するためレスポンスから除去する */
