@@ -21,7 +21,7 @@ portfolio_v2/
   └─ Next.js (frontend)
         ├─ Supabase    : works・カテゴリ等のデータ取得（View 経由）
         ├─ Strapi      : コンテンツ管理 API
-        ├─ SendGrid    : お問い合わせメール送信
+        ├─ Resend      : お問い合わせメール送信
         └─ OpenWeather : 天気情報取得（3D ワールド連携）
 ```
 
