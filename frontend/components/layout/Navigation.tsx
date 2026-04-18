@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { JSX } from 'react';
 import Link from 'next/link';
 
 import { Typography } from '@mui/material';
 import cn from 'classnames';
 
 import { SITE_MAP } from '@/constants/common';
-import s from '@/styles/layout/Navigation.module.css';
+import s from '@/styles/layout.module.css';
 
 type Props = {
   /** ナビゲーション要素に追加するクラス名 */
@@ -17,31 +17,27 @@ type Props = {
   closeDrawer?: () => void;
 };
 
-const Navigation = React.memo(({ className, closeDrawer }: Props) => {
-  const classNames = cn(className, s.navigation);
+const Navigation = React.memo(
+  ({ className, closeDrawer }: Props): JSX.Element => {
+    const classNames = cn(className, s.navigation);
 
-  /** リンククリック時にドロワーを閉じる */
-  const handleClick = useCallback(() => {
-    if (!closeDrawer) return;
-    closeDrawer();
-  }, [closeDrawer]);
-
-  return (
-    <nav className={classNames}>
-      <ul>
-        {SITE_MAP.map((item, i) => (
-          <li key={i}>
-            <Link href={item.href} onClick={handleClick} className={s.link}>
-              <Typography component="p" variant="p">
-                {item.title}
-              </Typography>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-});
+    return (
+      <nav className={classNames}>
+        <ul>
+          {SITE_MAP.map((item, i) => (
+            <li key={i}>
+              <Link href={item.href} onClick={closeDrawer} className={s.link}>
+                <Typography component="p" variant="p">
+                  {item.title}
+                </Typography>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    );
+  },
+);
 
 Navigation.displayName = 'Navigation';
 

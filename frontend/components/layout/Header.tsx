@@ -2,7 +2,7 @@
 
 import 'react-modern-drawer/dist/index.css';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { JSX, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,19 +10,15 @@ import { Close } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import Drawer from 'react-modern-drawer';
 
-import { Container } from '@/components/common';
-import { Hamburger } from '@/components/common';
+import { Container, Hamburger } from '@/components/common';
 import { Navigation } from '@/components/layout';
 import { BREAK_POINTS } from '@/constants/common';
-import { useIconSize, useWindowSize } from '@/hooks';
-import s from '@/styles/layout/Header.module.css';
+import { useWindowSize } from '@/hooks';
+import s from '@/styles/layout.module.css';
 
-const Header = () => {
+const Header = (): JSX.Element => {
   /** ドロワーの開閉状態 */
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  /** アイコンサイズを取得 */
-  const iconSize = useIconSize(40, 50, 50);
 
   /** ウィンドウ幅を取得 */
   const { width } = useWindowSize();
@@ -48,11 +44,7 @@ const Header = () => {
 
   return (
     <header className={s.header}>
-      <HeaderRow
-        width={width}
-        iconSize={iconSize}
-        toggleDrawer={toggleDrawer}
-      />
+      <HeaderRow width={width} toggleDrawer={toggleDrawer} />
 
       <Drawer
         open={isOpen}
@@ -66,8 +58,8 @@ const Header = () => {
           <IconButton aria-label="Close drawer" onClick={closeDrawer}>
             <Close
               sx={{
-                width: iconSize / 1.5,
-                height: iconSize / 1.5,
+                width: 33,
+                height: 33,
                 color: 'var(--navigation)',
               }}
             />
@@ -83,15 +75,12 @@ type HeaderRowProps = {
   /** ウィンドウ幅 */
   width: number;
 
-  /** アイコンサイズ */
-  iconSize: number;
-
   /** ドロワーの開閉を切り替える関数 */
   toggleDrawer: () => void;
 };
 
 const HeaderRow = React.memo(
-  ({ width, iconSize, toggleDrawer }: HeaderRowProps) => {
+  ({ width, toggleDrawer }: HeaderRowProps): JSX.Element => {
     return (
       <Container>
         <div className={s.header_row}>
@@ -113,7 +102,7 @@ const HeaderRow = React.memo(
             {width > BREAK_POINTS.SM ? (
               <Navigation />
             ) : (
-              <Hamburger iconSize={iconSize} onOpen={toggleDrawer} />
+              <Hamburger onOpen={toggleDrawer} />
             )}
           </>
         </div>

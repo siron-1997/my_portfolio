@@ -18,6 +18,7 @@ declare global {
   }
 }
 
+/** Noto Sans JP フォントの設定 */
 const notoSansJP = localFont({
   src: [
     {
@@ -53,6 +54,7 @@ const notoSansJP = localFont({
   display: 'swap',
 });
 
+/** Roboto フォントの設定 */
 const roboto = localFont({
   src: [
     { path: '../public/fonts/Roboto/Roboto-Black.woff2', weight: '900' },
@@ -69,8 +71,11 @@ const roboto = localFont({
   display: 'swap',
 });
 
+/** サイトオーナー名 */
 const myName = 'Junpei Oue';
+
 const xUserName = '@Jsiron2029';
+
 const imagePath = 'https://junpei-oue.vercel.app/og-image.jpg';
 
 export const metadata: Metadata = {
@@ -102,15 +107,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+type RootLayoutProps = {
   children: React.ReactNode;
-}>) {
+};
+
+export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
+  /** Google Analytics のトラッキングID */
   const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
 
   return (
-    <html suppressHydrationWarning={true} lang="ja">
+    <html suppressHydrationWarning lang="ja">
       <head>
         {/** Favicon 設定 */}
         <link
@@ -141,6 +147,8 @@ export default function RootLayout({
           content={COLOR_PALETTE.faviconTileColor}
         />
         <meta name="theme-color" content={COLOR_PALETTE.white} />
+
+        {/* Google Analytics の設定 */}
         {googleAnalyticsId && (
           <>
             <Script
@@ -165,25 +173,32 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className={`${notoSansJP.className} ${roboto.className}`}>
+
+      <body
+        suppressHydrationWarning
+        className={`${notoSansJP.className} ${roboto.className}`}
+      >
+        {/* ページ読み込み時のトップローダー */}
         <NextTopLoader
           color={APP_THEME_COLORS.navigation}
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}
-          crawl={true}
-          showSpinner={false}
+          crawl
+          showSpinner
           easing="ease"
           speed={200}
           shadow={`0 0 10px ${APP_THEME_COLORS.navigation},0 0 5px ${APP_THEME_COLORS.navigation}`}
           zIndex={9999}
         />
-        <Header />
+
+        {/* メイン */}
         <ThemeProviderWrapper notoSansJP={notoSansJP} roboto={roboto}>
+          <Header />
           <main>{children}</main>
+          <ScrollToTop />
+          <Footer />
         </ThemeProviderWrapper>
-        <ScrollToTop />
-        <Footer />
       </body>
     </html>
   );
