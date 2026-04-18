@@ -5,8 +5,7 @@ import {
   WEATHER_CATEGORY_THICK_CLOUD,
   WEATHER_CATEGORY_THIN_CLOUD,
 } from '@/constants/home';
-import { type TimePoint } from '@/types/api';
-import { type WeatherItem } from '@/types/api';
+import { type TimePoint, type WeatherItem } from '@/types/api';
 
 import getWeatherCategory from './getWeatherCategory';
 
@@ -22,7 +21,7 @@ type ModelType =
  * @param type - モデル種別
  * @returns {number} 補正後の環境光強度
  */
-const _setTimePointIntensity = (
+const setTimePointIntensity = (
   value: number,
   timePoint: TimePoint,
   type: ModelType,
@@ -68,7 +67,7 @@ const getEnvMapIntensity = (
   /** 天気カテゴリに応じて環境光強度を設定 */
   switch (category) {
     case WEATHER_CATEGORY_THICK_CLOUD:
-      return _setTimePointIntensity(
+      return setTimePointIntensity(
         type === ENV_MAP_MODEL_TYPE_MODEL
           ? 5.4
           : type === ENV_MAP_MODEL_TYPE_CLOUD
@@ -78,7 +77,7 @@ const getEnvMapIntensity = (
         type,
       );
     case WEATHER_CATEGORY_THIN_CLOUD:
-      return _setTimePointIntensity(
+      return setTimePointIntensity(
         type === ENV_MAP_MODEL_TYPE_MODEL
           ? 8.6
           : type === ENV_MAP_MODEL_TYPE_CLOUD
@@ -88,7 +87,7 @@ const getEnvMapIntensity = (
         type,
       );
     case WEATHER_CATEGORY_CLEAR_SKY:
-      return _setTimePointIntensity(
+      return setTimePointIntensity(
         type === ENV_MAP_MODEL_TYPE_MODEL ? 8.8 : 0,
         timePoint,
         type,
