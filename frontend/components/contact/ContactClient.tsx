@@ -78,20 +78,20 @@ const ContactClient = () => {
 
   return (
     <>
-      {/* 送信中の画面 */}
+      {/** 送信中の画面 */}
       <Sending isSending={formState.isSubmitting} />
 
       <div className="root_container">
         <Container className="top_container">
           <div className="container">
-            {/* フォームの進行状況 */}
+            {/** フォームの進行状況 */}
             <ProgressStatus
               formStep={state.formStep}
               isSubmitSuccessful={formState.isSubmitSuccessful}
               hasValidationError={state.hasValidationError}
             />
 
-            {/* フォーム本体 */}
+            {/** フォーム本体 */}
             <ContactForm
               register={register}
               formState={formState}

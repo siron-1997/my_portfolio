@@ -17,7 +17,7 @@ import {
   WEATHER_TYPES,
 } from '@/constants/home';
 import { useWindowSize } from '@/hooks';
-import s from '@/styles/home/HomeWorld.module.css';
+import s from '@/styles/home.module.css';
 import { type OpenWeatherCurrentData, type WeatherItem } from '@/types/api';
 import { type RainState, type RainStateResult } from '@/types/home';
 

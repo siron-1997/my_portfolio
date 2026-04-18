@@ -4,7 +4,7 @@ import React, { type JSX, useEffect } from 'react';
 
 import { portalAnimation } from '@/animations/home';
 import { HOME_PORTAL_TITLE } from '@/constants/home';
-import s from '@/styles/home/Portal.module.css';
+import s from '@/styles/home.module.css';
 
 type Props = {
   /** Portal セクションの参照 Ref */

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { JSX, useEffect, useRef } from 'react';
 
 import SchoolIcon from '@mui/icons-material/School';
 import WorkIcon from '@mui/icons-material/Work';
@@ -18,11 +18,15 @@ import {
 import { Typography } from '@mui/material';
 
 import { careerHistoryAnimation } from '@/animations/about';
-import { CAREER_HISTORIES } from '@/constants/about';
+import {
+  ABOUT_CAREER_HISTORY_ITEM_CLASS,
+  CAREER_HISTORIES,
+} from '@/constants/about';
+import { BREAK_POINTS } from '@/constants/common';
 import { useWindowSize } from '@/hooks';
-import s from '@/styles/about/CareerHistory.module.css';
+import s from '@/styles/about.module.css';
 
-const CareerHistory = React.memo(() => {
+const CareerHistory = React.memo((): JSX.Element => {
   /** 職務経歴の参照 Ref */
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -35,9 +39,9 @@ const CareerHistory = React.memo(() => {
     /** 職務経歴アニメーションの初期化 */
     const ctx = careerHistoryAnimation({
       elements: ref.current?.querySelectorAll(
-        '.career-history-item',
+        `.${ABOUT_CAREER_HISTORY_ITEM_CLASS}`,
       ) as NodeListOf<HTMLElement>,
-      careerHistoryRef: ref,
+      ref,
     });
 
     return () => {
@@ -46,12 +50,12 @@ const CareerHistory = React.memo(() => {
   }, []);
 
   return (
-    <div className={s.container} ref={ref}>
+    <div className={s.career_history_container} ref={ref}>
       <Timeline
         sx={{
           padding: 0,
           /** 年代表示エリアの幅を調整、モバイル表示時は非表示 */
-          ...(!(width && width <= 768) && {
+          ...(!(width && width <= BREAK_POINTS.XS) && {
             [`& .${timelineOppositeContentClasses.root}`]: {
               flex: 0,
               minWidth: '75px',
@@ -66,10 +70,10 @@ const CareerHistory = React.memo(() => {
         }}
       >
         {CAREER_HISTORIES.map((history, i) => (
-          <div key={i} className="career-history-item">
+          <div key={i} className={ABOUT_CAREER_HISTORY_ITEM_CLASS}>
             <TimelineItem>
               {/** 年 (PC表示時) */}
-              {!(width && width <= 768) && (
+              {!(width && width <= BREAK_POINTS.XS) && (
                 <TimelineOppositeContent
                   sx={{
                     py: '18px',
@@ -98,7 +102,7 @@ const CareerHistory = React.memo(() => {
               {/** 内容 (タイトルと説明) */}
               <TimelineContent sx={{ py: '12px', pl: 2, pr: 0 }}>
                 {/** 年 (モバイル表示時) */}
-                {width && width <= 768 && (
+                {width && width <= BREAK_POINTS.XS && (
                   <Typography component="p" variant="p" fontWeight="bold">
                     {history.year}
                   </Typography>

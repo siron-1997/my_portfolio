@@ -4,7 +4,7 @@ import React, { type JSX, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import { SCROLL_TO_TOP_ICON_PATH } from '@/constants/common';
-import s from '@/styles/common/button/ScrollToTop.module.css';
+import s from '@/styles/common.module.css';
 
 const ScrollToTop = React.memo((): JSX.Element => {
   /** ボタンの表示フラグ */

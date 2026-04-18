@@ -17,7 +17,6 @@ const FingerPress = () => {
     isFingerVisible,
     setIsFingerVisible,
     isViewerActive,
-    iconSize,
   } = useFingerPress();
 
   return (
@@ -27,12 +26,13 @@ const FingerPress = () => {
           ref={imageRef}
           src="/icons/finger_press_48x48.svg"
           alt="finger press"
-          width={iconSize}
-          height={iconSize}
+          width={95}
+          height={95}
           quality={1}
           onMouseDown={() => setIsFingerVisible(false)}
           onTouchStart={() => setIsFingerVisible(false)}
           style={{ display: !isFingerVisible ? 'none' : 'block' }}
+          className={s.icon}
         />
       ) : (
         <Typography component="p" sx={{ fontWeight: 600 }} ref={textRef}>

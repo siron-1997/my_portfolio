@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { JSX } from 'react';
 
 import cn from 'classnames';
 import { type FormState, type UseFormRegister } from 'react-hook-form';
 
 import Label from '@/components/contact/Label';
 import { type ContactFormValues } from '@/constants/contact';
-import s from '@/styles/contact/InputFields.module.css';
+import s from '@/styles/contact.module.css';
 import { type FormStep } from '@/types/contact';
 
 type Props = {
@@ -23,7 +23,12 @@ type Props = {
 };
 
 const InputFields = React.memo(
-  ({ register, formState, formStep, hasAttemptedAdvance }: Props) => {
+  ({
+    register,
+    formState,
+    formStep,
+    hasAttemptedAdvance,
+  }: Props): JSX.Element => {
     const { errors } = formState;
 
     /** 確認ステップかどうか */
@@ -61,7 +66,7 @@ const InputFields = React.memo(
 
     return (
       <>
-        {/* name (名前の入力フィールド) */}
+        {/** name (名前の入力フィールド) */}
         <div className={s.input_container}>
           <Label title="name" id="input-name" isConfirmStep={isConfirmStep} />
           <input
@@ -73,13 +78,13 @@ const InputFields = React.memo(
             {...register('name')}
           />
 
-          {/* 名前の入力エラー発生時に表示する */}
+          {/** 名前の入力エラー発生時に表示する */}
           {hasAttemptedAdvance && errors.name && (
             <div className={s.error}>{errors.name.message}</div>
           )}
         </div>
 
-        {/* email (メールの入力フィールド) */}
+        {/** email (メールの入力フィールド) */}
         <div className={s.input_container}>
           <Label
             title="E-mail"
@@ -95,13 +100,13 @@ const InputFields = React.memo(
             {...register('email')}
           />
 
-          {/* メールの入力エラー発生時に表示する */}
+          {/** メールの入力エラー発生時に表示する */}
           {hasAttemptedAdvance && errors.email && (
             <div className={s.error}>{errors.email.message}</div>
           )}
         </div>
 
-        {/* message (メッセージの入力フィールド) */}
+        {/** message (メッセージの入力フィールド) */}
         <div className={s.input_container}>
           <Label
             title="Message"

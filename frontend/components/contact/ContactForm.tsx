@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback,useEffect } from 'react';
+import React, { JSX, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 
 import { Typography } from '@mui/material';
@@ -22,7 +22,7 @@ import {
   type ContactFormValues,
   RESULT_MESSAGES,
 } from '@/constants/contact';
-import s from '@/styles/contact/ContactForm.module.css';
+import s from '@/styles/contact.module.css';
 import { type ContactFormAction, type FormStep } from '@/types/contact';
 
 type Props = {
@@ -57,7 +57,7 @@ const ContactForm = React.memo(
     dispatch,
     formStep,
     hasAttemptedAdvance,
-  }: Props) => {
+  }: Props): JSX.Element => {
     const classNames = cn(s.form_custom_container, 'shadow_container', {
       /** 最終ステップのときのみクラス名を適用 */
       [s.end_form]: formStep === 'RESULT',
@@ -158,7 +158,7 @@ const ContactForm = React.memo(
           className={classNames}
           style={{ backgroundColor: APP_THEME_COLORS.bgColor.dark.sub }}
         >
-          {/* 最終ステップ以外のときはフォームを表示 */}
+          {/** 最終ステップ以外のときはフォームを表示 */}
           {formStep !== 'RESULT' ? (
             <form className={s.form} onSubmit={onSubmit} name="form" noValidate>
               <InputFields
@@ -168,7 +168,7 @@ const ContactForm = React.memo(
                 hasAttemptedAdvance={hasAttemptedAdvance}
               />
               <div className={s.btn_container}>
-                {/* 確認ステップのときは修正・送信ボタンを表示 */}
+                {/** 確認ステップのときは修正・送信ボタンを表示 */}
                 {formStep === 'CONFIRM' ? (
                   <>
                     <Button type="button" onClick={handleGoBackToInput}>
@@ -188,19 +188,19 @@ const ContactForm = React.memo(
             /** 最終ステップのときは送信結果を表示 */
             <>
               <div className={s.txt_container}>
-                {/* 送信結果のメッセージタイトル */}
+                {/** 送信結果のメッセージタイトル */}
                 <Typography component="h3" variant="h3">
                   {result.title}
                 </Typography>
 
-                {/* 送信結果のメッセージ内容 */}
+                {/** 送信結果のメッセージ内容 */}
                 <Typography component="p" variant="p">
                   {result.description}
                 </Typography>
 
                 <br />
 
-                {/* 送信結果の補足メッセージ */}
+                {/** 送信結果の補足メッセージ */}
                 {result.notes.map((note) => (
                   <Typography key={note} component="p" variant="p">
                     {note}
@@ -208,7 +208,7 @@ const ContactForm = React.memo(
                 ))}
               </div>
 
-              {/* ホームへ戻るボタン */}
+              {/** ホームへ戻るボタン */}
               <div className={s.btn_container}>
                 <Link href="/">
                   <Button>{BUTTON_LABELS.BACK_HOME}</Button>

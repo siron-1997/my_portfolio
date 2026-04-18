@@ -1,12 +1,12 @@
 'use client';
 
-import React, { type JSX,useRef, useState } from 'react';
+import React, { type JSX, useRef, useState } from 'react';
 
 import { PageHeader } from '@/components/common';
 import Portal from '@/components/home/Portal';
 import Works from '@/components/home/Works';
 import { World } from '@/components/home/World';
-import s from '@/styles/home/index.module.css';
+import s from '@/styles/home.module.css';
 import { type WorkSummary } from '@/types/api';
 
 type Props = {

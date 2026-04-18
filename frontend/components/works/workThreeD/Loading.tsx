@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import Image from 'next/image';
 
 import cn from 'classnames';
 
 import { useWorkThreeDContext } from '@/contexts';
-import { useIconSize, useWindowSize } from '@/hooks';
+import { useWindowSize } from '@/hooks';
 import s from '@/styles/common/loading/ModelViewerLoading.module.css';
 import { disableScroll } from '@/utils';
 
@@ -15,10 +15,9 @@ const Loading = () => {
     state: { isLoading },
   } = useWorkThreeDContext();
   const { height } = useWindowSize();
-  const iconSize = useIconSize(150, 150, 150);
   const imageClassNames = cn('image_container', s.image_container);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const cleanup = disableScroll(isLoading);
     return () => {
       cleanup();
@@ -31,8 +30,8 @@ const Loading = () => {
         <Image
           src="/icons/model_viewer_loading.svg"
           alt="loading"
-          width={iconSize}
-          height={iconSize}
+          width={150}
+          height={150}
           quality={1}
           priority={true}
         />

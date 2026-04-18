@@ -1,27 +1,26 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { JSX, useEffect, useRef } from 'react';
 
 import { Typography } from '@mui/material';
 
 import { introductionAnimation } from '@/animations/about';
-import { INTRODUCTION } from '@/constants/about';
-import s from '@/styles/about/Introduction.module.css';
+import { ABOUT_INTRODUCTION_SECTION_ID, INTRODUCTION } from '@/constants/about';
+import s from '@/styles/about.module.css';
 
-const Introduction = React.memo(() => {
+const Introduction = React.memo((): JSX.Element => {
   /** 紹介セクションの参照 Ref */
   const ref = useRef<HTMLDivElement | null>(null);
-
-  /** 紹介セクションの ID */
-  const sectionId = 'about-introduction-section';
 
   useEffect(() => {
     if (!ref.current) return;
 
     /** 紹介セクションのアニメーションコンテキスト */
     const ctx = introductionAnimation({
-      section: ref.current.querySelector(`#${sectionId}`) as HTMLElement,
-      introductionRef: ref,
+      section: ref.current.querySelector(
+        `#${ABOUT_INTRODUCTION_SECTION_ID}`,
+      ) as HTMLElement,
+      ref,
     });
 
     return () => {
@@ -31,13 +30,13 @@ const Introduction = React.memo(() => {
 
   return (
     <div className={s.introduction} ref={ref}>
-      <section className={s.profile_text} id={sectionId}>
-        {/* 紹介タイトル */}
+      <section className={s.profile_text} id={ABOUT_INTRODUCTION_SECTION_ID}>
+        {/** 紹介タイトル */}
         <Typography component="h3" variant="h3">
           {INTRODUCTION.title}
         </Typography>
 
-        {/* 紹介説明 */}
+        {/** 紹介説明 */}
         <Typography component="p" variant="p">
           {INTRODUCTION.description}
         </Typography>

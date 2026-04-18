@@ -2,7 +2,7 @@ import { type JSX } from 'react';
 
 import cn from 'classnames';
 
-import s from '@/styles/common/button/Button.module.css';
+import s from '@/styles/common.module.css';
 
 type Props = {
   /** ボタンの種類 */

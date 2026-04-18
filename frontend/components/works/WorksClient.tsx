@@ -22,12 +22,12 @@ const WorksClient = React.memo(({ worksDatum, workCategoriesDatum }: Props) => {
 
   return (
     <>
-      {/* カテゴリフィルター */}
+      {/** カテゴリフィルター */}
       <CategoryFilter
         data={workCategoriesDatum}
         setSelectedCategories={setSelectedCategories}
       />
-      {/* コンテンツ表示 */}
+      {/** コンテンツ表示 */}
       <Contents data={worksDatum} selectedCategories={selectedCategories} />
     </>
   );

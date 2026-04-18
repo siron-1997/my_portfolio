@@ -8,6 +8,7 @@ import React, {
   Suspense,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
@@ -24,8 +25,9 @@ import { Rain } from '@/components/home/World/modules';
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';
 import { DEFAULT_COORDINATES, IS_DEV } from '@/constants/common';
 import { useGeolocation } from '@/hooks';
-import s from '@/styles/home/HomeWorld.module.css';
+import s from '@/styles/home.module.css';
 import { type OpenWeatherCurrentData } from '@/types/api';
+import { disableScroll } from '@/utils';
 import { type TimePoint } from '@/types/api';
 
 type Props = {
@@ -116,13 +118,18 @@ const World = React.memo(
       return () => clearInterval(intervalId);
     }, [isPermissionHandled, fetchCurrentWeatherData]);
 
+    /**  天気取得・Canvas 初期化いずれかが未完了の間スクロールを禁止する */
+    useLayoutEffect(() => {
+      return disableScroll(!hasWeatherFetched || !isCanvasReady);
+    }, [hasWeatherFetched, isCanvasReady]);
+
     /** 天気情報取得前はローディングを表示 */
-    if (!hasWeatherFetched) return <Loading isLoading />;
+    if (!hasWeatherFetched) return <Loading isLoading scrollLock={false} />;
 
     return (
       <>
         {/* Canvas の準備が完了していない場合もローディングを表示 */}
-        {!isCanvasReady && <Loading isLoading />}
+        {!isCanvasReady && <Loading isLoading scrollLock={false} />}
 
         {/** 開発環境のみ Leva デバッグパネルを表示。ヘッダー高さ分を下にオフセット */}
         {IS_DEV &&

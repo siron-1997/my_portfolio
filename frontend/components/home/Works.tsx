@@ -9,7 +9,7 @@ import cn from 'classnames';
 import { worksAnimation } from '@/animations/home';
 import { Card, Container } from '@/components/common';
 import { HOME_WORKS_LEARN_MORE, HOME_WORKS_TITLE } from '@/constants/home';
-import s from '@/styles/home/Works.module.css';
+import s from '@/styles/home.module.css';
 import { type WorkSummary } from '@/types/api';
 import { truncateString } from '@/utils';
 

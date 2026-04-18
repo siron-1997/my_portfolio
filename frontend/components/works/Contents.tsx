@@ -1,10 +1,15 @@
 'use client';
 
-import React, { useEffect, useMemo,useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import { contentsAnimation } from '@/animations/works';
 import { Card } from '@/components/common';
-import s from '@/styles/works/Contents.module.css';
+import {
+  WORKS_CONTENT_ITEM_CLASS,
+  WORKS_DESCRIPTION_TRUNCATE_LENGTH,
+  WORKS_LINK_PREFIX,
+} from '@/constants/works';
+import s from '@/styles/works.module.css';
 import { type WorkCategory, type WorkSummary } from '@/types/api';
 import { truncateString } from '@/utils';
 
@@ -36,7 +41,9 @@ const Contents = React.memo(({ data, selectedCategories }: Props) => {
 
     /** コンテンツのアニメーションを初期化 */
     const ctx = contentsAnimation({
-      contentItems: ref.current.querySelectorAll<HTMLElement>('.content'),
+      contentItems: ref.current.querySelectorAll<HTMLElement>(
+        `.${WORKS_CONTENT_ITEM_CLASS}`,
+      ),
       ref,
     });
 
@@ -52,9 +59,12 @@ const Contents = React.memo(({ data, selectedCategories }: Props) => {
           key={work.slug}
           image={work.image_url}
           alt={work.alternative_text}
-          link={`works/${work.slug}`}
+          link={`${WORKS_LINK_PREFIX}${work.slug}`}
           title={work.title}
-          description={truncateString(work.description, 50)}
+          description={truncateString(
+            work.description,
+            WORKS_DESCRIPTION_TRUNCATE_LENGTH,
+          )}
           categoryType={work.category_name}
           type="work"
         />

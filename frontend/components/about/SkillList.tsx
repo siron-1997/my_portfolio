@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo,useRef } from 'react';
+import React, { JSX, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 
 import { Typography } from '@mui/material';
@@ -9,21 +9,19 @@ import cn from 'classnames';
 import { skillsListAnimation } from '@/animations/about';
 import { SKILLS } from '@/constants/about';
 import { BREAK_POINTS } from '@/constants/common';
-import { useIconSize, useWindowSize } from '@/hooks';
-import s from '@/styles/about/SkillList.module.css';
-import { type Skill,type Skills } from '@/types/common';
+import { useWindowSize } from '@/hooks';
+import s from '@/styles/about.module.css';
+import { type Skill, type Skills } from '@/types/common';
 
 type ChunkedSkills = Omit<Skills, 'skills'> & {
   /** チャンク化されたスキル配列 */
   skills: Skill[][];
 };
 
-const SkillsList = React.memo(() => {
+const SkillsList = React.memo((): JSX.Element => {
   /** スキルリストのコンテナ要素の参照 Ref */
   const ref = useRef<HTMLDivElement | null>(null);
 
-  /** アイコンサイズを取得 */
-  const iconSize = useIconSize(45, 60, 50);
   /** ウィンドウ幅を取得 */
   const { width } = useWindowSize();
 
@@ -32,13 +30,16 @@ const SkillsList = React.memo(() => {
     s.skills_list_container,
     'skills-list-container',
   );
+
   /** スキルリストのクラス名 */
   const skillListClassNames = cn(s.skill_list, 'skill-list');
+
   /** スキルリストのコンテナクラス名 */
   const skillListContainerClassNames = cn(
     s.skill_list_container,
     'skill-list-container',
   );
+
   /** スキルアイテムのクラス名 */
   const skillClassNames = cn(s.skill, {
     /** スキルアイテムがアクティブかどうか */
@@ -99,7 +100,7 @@ const SkillsList = React.memo(() => {
       skillList: ref.current.querySelectorAll(
         '.skills-list-container',
       ) as NodeListOf<Element>,
-      skillsListRef: ref,
+      ref,
     });
 
     return () => {
@@ -111,38 +112,37 @@ const SkillsList = React.memo(() => {
     <div className={s.skills_list} ref={ref}>
       {chunkedSkills.map((category, i1) => (
         <div key={i1} className={skillsListContainerClassNames}>
-          {/* スキルカテゴリのタイトル */}
+          {/** スキルカテゴリのタイトル */}
           <Typography component="h3" variant="h3">
             {category.title}
           </Typography>
 
-          {/* スキル一覧 */}
+          {/** スキル一覧 */}
           <div className={skillListClassNames}>
             {category.skills.map((skillsChunk, i2) => (
               /** チャンク化されたスキル配列ごとにリストを生成 */
               <ul key={i2} className={skillListContainerClassNames}>
                 {skillsChunk.map((item, i3) => (
                   <li key={i3} className={skillClassNames}>
-                    {/* アイコン画像 */}
+                    {/** アイコン画像 */}
                     <Image
                       src={item.image}
                       alt={item.alt}
-                      width={iconSize}
-                      height={iconSize}
+                      width={60}
+                      height={60}
                       className={s.image}
                       quality={item.name === 'Three.js' ? 75 : 1}
                       placeholder="blur"
                       blurDataURL={item.image}
                     />
 
-                    {/* スキルの説明 */}
                     <div className={s.txt}>
-                      {/* スキルのタイトル */}
+                      {/** スキルのタイトル */}
                       <Typography component="span" variant="p">
                         {item.name}
                       </Typography>
 
-                      {/* スキルの経験年数 */}
+                      {/** スキルの経験年数 */}
                       <Typography component="p" variant="p">
                         {item.year}
                       </Typography>

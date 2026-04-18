@@ -1,6 +1,6 @@
 import cn from 'classnames';
 
-import s from '@/styles/common/Container.module.css';
+import s from '@/styles/common.module.css';
 
 type Props = {
   /** コンテナ内に表示する子要素 */

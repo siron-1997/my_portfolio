@@ -5,9 +5,8 @@ import Image from 'next/image';
 
 import cn from 'classnames';
 
-import { useIconSize } from '@/hooks';
 import { CLOSE_ICON_PATH } from '@/constants/common';
-import s from '@/styles/common/button/Close.module.css';
+import s from '@/styles/common.module.css';
 
 type Props = {
   /** クラス名 */
@@ -18,9 +17,6 @@ type Props = {
 };
 
 const Close = React.memo(({ className, onClose }: Props): JSX.Element => {
-  /** アイコンサイズを取得 */
-  const iconSize = useIconSize(35, 40, 50);
-
   const rootClassNames = cn(className, s.close);
 
   return (
@@ -35,10 +31,11 @@ const Close = React.memo(({ className, onClose }: Props): JSX.Element => {
       <Image
         src={CLOSE_ICON_PATH}
         alt="close"
-        width={iconSize}
-        height={iconSize}
+        width={50}
+        height={50}
         quality={1}
         priority={true}
+        className={s.icon}
       />
     </div>
   );

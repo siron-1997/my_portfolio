@@ -1,9 +1,9 @@
-import { useEffect,useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { fingerPressAnimation } from '@/animations/workThreeD';
 import { BREAK_POINTS } from '@/constants/common';
 import { useWorkThreeDContext } from '@/contexts';
-import { useIconSize,useWindowSize } from '@/hooks';
+import { useWindowSize } from '@/hooks';
 
 const useFingerPress = () => {
   const fingerPressRef = useRef<HTMLDivElement>(null!);
@@ -16,7 +16,6 @@ const useFingerPress = () => {
   const setIsFingerVisible = (value: boolean) =>
     dispatch({ type: 'SET_FINGER_VISIBLE', payload: value });
   const { width } = useWindowSize();
-  const iconSize = useIconSize(75, 85, 95);
   /** ブレイクポイントがモバイルかどうか */
   const isBreakPointMB = width! < BREAK_POINTS.XS;
 
@@ -39,7 +38,6 @@ const useFingerPress = () => {
     isFingerVisible,
     setIsFingerVisible,
     isViewerActive,
-    iconSize,
   };
 };
 

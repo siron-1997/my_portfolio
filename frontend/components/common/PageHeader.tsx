@@ -1,7 +1,7 @@
 import cn from 'classnames';
 
 import { Container } from '@/components/common';
-import s from '@/styles/common/PageHeader.module.css';
+import s from '@/styles/common.module.css';
 
 type Props = {
   /** figure 要素の HTML ID（スクロールアンカー等に使用） */

@@ -1,18 +1,19 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { JSX, useEffect } from 'react';
 
 import { Typography } from '@mui/material';
 import cn from 'classnames';
 
-import s from '@/styles/contact/Sending.module.css';
+import { SENDING_TITLE } from '@/constants/contact';
+import s from '@/styles/contact.module.css';
 
 type Props = {
   /** 送信中フラグ */
   isSending: boolean;
 };
 
-const Sending = React.memo(({ isSending }: Props) => {
+const Sending = React.memo(({ isSending }: Props): JSX.Element => {
   const classNames = cn(
     s.sending,
     /** 送信中フラグに応じて表示を切り替え */
@@ -47,12 +48,12 @@ const Sending = React.memo(({ isSending }: Props) => {
 
       <div className={classNames}>
         <div className={s.sending_container}>
-          {/* タイトル */}
+          {/** タイトル */}
           <Typography component="h1" variant="h1">
-            送信中
+            {SENDING_TITLE}
           </Typography>
 
-          {/* ローディングアニメーション (アイコン) */}
+          {/** ローディングアニメーション (アイコン) */}
           <div id={s['fountainG']}>
             <div id={s['fountainG_1']} className={s.fountainG} />
             <div id={s['fountainG_2']} className={s.fountainG} />

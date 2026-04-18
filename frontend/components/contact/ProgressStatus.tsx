@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { JSX, useEffect, useRef } from 'react';
 
 import { Typography } from '@mui/material';
 
 import { progressStatusAnimation } from '@/animations/contact';
 import StepProgressBar from '@/components/contact/StepProgressBar';
 import { INTRODUCTION } from '@/constants/contact';
-import s from '@/styles/contact/ProgressStatus.module.css';
+import s from '@/styles/contact.module.css';
 import { type FormStep } from '@/types/contact';
 
 type Props = {
@@ -22,7 +22,11 @@ type Props = {
 };
 
 const ProgressStatus = React.memo(
-  ({ formStep, isSubmitSuccessful, hasValidationError }: Props) => {
+  ({
+    formStep,
+    isSubmitSuccessful,
+    hasValidationError,
+  }: Props): JSX.Element => {
     /** 進捗ステータスの参照 Ref */
     const ref = useRef<HTMLDivElement | null>(null);
 
@@ -33,7 +37,7 @@ const ProgressStatus = React.memo(
       const ctx = progressStatusAnimation({
         title: ref.current.querySelector('h1') as HTMLHeadingElement,
         progressBar: ref.current.querySelector('div') as HTMLDivElement,
-        progressStatusRef: ref,
+        ref,
       });
 
       return () => {
@@ -43,12 +47,12 @@ const ProgressStatus = React.memo(
 
     return (
       <div className={s.contact_txt} ref={ref}>
-        {/* タイトル */}
+        {/** タイトル */}
         <Typography component="h1" variant="h1">
           {INTRODUCTION.title}
         </Typography>
 
-        {/* ステップ進行バー */}
+        {/** ステップ進行バー */}
         <div className={s.step_progress_bar_container}>
           <StepProgressBar
             formStep={formStep}

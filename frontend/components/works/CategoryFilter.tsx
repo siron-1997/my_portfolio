@@ -21,8 +21,17 @@ import {
 
 import { categoryFilterAnimation } from '@/animations/works';
 import { BREAK_POINTS } from '@/constants/common';
+import {
+  CATEGORY_FILTER_ICON_ALT,
+  CATEGORY_FILTER_ICON_QUALITY,
+  CATEGORY_FILTER_ICON_SIZE,
+  CATEGORY_FILTER_ICON_SRC,
+  CATEGORY_FILTER_INPUT_ID,
+  CATEGORY_FILTER_LIMIT_TAGS_DESKTOP,
+  CATEGORY_FILTER_LIMIT_TAGS_MOBILE,
+} from '@/constants/works';
 import { useWindowSize } from '@/hooks';
-import s from '@/styles/works/CategoryFilter.module.css';
+import s from '@/styles/works.module.css';
 import { type WorkCategory } from '@/types/api';
 
 type Props = {
@@ -42,8 +51,8 @@ const CategoryFilter = React.memo(({ data, setSelectedCategories }: Props) => {
 
   /** 選択されたカテゴリの配列を状態管理関数に渡して更新する関数
    *
-   * @params _ イベントオブジェクト（未使用）
-   * @params value 選択されたカテゴリの配列
+   * @param _ イベントオブジェクト（未使用）
+   * @param value 選択されたカテゴリの配列
    */
   const handleChange = useCallback(
     (_: React.SyntheticEvent, value: WorkCategory[]): void =>
@@ -53,7 +62,7 @@ const CategoryFilter = React.memo(({ data, setSelectedCategories }: Props) => {
 
   /** オプション（カテゴリ）から表示用のラベル（カテゴリ名）を返す関数
    *
-   * @params option カテゴリオブジェクト
+   * @param option カテゴリオブジェクト
    * @returns カテゴリ名
    */
   const getOptionLabel = useCallback(
@@ -63,8 +72,8 @@ const CategoryFilter = React.memo(({ data, setSelectedCategories }: Props) => {
 
   /** 選択されたカテゴリの配列からチップをレンダリングする関数
    *
-   * @params value 選択されたカテゴリの配列
-   * @params getTagProps チップのプロパティを取得する関数
+   * @param value 選択されたカテゴリの配列
+   * @param getTagProps チップのプロパティを取得する関数
    * @returns チップ要素の配列
    */
   const renderTags = useCallback(
@@ -82,24 +91,24 @@ const CategoryFilter = React.memo(({ data, setSelectedCategories }: Props) => {
 
   /** テキストフィールドのレンダリング関数
    *
-   * @params params Autocomplete のレンダリングパラメータ
+   * @param params Autocomplete のレンダリングパラメータ
    * @returns テキストフィールド要素
    */
   const renderInput = useCallback(
     (params: AutocompleteRenderInputParams): JSX.Element => (
       <div className={s.filter_container}>
-        {/* フィルター アイコン */}
-        <InputLabel htmlFor="size-small-outlined-multi" className={s.label}>
+        {/** フィルター アイコン */}
+        <InputLabel htmlFor={CATEGORY_FILTER_INPUT_ID} className={s.label}>
           <Image
-            src="/icons/tune_white.svg"
-            alt="filters"
-            width={50}
-            height={50}
-            quality={1}
+            src={CATEGORY_FILTER_ICON_SRC}
+            alt={CATEGORY_FILTER_ICON_ALT}
+            width={CATEGORY_FILTER_ICON_SIZE}
+            height={CATEGORY_FILTER_ICON_SIZE}
+            quality={CATEGORY_FILTER_ICON_QUALITY}
             priority
           />
         </InputLabel>
-        {/* テキストフィールド */}
+        {/** テキストフィールド */}
         <TextField {...params} variant="standard" />
       </div>
     ),
@@ -112,7 +121,7 @@ const CategoryFilter = React.memo(({ data, setSelectedCategories }: Props) => {
     /** カテゴリフィルターのアニメーションを初期化 */
     const ctx = categoryFilterAnimation({
       categoryFilter: ref.current,
-      categoryFilterRef: ref,
+      ref,
     });
 
     return () => {
@@ -125,8 +134,12 @@ const CategoryFilter = React.memo(({ data, setSelectedCategories }: Props) => {
       <Autocomplete
         multiple
         /** 表示するチップの最大数 */
-        limitTags={width && width < BREAK_POINTS.XS ? 2 : 4}
-        id="size-small-outlined-multi"
+        limitTags={
+          width && width < BREAK_POINTS.XS
+            ? CATEGORY_FILTER_LIMIT_TAGS_MOBILE
+            : CATEGORY_FILTER_LIMIT_TAGS_DESKTOP
+        }
+        id={CATEGORY_FILTER_INPUT_ID}
         className={s.autocomplete}
         size="small"
         onChange={handleChange}

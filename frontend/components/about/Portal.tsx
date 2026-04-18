@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { JSX, useEffect, useRef } from 'react';
 
 import { Typography } from '@mui/material';
 
@@ -11,7 +11,7 @@ type Props = {
   title: string;
 };
 
-const Portal = React.memo(({ title }: Props) => {
+const Portal = React.memo(({ title }: Props): JSX.Element => {
   /** ポータルタイトルの参照 Ref */
   const ref = useRef<HTMLHeadingElement | null>(null);
 
@@ -19,7 +19,7 @@ const Portal = React.memo(({ title }: Props) => {
     if (!ref.current) return;
 
     /** ポータルタイトルのアニメーションコンテキスト */
-    const ctx = portalAnimation({ title: ref.current, titleRef: ref });
+    const ctx = portalAnimation({ title: ref.current, ref });
 
     return () => {
       ctx.revert();

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { JSX } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -16,7 +16,7 @@ import cn from 'classnames';
 import { APP_THEME_COLORS } from '@/constants/colors';
 import { BREAK_POINTS } from '@/constants/common';
 import { useImageSize, useWindowSize } from '@/hooks';
-import s from '@/styles/common/Card.module.css';
+import s from '@/styles/common.module.css';
 import p from '@/styles/page.module.css';
 
 type Props = {
@@ -51,7 +51,7 @@ const CustomCard = React.memo(
     description,
     categoryType,
     type,
-  }: Props) => {
+  }: Props): JSX.Element => {
     /** ウィンドウ幅を取得 */
     const { width } = useWindowSize();
 
@@ -95,6 +95,7 @@ const CustomCard = React.memo(
           sx={{ bgcolor: APP_THEME_COLORS.bgColor.dark.sub }}
         >
           <CardMedia className={cardMediaClassNames}>
+            {/* カード画像 */}
             <Link href={link}>
               <Image
                 src={image}
@@ -120,7 +121,7 @@ const CustomCard = React.memo(
             </Link>
           </CardContent>
 
-          {/*  */}
+          {/* カテゴリタグ */}
           {termsWorks && (
             <CardActions className={s.tags}>
               <Typography variant="tag">{categoryType}</Typography>

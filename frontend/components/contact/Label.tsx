@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { JSX } from 'react';
 
-import s from '@/styles/contact/InputFields.module.css';
+import s from '@/styles/contact.module.css';
 
 type Props = {
   /** ラベルのタイトル */
@@ -13,10 +13,10 @@ type Props = {
   isConfirmStep: boolean;
 };
 
-const Label = React.memo(({ title, id, isConfirmStep }: Props) => {
+const Label = React.memo(({ title, id, isConfirmStep }: Props): JSX.Element => {
   return (
     <label htmlFor={id} className={s.label}>
-      {/* 必須フィールドの表示 (確認ステップでない場合のみ表示) */}
+      {/** 必須フィールドの表示 (確認ステップでない場合のみ表示) */}
       {!isConfirmStep && <span className={s.required}>※ 必須</span>}
       <span className={s.label_name}>{title}</span>
     </label>

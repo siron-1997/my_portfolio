@@ -1,14 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { JSX } from 'react';
 import Image from 'next/image';
 
 import { Typography } from '@mui/material';
 import cn from 'classnames';
 
 import { STEP_LABELS, STEP_STATUS } from '@/constants/contact';
-import { useIconSize } from '@/hooks';
-import s from '@/styles/contact/StepProgressBar.module.css';
+import s from '@/styles/contact.module.css';
 import { type FormStep, type StepPointState } from '@/types/contact';
 
 type Props = {
@@ -119,10 +118,7 @@ const StepProgressBar = React.memo(
     labelClassName,
     contentClassName,
     currentStepClassName,
-  }: Props) => {
-    /** アイコンサイズを取得 */
-    const iconSize = useIconSize(25, 25, 25);
-
+  }: Props): JSX.Element => {
     /** ステップのラベルを取得 */
     const labels = getStepLabels(formStep, isSubmitSuccessful);
     /** ステップの状態を取得 */
@@ -158,8 +154,8 @@ const StepProgressBar = React.memo(
                     <Image
                       src="/icons/step_check.svg"
                       alt="check"
-                      width={iconSize}
-                      height={iconSize}
+                      width={25}
+                      height={25}
                       quality={1}
                       priority={true}
                     />
@@ -172,7 +168,7 @@ const StepProgressBar = React.memo(
                   <span className={s.step_index}>{i + 1}</span>
                 )}
 
-                {/* ラベル */}
+                {/** ラベル */}
                 <div className={cn(s.step_label, labelClassName)}>
                   {labels[i]}
                 </div>
@@ -181,7 +177,7 @@ const StepProgressBar = React.memo(
           })}
         </ul>
 
-        {/* モバイル時に表示する現在アクティブなステップのラベル */}
+        {/** モバイル時に表示する現在アクティブなステップのラベル */}
         <div className={cn(s.step_content, contentClassName)}>
           <Typography
             component="p"
