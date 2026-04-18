@@ -84,6 +84,9 @@ export const contactSchema = z.object({
  */
 export type ContactFormValues = z.infer<typeof contactSchema>;
 
+/** 送信中画面のタイトル */
+export const SENDING_TITLE = '送信中';
+
 /** お問い合わせフォームの初期値 */
 export const CONTACT_DEFAULT_VALUES: ContactFormValues = {
   name: '',

@@ -7,6 +7,9 @@ import {
 /** 開発環境フラグ */
 export const IS_DEV = process.env.NODE_ENV === 'development';
 
+/** サイト公開年（著作権表記の開始年） */
+export const SITE_START_YEAR = 2023;
+
 /**
  * 現在地のデフォルト座標（比叡山）
  * @description 位置情報の共有が許可されなかった場合に使用
