@@ -1,4 +1,4 @@
-import { Object3D,PerspectiveCamera } from 'three';
+import { Object3D, PerspectiveCamera } from 'three';
 
 import { BREAK_POINTS } from '@/constants/common';
 import {
@@ -10,7 +10,7 @@ import {
   WORK_WORLD_SECTION_CAMERA_BREAKPOINTS,
   WORK_WORLD_SECTION_MAP,
   WORK_WORLD_VIEWER_TOGGLE_CAMERA_BREAKPOINTS,
-} from '@/constants/world';
+} from '@/constants/workThreeD';
 import { type WorkControl } from '@/types/api';
 import {
   type ControlCameraConfig,
@@ -40,60 +40,60 @@ export const getSectionsCameraParams = (
     (bp) => width >= bp.min && width < bp.max,
   );
 
-  if (bp) {
-    /** 各カメラ/オフセットオブジェクトを処理 */
-    objects.forEach((obj) => {
-      /** 名前がブレークポイントの prefix にマッチしない場合はスキップ */
-      if (!bp.prefix.test(obj.name)) return;
+  if (!bp) return cameraParams;
 
-      /** 名前を '_' で分割し、セクション名やインデックスを抽出 */
-      const objNames = obj.name.split('_');
-      let sectionKey: WorkWorldSectionKey | undefined;
-      let index: string | undefined;
+  /** 各カメラ/オフセットオブジェクトを処理 */
+  objects.forEach((obj) => {
+    /** 名前がブレークポイントの prefix にマッチしない場合はスキップ */
+    if (!bp.prefix.test(obj.name)) return;
 
-      /** カメラの場合: Cam_BP_XX_SecN_0 */
-      if (obj instanceof PerspectiveCamera) {
-        sectionKey = objNames[3] as WorkWorldSectionKey;
-        index = objNames[4];
-        /** オフセットの場合: Cam_BP_XX_Offset_SecN_0 */
-      } else if (obj instanceof Object3D && objNames[3] === 'Offset') {
-        sectionKey = objNames[4] as WorkWorldSectionKey;
-        index = objNames[5];
-      }
+    /** 名前を '_' で分割し、セクション名やインデックスを抽出 */
+    const objNames = obj.name.split('_');
+    let sectionKey: WorkWorldSectionKey | undefined;
+    let index: string | undefined;
 
-      /** タブレット or スマホの場合 */
-      if (width < BREAK_POINTS.SM) {
-        const offset = 1.3;
-        obj.position.x = obj.position.x * offset;
-        obj.position.y = obj.position.y * offset;
-        obj.position.z = obj.position.z * offset;
-      }
+    /** カメラの場合: Cam_BP_XX_SecN_0 */
+    if (obj instanceof PerspectiveCamera) {
+      sectionKey = objNames[3] as WorkWorldSectionKey;
+      index = objNames[4];
+      /** オフセットの場合: Cam_BP_XX_Offset_SecN_0 */
+    } else if (obj instanceof Object3D && objNames[3] === 'Offset') {
+      sectionKey = objNames[4] as WorkWorldSectionKey;
+      index = objNames[5];
+    }
 
-      /** sectionKey が不正な場合や、代表カメラ以外（index !== '0'）はスキップ */
-      const paramKey = sectionKey && WORK_WORLD_SECTION_MAP[sectionKey];
-      if (!paramKey && index !== '0') return;
-      if (!paramKey) return;
+    /** タブレット or スマホの場合 */
+    if (width < BREAK_POINTS.SM) {
+      const offset = 1.3;
+      obj.position.x = obj.position.x * offset;
+      obj.position.y = obj.position.y * offset;
+      obj.position.z = obj.position.z * offset;
+    }
 
-      /** 対象セクションのカメラパラメータを取得 */
-      const target = cameraParams[paramKey];
+    /** sectionKey が不正な場合や、代表カメラ以外（index !== '0'）はスキップ */
+    const paramKey = sectionKey && WORK_WORLD_SECTION_MAP[sectionKey];
+    if (!paramKey && index !== '0') return;
+    if (!paramKey) return;
 
-      /** カメラの場合は position/rotation を設定 */
-      if (obj instanceof PerspectiveCamera) {
-        target.position = obj.position;
-        target.rotation = obj.rotation;
-        /** Offset 用 Object3D の場合は viewOffset を設定 */
-      } else if (obj instanceof Object3D && objNames[3] === 'Offset') {
-        target.viewOffset = {
-          fullWidth: width,
-          fullHeight: height,
-          x: obj.position.x * width,
-          y: -obj.position.z * height,
-          width,
-          height,
-        };
-      }
-    });
-  }
+    /** 対象セクションのカメラパラメータを取得 */
+    const target = cameraParams[paramKey];
+
+    /** カメラの場合は position/rotation を設定 */
+    if (obj instanceof PerspectiveCamera) {
+      target.position = obj.position;
+      target.rotation = obj.rotation;
+      /** Offset 用 Object3D の場合は viewOffset を設定 */
+    } else if (obj instanceof Object3D && objNames[3] === 'Offset') {
+      target.viewOffset = {
+        fullWidth: width,
+        fullHeight: height,
+        x: obj.position.x * width,
+        y: -obj.position.z * height,
+        width,
+        height,
+      };
+    }
+  });
 
   return cameraParams;
 };

@@ -8,20 +8,15 @@ import {
   type WorkWorldSectionsCameraParams,
 } from '@/types/world';
 
-/** Work World */
+/** ============================================
+ *  ブレークポイント
+ * ============================================ */
+
 /** ブレークポイント名の定数 */
 export const BREAK_POINT_KEYS = ['XS', 'SM', 'LG', 'XL', '2XL', '3XL'] as const;
-export type BreakPointKey = (typeof BREAK_POINT_KEYS)[number];
 
-/**
- * Work World のセクション名と対応するカメラパラメータのキーのマッピング
- * @from /utils/world/work/getCameraParams.ts
- */
-export const WORK_WORLD_SECTION_MAP = {
-  Sec1: 'portal',
-  Sec2: 'introduction',
-  Sec3: 'controls',
-} as const;
+/** ブレークポイント名の型 */
+export type BreakPointKey = (typeof BREAK_POINT_KEYS)[number];
 
 /** ブレークポイント名と値のマッピング */
 export const BREAK_POINT_MAP: Record<BreakPointKey, number> = {
@@ -31,6 +26,21 @@ export const BREAK_POINT_MAP: Record<BreakPointKey, number> = {
   XL: BREAK_POINTS.XL,
   '2XL': BREAK_POINTS['2XL'],
   '3XL': Infinity,
+} as const;
+
+/** ============================================
+ *  セクション / カメラ
+ * ============================================ */
+
+/**
+ * Work World のセクション名と対応するカメラパラメータキーのマッピング。
+ *
+ * @see /utils/world/work/getCameraParams.ts
+ */
+export const WORK_WORLD_SECTION_MAP = {
+  Sec1: 'portal',
+  Sec2: 'introduction',
+  Sec3: 'controls',
 } as const;
 
 /** セクションカメラのブレークポイント設定 */
@@ -106,6 +116,10 @@ export const WORK_WORLD_VIEWER_TOGGLE_CAMERA_BREAKPOINTS = [
 /** カメラ名からブレークポイント名を抽出する正規表現 */
 export const BP_REGEX = /^Cam_BP_(3XL|2XL|XL|LG|SM|XS)_(?:Offset_)?(.+)_Sec3$/;
 
+/** ============================================
+ *  デバッグ用パラメータ（Leva）
+ * ============================================ */
+
 /** デバッグ用環境光のパラメータ */
 export const DEBUG_AMBIENT_LIGHT_PARAMS: DebugAmbientLightParams = {
   color: WORK_WORLD_ENV_COLORS.ambientLight,
@@ -126,6 +140,10 @@ export const DEBUG_CAMERA_PARAMS: DebugCameraParams = {
   position: { x: 5.3, y: 9.8, z: 17.5 },
   rotation: { x: -0.55, y: 0.45, z: 0.25 },
 } as const;
+
+/** ============================================
+ *  デフォルトカメラパラメータ
+ * ============================================ */
 
 /** デフォルトのセクションカメラパラメータ */
 export const DEFAULT_SECTION_CAMERA_PARAMS: WorkWorldSectionsCameraParams = {
@@ -174,7 +192,7 @@ export const DEFAULT_VIEWER_TOGGLE_CAMERA_PARAMS: CameraParams = {
   viewOffset: { fullWidth: 0, fullHeight: 0, x: 0, y: 0, width: 0, height: 0 },
 } as const;
 
-/** Controlsカメラ用デフォルトViewOffset */
+/** Controls カメラ用デフォルト ViewOffset */
 export const DEFAULT_CONTROLS_VIEW_OFFSET = {
   fullWidth: 0,
   fullHeight: 0,
@@ -184,7 +202,7 @@ export const DEFAULT_CONTROLS_VIEW_OFFSET = {
   height: 0,
 } as const;
 
-/** Controlsカメラ用デフォルトパラメータ */
+/** Controls カメラ用デフォルトパラメータ */
 export const DEFAULT_CONTROLS_CAMERA_PARAMS: CameraParams = {
   position: { x: 0, y: 0, z: 0 },
   rotation: { x: 0, y: 0, z: 0 },

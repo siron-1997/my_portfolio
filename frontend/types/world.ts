@@ -1,6 +1,6 @@
 import { type Group,type Mesh, type Object3D, type PerspectiveCamera, type PointLight } from 'three';
 
-import { type WORK_WORLD_SECTION_MAP } from '@/constants/world';
+import { type WORK_WORLD_SECTION_MAP } from '@/constants/workThreeD';
 
 /** Common 3D Types */
 /**
