@@ -21,7 +21,7 @@ export const HOME_WORKS_LEARN_MORE = 'Learn More >';
  * ============================================ */
 
 /** 山モデルのファイルパス */
-export const HOME_WORLD_MOUNTAIN_MODEL_PATH = 'models/gltf/mountain.glb';
+export const HOME_WORLD_MOUNTAIN_MODEL_PATH = '/models/gltf/mountain.glb';
 
 /** ドアモデルのファイルパス */
 export const HOME_WORLD_DOOR_MODEL_PATH = '/models/gltf/door.glb';

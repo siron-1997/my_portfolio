@@ -4,14 +4,13 @@ import axios from 'axios';
 
 import { API_ALLOWED_KEYS, LOG_MESSAGES } from '@/constants/api';
 import { IS_DEV } from '@/constants/common';
-import { type OpenWeatherCurrentData } from '@/types/api';
-
 import {
   convertToLocalTime,
   createResponse,
   handleAxiosError,
   handleUnknownError,
 } from '@/services/getCurrentWeather';
+import { type OpenWeatherCurrentData } from '@/types/api';
 
 /**
  * 現在の天気情報を取得する API エンドポイント
@@ -94,8 +93,8 @@ export async function POST(request: NextRequest) {
     const localTime = convertToLocalTime(utcTime, data.timezone);
 
     /** 現在の時間をポイントに変換 */
-    const currentHour = localTime.getHours();
-    const currentMinute = localTime.getMinutes() / 100;
+    const currentHour = localTime.getUTCHours();
+    const currentMinute = localTime.getUTCMinutes() / 100;
     const currentPoint = currentHour + currentMinute;
 
     /** 日の出時間を計算 */
@@ -112,11 +111,11 @@ export async function POST(request: NextRequest) {
 
     /** 日の出の時間帯を設定 */
     const startSunrise =
-      sunriseTime.getHours() + sunriseTime.getMinutes() / 100;
+      sunriseTime.getUTCHours() + sunriseTime.getUTCMinutes() / 100;
     const endSunrise = startSunrise + 1;
 
     /** 日の入りの時間帯を設定 */
-    const startSunset = sunsetTime.getHours() + sunsetTime.getMinutes() / 100;
+    const startSunset = sunsetTime.getUTCHours() + sunsetTime.getUTCMinutes() / 100;
     const endSunset = startSunset + 1;
 
     /** 昼の時間帯を設定 */

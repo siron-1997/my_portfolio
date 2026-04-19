@@ -1,6 +1,6 @@
-import { useEffect,useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-import { useFrame,useLoader } from '@react-three/fiber';
+import { useFrame, useLoader } from '@react-three/fiber';
 import type React from 'react';
 import {
   type AnimationClip,
@@ -12,38 +12,54 @@ import {
   type Mesh,
   type Object3D,
 } from 'three';
-/* @ts-expect-error three/examples/jsm モジュールに型定義が存在しないため */
+/** @ts-expect-error three/examples/jsm モジュールに型定義が存在しないため */
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-/* @ts-expect-error three/examples/jsm モジュールに型定義が存在しないため */
+/** @ts-expect-error three/examples/jsm モジュールに型定義が存在しないため */
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import { useWorkThreeDContext } from '@/contexts';
+/**
+ * DRACOLoader シングルトン
+ * useLoader のセットアップ関数が複数回呼ばれても WASM 仮想 FS を二重マウントしないよう
+ * モジュールレベルで1インスタンスのみ生成する。
+ */
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('/draco/');
+
 import { type WorkDetail } from '@/types/api';
 import { type ModelChildren } from '@/types/world';
 
-/** Props の型定義 */
+/** useModel Props の型定義 */
 type Props = {
-  /** content */
+  /** 表示する作品の詳細データ */
   content: WorkDetail;
-  /** setModelChildren */
+
+  /** モデル子要素の更新関数 */
   setModelChildren: React.Dispatch<React.SetStateAction<ModelChildren>>;
+
+  /** 初期コントロール状態フラグ */
+  isInitialControl: boolean;
+
+  /** コントロール開始フラグ */
+  isStartControls: boolean;
+
+  /** 現在選択中のコントロールインデックス */
+  currentIndex: number;
 };
 
-const useModel = ({ content, setModelChildren }: Props) => {
+const useModel = ({
+  content,
+  setModelChildren,
+  isInitialControl,
+  isStartControls,
+  currentIndex,
+}: Props) => {
   const groupRef = useRef<Group>(null);
-
-  const {
-    state: { isInitialControl, isStartControls, currentIndex },
-  } = useWorkThreeDContext();
 
   /** GLTFLoader でモデルをプロキシ経由で読み込む（Storage URL をクライアントに公開しない） */
   const gltf = useLoader(
     GLTFLoader,
     `/api/supabase/model/${content.key}`,
     (loader) => {
-      const dracoLoader = new DRACOLoader();
-      dracoLoader.setDecoderPath('/draco/');
-      dracoLoader.preload();
       loader.setDRACOLoader(dracoLoader);
     },
   );
