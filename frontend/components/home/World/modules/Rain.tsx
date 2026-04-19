@@ -2,9 +2,9 @@
 
 import React, { type JSX, useEffect, useRef } from 'react';
 
-import { buttonGroup, type useCreateStore, useControls } from 'leva';
+import { buttonGroup, useControls, type useCreateStore } from 'leva';
 
-import { COLOR_PALETTE } from '@/constants/colors';
+import { WORLD_COLOR_PALETTE } from '@/constants/colors';
 import { BREAK_POINTS, IS_DEV } from '@/constants/common';
 import {
   DEFAULT_WEATHER,
@@ -188,7 +188,7 @@ const Rain = React.memo(
 
       /** 描画スタイルを設定 */
       ctx.strokeStyle = IS_DEV
-        ? `rgba(${COLOR_PALETTE.rain}, ${debugOpacity})`
+        ? `rgba(${WORLD_COLOR_PALETTE.rain}, ${debugOpacity})`
         : color;
       ctx.lineWidth = lineWidth;
       ctx.lineCap = 'round';
@@ -298,7 +298,7 @@ export default Rain;
  */
 const _getRainState = (config: RainState): RainStateResult => {
   const rainState = {
-    color: config?.color ?? `rgba(${COLOR_PALETTE.rain}, 0.25)`,
+    color: config?.color ?? `rgba(${WORLD_COLOR_PALETTE.rain}, 0.25)`,
     lineWidth: config?.lineWidth ?? 0,
     length: config?.length ?? 0,
     xSpeed: config?.xSpeed ?? 0,
@@ -309,14 +309,14 @@ const _getRainState = (config: RainState): RainStateResult => {
   const desc = config.currentWeather.description;
   if ((WEATHER_DESCRIPTIONS_RAIN_LIGHT as readonly string[]).includes(desc)) {
     /** 弱い雨・霧雨（Drizzle を含む） */
-    rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.25)`;
+    rainState.color = `rgba(${WORLD_COLOR_PALETTE.rain}, 0.25)`;
     rainState.length = rainState.length - 0.2;
     rainState.ySpeed = rainState.ySpeed - 2;
   } else if (
     (WEATHER_DESCRIPTIONS_RAIN_NORMAL as readonly string[]).includes(desc)
   ) {
     /** 通常の雨 */
-    rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.20)`;
+    rainState.color = `rgba(${WORLD_COLOR_PALETTE.rain}, 0.20)`;
     rainState.length = rainState.length + 1;
     rainState.lineWidth = 2.5;
     rainState.ySpeed = rainState.ySpeed + 2.5;
@@ -324,7 +324,7 @@ const _getRainState = (config: RainState): RainStateResult => {
     (WEATHER_DESCRIPTIONS_RAIN_HEAVY as readonly string[]).includes(desc)
   ) {
     /** 激しい雨 */
-    rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.20)`;
+    rainState.color = `rgba(${WORLD_COLOR_PALETTE.rain}, 0.20)`;
     rainState.length = rainState.length + 2;
     rainState.lineWidth = 3;
     rainState.xSpeed = rainState.xSpeed + 1;
@@ -333,7 +333,7 @@ const _getRainState = (config: RainState): RainStateResult => {
     (WEATHER_DESCRIPTIONS_RAIN_VERY_HEAVY as readonly string[]).includes(desc)
   ) {
     /** 非常に激しい雨 */
-    rainState.color = `rgba(${COLOR_PALETTE.rain}, 0.15)`;
+    rainState.color = `rgba(${WORLD_COLOR_PALETTE.rain}, 0.15)`;
     rainState.length = rainState.length + 3;
     rainState.lineWidth = 4;
     rainState.xSpeed = rainState.xSpeed + 2;

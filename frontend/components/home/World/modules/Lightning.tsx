@@ -4,10 +4,10 @@ import React, { type RefObject, useEffect, useMemo, useRef } from 'react';
 
 import { useHelper } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { buttonGroup, type useCreateStore, useControls } from 'leva';
-import { type PointLight, PointLightHelper, type Object3D } from 'three';
+import { buttonGroup, useControls, type useCreateStore } from 'leva';
+import { type Object3D, type PointLight, PointLightHelper } from 'three';
 
-import { COLOR_PALETTE } from '@/constants/colors';
+import { WORLD_COLOR_PALETTE } from '@/constants/colors';
 import { IS_DEV } from '@/constants/common';
 import {
   DEFAULT_WEATHER,
@@ -272,7 +272,7 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
   return (
     <pointLight
       name={HOME_WORLD_SCENE_NAME_LIGHTNING}
-      color={COLOR_PALETTE.lightning}
+      color={WORLD_COLOR_PALETTE.lightning}
       intensity={HOME_WORLD_LIGHTNING_LIGHT_INTENSITY}
       distance={HOME_WORLD_LIGHTNING_LIGHT_DISTANCE}
       decay={HOME_WORLD_LIGHTNING_LIGHT_DECAY}

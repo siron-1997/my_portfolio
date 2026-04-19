@@ -9,7 +9,7 @@ import {
   useFrame,
   useThree,
 } from '@react-three/fiber';
-import { buttonGroup, type useCreateStore, useControls } from 'leva';
+import { buttonGroup, useControls, type useCreateStore } from 'leva';
 import {
   MathUtils,
   PlaneGeometry,
@@ -21,7 +21,7 @@ import {
 /** @ts-expect-error -- three/examples/jsm モジュールに型定義が存在しないため */
 import { Water } from 'three/examples/jsm/objects/Water';
 
-import { COLOR_PALETTE } from '@/constants/colors';
+import { WORLD_COLOR_PALETTE } from '@/constants/colors';
 import { IS_DEV } from '@/constants/common';
 import {
   HOME_WORLD_DEBUG_OCEAN_CONTROLS,
@@ -106,7 +106,7 @@ const Ocean = React.memo(
     /** デフォルト値（天候依存） */
     const defaults = {
       visible: currentWeatherData?.rain !== undefined,
-      color: COLOR_PALETTE.oceanWater,
+      color: WORLD_COLOR_PALETTE.oceanWater,
       distortionScale: HOME_WORLD_DEBUG_OCEAN_CONTROLS.distortionScale.value,
       speed: HOME_WORLD_DEBUG_OCEAN_CONTROLS.speed.value,
     };
@@ -167,7 +167,7 @@ const Ocean = React.memo(
         textureHeight: HOME_WORLD_OCEAN_TEXTURE_SIZE,
         waterNormals,
         sunDirection: new Vector3(),
-        sunColor: COLOR_PALETTE.oceanSun,
+        sunColor: WORLD_COLOR_PALETTE.oceanSun,
         waterColor: color,
         distortionScale,
         fog: true,

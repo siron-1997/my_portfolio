@@ -12,7 +12,7 @@ import {
   type MeshStandardMaterial,
 } from 'three';
 
-import { COLOR_PALETTE } from '@/constants/colors';
+import { WORLD_COLOR_PALETTE } from '@/constants/colors';
 import {
   DEFAULT_WEATHER,
   ENV_MAP_MODEL_TYPE_MODEL,
@@ -159,7 +159,7 @@ const Door = React.memo(
         <pointLight
           name={HOME_WORLD_SCENE_NAME_DOOR_LIGHT}
           power={50}
-          color={COLOR_PALETTE.doorLight}
+          color={WORLD_COLOR_PALETTE.doorLight}
           distance={0.8}
           decay={1}
           position={[10, 31, 0]}
