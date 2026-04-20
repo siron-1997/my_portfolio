@@ -9,9 +9,14 @@ import { Typography } from '@mui/material';
 
 import { fingerPressAnimation } from '@/animations/workThreeD';
 import { BREAK_POINTS } from '@/constants/common';
+import {
+  WORK_THREE_D_FINGER_PRESS_ICON_ALT,
+  WORK_THREE_D_FINGER_PRESS_ICON_PATH,
+  WORK_THREE_D_FINGER_PRESS_TEXT,
+} from '@/constants/workThreeD';
 import { useWindowSize } from '@/hooks';
+import s from '@/styles/workThreeD.module.css';
 import { type WorkThreeDAction } from '@/types/contexts';
-import s from '@/styles/works/workThreeD/workThreeDmodule.css';
 
 type Props = {
   /** 指アイコン表示フラグ */
@@ -72,8 +77,8 @@ const FingerPress = React.memo(
         {isViewerActive ? (
           <Image
             ref={imageRef}
-            src="/icons/finger_press_48x48.svg"
-            alt="finger press"
+            src={WORK_THREE_D_FINGER_PRESS_ICON_PATH}
+            alt={WORK_THREE_D_FINGER_PRESS_ICON_ALT}
             width={95}
             height={95}
             quality={1}
@@ -84,7 +89,7 @@ const FingerPress = React.memo(
           />
         ) : (
           <Typography component="p" sx={{ fontWeight: 600 }} ref={textRef}>
-            「Start」をタップすると3Dビュワーモードが開始します。
+            {WORK_THREE_D_FINGER_PRESS_TEXT}
             <br />
             <KeyboardArrowDown sx={{ width: 45, height: 45 }} />
           </Typography>

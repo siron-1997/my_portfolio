@@ -1,5 +1,6 @@
+import type { Dispatch, RefObject, SetStateAction } from 'react';
+
 import { gsap } from 'gsap';
-import type React from 'react';
 import { Euler, type PerspectiveCamera, Quaternion, Vector3 } from 'three';
 
 import { computeArcPosition } from '@/utils/world/work/cameraArc';
@@ -39,58 +40,75 @@ type CameraViewState = {
 } | null;
 
 type CreateSectionAnimationProps = {
-  /** element */
+  /** 対象のセクション要素 */
   element: HTMLElement;
-  /** startPosition */
+
+  /** 開始時のカメラ位置 */
   startPosition: Position;
-  /** startRotation */
+
+  /** 開始時のカメラ回転 */
   startRotation: Rotation;
-  /** startViewOffset */
+
+  /** 開始時の viewOffset */
   startViewOffset: ViewOffset;
-  /** targetPosition */
+
+  /** 目標のカメラ位置 */
   targetPosition?: Position;
-  /** targetRotation */
+
+  /** 目標のカメラ回転 */
   targetRotation?: Rotation;
-  /** targetViewOffset */
+
+  /** 目標の viewOffset */
   targetViewOffset?: ViewOffset;
-  /** setIsStartControls */
-  setIsStartControls?: React.Dispatch<React.SetStateAction<boolean>>;
-  /** setIsNavigationVisible */
-  setIsNavigationVisible?: React.Dispatch<React.SetStateAction<boolean>>;
-  /** width */
+
+  /** コントロール開始フラグを更新するコールバック */
+  updateStartControls?: Dispatch<SetStateAction<boolean>>;
+
+  /** ナビゲーション表示状態を更新する関数 */
+  setIsNavigationVisible?: Dispatch<SetStateAction<boolean>>;
+
+  /** ウィンドウ幅 */
   width?: number;
-  /** height */
+
+  /** ウィンドウ高さ */
   height?: number;
-  /** camera */
+
+  /** カメラ */
   camera: PerspectiveCamera;
 };
 
-/** SectionsAnimationProps の型定義 */
 type SectionsAnimationProps = {
-  /** portal */
+  /** portal セクションの要素 */
   portal: HTMLElement;
-  /** introduction */
+
+  /** introduction セクションの要素 */
   introduction: HTMLElement;
-  /** controls */
+
+  /** controls セクションの要素 */
   controls: HTMLElement;
-  /** camera */
+
+  /** カメラ */
   camera: PerspectiveCamera;
-  /** setIsStartControls */
-  setIsStartControls: React.Dispatch<React.SetStateAction<boolean>>;
-  /** setIsNavigationVisible */
-  setIsNavigationVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  /** cameraParams */
+
+  /** コントロール開始フラグを更新するコールバック */
+  updateStartControls: (
+    valueOrUpdater: boolean | ((prev: boolean) => boolean),
+  ) => void;
+
+  /** ナビゲーションの表示フラグの状態を更新する関数 */
+  setIsNavigationVisible: Dispatch<SetStateAction<boolean>>;
+
+  /** ブレークポイントに応じた、各セクションのカメラパラメータ */
   cameraParams: WorkWorldSectionsCameraParams;
 };
 
-/** ViewerToggleAnimationProps の型定義 */
 type ViewerToggleAnimationProps = {
   /** introduction */
   introduction: HTMLElement;
   /** toggleButton */
   toggleButton: HTMLElement;
-  /** cameraRef */
-  cameraRef: React.RefObject<PerspectiveCamera>;
+  /** カメラの参照 Ref */
+  cameraRef: RefObject<PerspectiveCamera | null>;
   /** cameraParams */
   cameraParams: CameraParams;
   /** zoom */
@@ -99,29 +117,38 @@ type ViewerToggleAnimationProps = {
   offset: number;
 };
 
-/** controlsAnimationProps の型定義 */
 type controlsAnimationProps = {
-  /** previousPosition */
+  /** 前回のカメラ位置の参照 Ref */
   previousPosition: Position;
-  /** previousRotation */
+
+  /** 前回のカメラ回転の参照 Ref */
   previousRotation: Rotation;
-  /** cameraRef */
-  cameraRef: React.RefObject<PerspectiveCamera>;
-  /** currentIndex */
+
+  /** カメラの参照 Ref */
+  cameraRef: RefObject<PerspectiveCamera | null>;
+
+  /** 現在選択中のコントロールインデックス */
   currentIndex: number;
-  /** isInitialControl */
+
+  /** 初期コントロール状態フラグ（Controls セクションに入る前の初期状態） */
   isInitialControl: boolean;
-  /** isStartControls */
+
+  /** コントロール開始フラグ（Controls セクションに到達したとき true になる） */
   isStartControls: boolean;
-  /** cameraConfigs */
+
+  /** 生成されたコントロール用のカメラパラメータ */
   cameraConfigs: ControlCameraConfigs;
-  /** width */
+
+  /** ウィンドウ幅 */
   width: number;
-  /** height */
+
+  /** ウィンドウ高さ */
   height: number;
-  /** sceneCenter */
+
+  /** シーンの中心座標 */
   sceneCenter: Vector3;
-  /** bboxRadius */
+
+  /** シーンの包容球半径 */
   bboxRadius: number;
 };
 
@@ -372,12 +399,11 @@ const handleReverseComplete = (
 };
 
 /**
- * セクション用アニメーション作成。
+ * セクション用アニメーション作成
  * ページの一番下から開始した際に portal から introduction 間で空間に何も映らない課題への対応ロジックを含む。
  *
  * @param props - セクションアニメーション生成に必要なパラメータ
  * @returns {gsap.Context} 生成した GSAP コンテキスト
- 
  *
  * @example
  * createSectionAnimation({});
@@ -390,16 +416,16 @@ const createSectionAnimation = ({
   targetRotation,
   startViewOffset,
   targetViewOffset,
-  setIsStartControls,
+  updateStartControls,
   setIsNavigationVisible,
   camera,
-}: CreateSectionAnimationProps) => {
-  const ctx = gsap.context(() => {
+}: CreateSectionAnimationProps): gsap.Context => {
+  return gsap.context(() => {
     let startPoint = '';
     let endPoint = '';
     let sectionName = '';
 
-    /** 各セクションのアニメーション開始・終了位置を設定 */
+    /** セクション種別に応じて、開始・終了位置を設定 */
     switch (element.id) {
       case 'model-viewer':
         startPoint = 'top top';
@@ -449,7 +475,7 @@ const createSectionAnimation = ({
     const handleStart = () => {
       /** コントロールセクションに入ったとき */
       if (element.id === 'controls') {
-        if (setIsStartControls) setIsStartControls(true);
+        if (updateStartControls) updateStartControls(true);
         if (setIsNavigationVisible) setIsNavigationVisible(true);
         /** カメラ位置の追跡を開始 */
         gsap.ticker.add(updateLastCameraState);
@@ -478,7 +504,7 @@ const createSectionAnimation = ({
           startRotation,
           startViewOffset,
           lastCameraState,
-          setIsStartControls!,
+          updateStartControls!,
           setIsNavigationVisible!,
         );
       }
@@ -600,8 +626,6 @@ const createSectionAnimation = ({
       );
     }
   }, element);
-
-  return ctx;
 };
 
 /**
@@ -626,33 +650,38 @@ export const sectionsAnimation = ({
   introduction,
   controls,
   camera,
-  setIsStartControls,
+  updateStartControls,
   setIsNavigationVisible,
   cameraParams,
-}: SectionsAnimationProps) => {
-  /** カメラの初期状態を即座に設定 */
-  const initParams = cameraParams.portal;
+}: SectionsAnimationProps): gsap.Context[] => {
+  /** カメラの位置を設定 */
   camera.position.set(
-    initParams.position.x,
-    initParams.position.y,
-    initParams.position.z,
+    cameraParams.portal.position.x,
+    cameraParams.portal.position.y,
+    cameraParams.portal.position.z,
   );
+
+  /** カメラの回転を設定 */
   camera.rotation.set(
-    initParams.rotation.x,
-    initParams.rotation.y,
-    initParams.rotation.z,
+    cameraParams.portal.rotation.x,
+    cameraParams.portal.rotation.y,
+    cameraParams.portal.rotation.z,
   );
+
+  /** カメラの viewOffset を設定 */
   camera.setViewOffset(
-    initParams.viewOffset.fullWidth,
-    initParams.viewOffset.fullHeight,
-    initParams.viewOffset.x,
-    initParams.viewOffset.y,
-    initParams.viewOffset.width,
-    initParams.viewOffset.height,
+    cameraParams.portal.viewOffset.fullWidth,
+    cameraParams.portal.viewOffset.fullHeight,
+    cameraParams.portal.viewOffset.x,
+    cameraParams.portal.viewOffset.y,
+    cameraParams.portal.viewOffset.width,
+    cameraParams.portal.viewOffset.height,
   );
+
+  /** カメラの投影行列を更新 */
   camera.updateProjectionMatrix();
 
-  /** portal セクション */
+  /** portal セクションのアニメーションを作成 */
   const portalCtx = createSectionAnimation({
     element: portal,
     startPosition: cameraParams.portal.position,
@@ -664,7 +693,7 @@ export const sectionsAnimation = ({
     camera,
   });
 
-  /** introduction セクション */
+  /** introduction セクションのアニメーションを作成 */
   const introductionCtx = createSectionAnimation({
     element: introduction,
     startPosition: cameraParams.introduction.position,
@@ -676,13 +705,13 @@ export const sectionsAnimation = ({
     camera,
   });
 
-  /** controls セクション */
+  /** controls セクションのアニメーションを作成 */
   const controlsCtx = createSectionAnimation({
     element: controls,
     startPosition: cameraParams.controls.position,
     startRotation: cameraParams.controls.rotation,
     startViewOffset: cameraParams.controls.viewOffset!,
-    setIsStartControls,
+    updateStartControls,
     setIsNavigationVisible,
     camera,
   });
@@ -721,89 +750,97 @@ export const controlsAnimation = ({
   height,
   sceneCenter,
   bboxRadius,
-}: controlsAnimationProps) => {
-  const camera = cameraRef.current!;
-  const duration = 2;
-  const options = { ease: 'power2.inOut', duration };
-  const item = cameraConfigs[currentIndex];
-  const delay = 0.5;
-  camera.aspect = width / height;
-  const ctx = gsap.context(() => {
-    if (!isInitialControl && isStartControls && item) {
-      const timeline = gsap.timeline();
+}: controlsAnimationProps): gsap.Context => {
+  /** アニメーションオプション */
+  const options = { ease: 'power2.inOut', duration: 2 };
 
-      /** カメラ位置：弧状補間（Arc-Slerp） */
-      const startPos = camera.position.clone();
-      const endPos = new Vector3(
-        item.position.x,
-        item.position.y,
-        item.position.z,
-      );
-      const arcProgress = { value: 0 };
-      timeline.to(arcProgress, {
+  /** 現在のカメラ設定 */
+  const currentCameraConfig = cameraConfigs[currentIndex];
+
+  /** カメラのアスペクト比を更新 */
+  cameraRef.current!.aspect = width / height;
+
+  return gsap.context(() => {
+    /** Controls セクションに入る前の初期状態で、カメラパラメータが生成されていない場合は中断 */
+    if (isInitialControl && !isStartControls && !currentCameraConfig) {
+      return;
+    }
+
+    /** カメラ位置：弧状補間（Arc-Slerp） */
+    const arcProgress = { value: 0 };
+
+    /** カメラ回転：クォータニオン slerp（Euler 直接補間によるぎめり回転を防止） */
+    const rotProgress = { value: 0 };
+
+    /** カメラのアニメーション */
+    gsap
+      .timeline()
+      /** カメラ位置の弧状補間 */
+      .to(arcProgress, {
         value: 1,
         ...options,
-        delay,
+        delay: 0.5,
         onUpdate: () => {
           const pos = computeArcPosition(
-            startPos,
-            endPos,
+            cameraRef.current!.position.clone(),
+            new Vector3(
+              currentCameraConfig.position.x,
+              currentCameraConfig.position.y,
+              currentCameraConfig.position.z,
+            ),
             sceneCenter,
             arcProgress.value,
             bboxRadius,
             ARC_BIAS,
           );
-          camera.position.copy(pos);
+          cameraRef.current!.position.copy(pos);
         },
-      });
-
-      /** カメラ回転：クォータニオン slerp（Euler 直接補間によるぎめり回転を防止） */
-      const startQuaternion = camera.quaternion.clone();
-      const endQuaternion = new Quaternion().setFromEuler(
-        new Euler(item.rotation.x, item.rotation.y, item.rotation.z),
-      );
-      const rotProgress = { value: 0 };
-      timeline.to(
+      })
+      /** カメラ回転のクォータニオン補間 */
+      .to(
         rotProgress,
         {
           value: 1,
           ...options,
           delay: 0,
           onUpdate: () => {
-            camera.quaternion.slerpQuaternions(
-              startQuaternion,
-              endQuaternion,
+            cameraRef.current!.quaternion.slerpQuaternions(
+              cameraRef.current!.quaternion.clone(),
+              new Quaternion().setFromEuler(
+                new Euler(
+                  currentCameraConfig.rotation.x,
+                  currentCameraConfig.rotation.y,
+                  currentCameraConfig.rotation.z,
+                ),
+              ),
               rotProgress.value,
             );
           },
         },
         '<',
-      );
-
-      timeline.to(
+      )
+      /** カメラの viewOffset 補間 */
+      .to(
         { dummy: 0 },
         {
           dummy: 1,
           onUpdate: () => {
-            camera.setViewOffset(
-              item.viewOffset.fullWidth,
-              item.viewOffset.fullHeight,
-              item.viewOffset.x,
-              item.viewOffset.y,
-              item.viewOffset.width,
-              item.viewOffset.height,
+            cameraRef.current!.setViewOffset(
+              currentCameraConfig.viewOffset.fullWidth,
+              currentCameraConfig.viewOffset.fullHeight,
+              currentCameraConfig.viewOffset.x,
+              currentCameraConfig.viewOffset.y,
+              currentCameraConfig.viewOffset.width,
+              currentCameraConfig.viewOffset.height,
             );
-            camera.updateProjectionMatrix();
+            cameraRef.current!.updateProjectionMatrix();
           },
           ...options,
           delay: 0,
         },
         '<',
       );
-    }
   }, cameraRef);
-
-  return ctx;
 };
 
 /**

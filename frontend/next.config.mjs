@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // R3F v9 + @react-three/postprocessing は React Strict Mode の二重 invoke と
+  // forceContextLoss() の組み合わせで WebGL コンテキストが破壊されるため無効化する。
+  // (development 専用の問題。production では Strict Mode は非適用のためエラーは発生しない)
+  reactStrictMode: false,
   images: {
     remotePatterns: [
       {

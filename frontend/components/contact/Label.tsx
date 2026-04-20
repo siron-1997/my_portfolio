@@ -1,4 +1,4 @@
-import React, { JSX } from 'react';
+import React, { type JSX } from 'react';
 
 import s from '@/styles/contact.module.css';
 

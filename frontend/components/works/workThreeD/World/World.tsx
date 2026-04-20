@@ -10,7 +10,7 @@ import { ACESFilmicToneMapping, PCFShadowMap } from 'three';
 
 import { IS_DEV } from '@/constants/common';
 import Experience from '@/components/works/workThreeD/World/Experience';
-import s from '@/styles/works/workThreeD/workThreeDD.module.css';
+import s from '@/styles/workThreeD.module.css';
 import { type WorkDetail } from '@/types/api';
 import { type WorkThreeDAction, type WorkThreeDState } from '@/types/contexts';
 

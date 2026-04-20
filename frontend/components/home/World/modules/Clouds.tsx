@@ -4,7 +4,7 @@ import React, { type JSX, useEffect, useMemo } from 'react';
 
 import { useTexture } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { buttonGroup, type useCreateStore, useControls } from 'leva';
+import { buttonGroup, useControls,type useCreateStore } from 'leva';
 import { FrontSide, MathUtils, RepeatWrapping, type Vector3 } from 'three';
 
 import { BREAK_POINTS, IS_DEV } from '@/constants/common';

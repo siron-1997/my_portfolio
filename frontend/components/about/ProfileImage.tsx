@@ -1,6 +1,6 @@
 'use client';
 
-import React, { JSX, useEffect, useRef } from 'react';
+import React, { type JSX, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 import cn from 'classnames';

@@ -25,6 +25,18 @@ import {
   DEBUG_AMBIENT_LIGHT_PARAMS,
   DEBUG_CAMERA_PARAMS,
   DEBUG_DIRECTIONAL_LIGHT_PARAMS,
+  WORK_WORLD_AMBIENT_LIGHT_INTENSITY,
+  WORK_WORLD_CUBE_TEXTURE_FILES,
+  WORK_WORLD_CUBE_TEXTURE_PATH,
+  WORK_WORLD_DIRECTIONAL_LIGHT_INTENSITY,
+  WORK_WORLD_DIRECTIONAL_LIGHT_POSITION,
+  WORK_WORLD_DOF_PARAMS,
+  WORK_WORLD_FOG_FAR,
+  WORK_WORLD_FOG_NEAR,
+  WORK_WORLD_SCENE_ENV_INTENSITY,
+  WORK_WORLD_SHADOW_BIAS,
+  WORK_WORLD_SHADOW_CAMERA_FAR,
+  WORK_WORLD_SHADOW_MAP_SIZE,
 } from '@/constants/workThreeD';
 import { useWindowSize } from '@/hooks';
 import { type ModelChildren } from '@/types/world';
@@ -68,10 +80,9 @@ const Experience = React.memo(
     const scene = useThree((state) => state.scene);
 
     /** キューブマップを設定 */
-    const cubeTexture = useCubeTexture(
-      ['px.webp', 'nx.webp', 'py.webp', 'ny.webp', 'pz.webp', 'nz.webp'],
-      { path: '/images/maps/workWorld/' },
-    );
+    const cubeTexture = useCubeTexture(WORK_WORLD_CUBE_TEXTURE_FILES, {
+      path: WORK_WORLD_CUBE_TEXTURE_PATH,
+    });
 
     /** カメラパラメータ（開発環境デバッグ用 leva コントロール） */
     const {
@@ -178,7 +189,7 @@ const Experience = React.memo(
     useEffect(() => {
       scene.environment = cubeTexture;
       scene.background = cubeTexture;
-      scene.environmentIntensity = 0.5;
+      scene.environmentIntensity = WORK_WORLD_SCENE_ENV_INTENSITY;
     }, [cubeTexture, scene]);
 
     /** カメラの leva コントロール値を Three.js オブジェクトへ同期する (開発環境のみ) */
@@ -228,25 +239,25 @@ const Experience = React.memo(
         {/* 環境光 */}
         <ambientLight
           color={WORK_WORLD_ENV_COLORS.ambientLight}
-          intensity={0.6}
+          intensity={WORK_WORLD_AMBIENT_LIGHT_INTENSITY}
           ref={ambientLightRef}
         />
 
         {/* 平行光源 */}
         <directionalLight
           color={WORK_WORLD_ENV_COLORS.directionalLight}
-          intensity={1.5}
-          position={[-4, 15, -8]}
+          intensity={WORK_WORLD_DIRECTIONAL_LIGHT_INTENSITY}
+          position={WORK_WORLD_DIRECTIONAL_LIGHT_POSITION}
           ref={directionalLightRef}
           castShadow
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
-          shadow-camera-far={30}
+          shadow-mapSize-width={WORK_WORLD_SHADOW_MAP_SIZE}
+          shadow-mapSize-height={WORK_WORLD_SHADOW_MAP_SIZE}
+          shadow-camera-far={WORK_WORLD_SHADOW_CAMERA_FAR}
           shadow-camera-left={-1}
           shadow-camera-right={1}
           shadow-camera-top={1}
           shadow-camera-bottom={-1}
-          shadow-bias={-0.0005}
+          shadow-bias={WORK_WORLD_SHADOW_BIAS}
         />
 
         {/* 霧 */}
@@ -254,12 +265,24 @@ const Experience = React.memo(
           attach="fog"
           args={[
             WORK_WORLD_ENV_COLORS.fog,
-            width! > BREAK_POINTS.SM ? 4 : 3,
-            width! > BREAK_POINTS.SM ? 12 : 11,
+            width! > BREAK_POINTS.SM
+              ? WORK_WORLD_FOG_NEAR.SM
+              : WORK_WORLD_FOG_NEAR.default,
+            width! > BREAK_POINTS.SM
+              ? WORK_WORLD_FOG_FAR.SM
+              : WORK_WORLD_FOG_FAR.default,
           ]}
           color={WORK_WORLD_ENV_COLORS.fog}
-          near={width! > BREAK_POINTS.SM ? 4 : 3}
-          far={width! > BREAK_POINTS.SM ? 12 : 11}
+          near={
+            width! > BREAK_POINTS.SM
+              ? WORK_WORLD_FOG_NEAR.SM
+              : WORK_WORLD_FOG_NEAR.default
+          }
+          far={
+            width! > BREAK_POINTS.SM
+              ? WORK_WORLD_FOG_FAR.SM
+              : WORK_WORLD_FOG_FAR.default
+          }
         />
 
         <CustomModel
@@ -284,10 +307,10 @@ const Experience = React.memo(
           <EffectComposer>
             {/** 被写界深度の設定 */}
             <DepthOfField
-              focusDistance={0}
-              focalLength={0.1}
-              bokehScale={8}
-              height={1080}
+              focusDistance={WORK_WORLD_DOF_PARAMS.focusDistance}
+              focalLength={WORK_WORLD_DOF_PARAMS.focalLength}
+              bokehScale={WORK_WORLD_DOF_PARAMS.bokehScale}
+              height={WORK_WORLD_DOF_PARAMS.height}
             />
           </EffectComposer>
         )}

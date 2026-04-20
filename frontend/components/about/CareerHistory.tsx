@@ -1,6 +1,6 @@
 'use client';
 
-import React, { JSX, useEffect, useRef } from 'react';
+import React, { type JSX, useEffect, useRef } from 'react';
 
 import SchoolIcon from '@mui/icons-material/School';
 import WorkIcon from '@mui/icons-material/Work';

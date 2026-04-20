@@ -14,7 +14,7 @@ import { BREAK_POINTS } from '@/constants/common';
 import { useWindowSize } from '@/hooks';
 import { type WorkControl, type WorkDetail } from '@/types/api';
 import { type WorkThreeDAction } from '@/types/contexts';
-import s from '@/styles/works/workThreeD/workThreeDeD.module.css';
+import s from '@/styles/workThreeD.module.css';
 
 type Props = {
   /** 表示する作品の詳細データ */
@@ -46,6 +46,7 @@ const Controls = React.memo(
 
     const rootClassNames = cn('root_container', s.controls);
 
+    /** コントロール項目のクリックハンドラ */
     const handleClick = useCallback(
       (index: number): void => {
         dispatch({ type: 'NAVIGATE_TO', payload: index });
@@ -110,7 +111,7 @@ const Controls = React.memo(
                     title={item.title}
                     description={item.description}
                     className={`${s.control_list} ${currentIndex === i && s.current}`}
-                    onClick={() => handleClick(i)}
+                    onClick={handleClick}
                   />
                 ))}
               </List>
@@ -134,7 +135,7 @@ const Controls = React.memo(
                     description={item.description}
                     className={`${s.control_list} ${s.work_shadow} ${currentIndex === i && s.current}`}
                     style={{ display: currentIndex === i ? 'flex' : 'none' }}
-                    onClick={() => handleClick(i)}
+                    onClick={handleClick}
                   />
                 ))}
               </List>

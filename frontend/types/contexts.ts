@@ -74,22 +74,6 @@ export type WorkThreeDRefs = {
   toggleButtonRef: React.MutableRefObject<HTMLDivElement>;
 };
 
-/**
- * WorkThreeDContext の公開型。
- * state と dispatch、ref 群の 3 点のみを外部に露出する。
- */
-/** WorkThreeDContextType の型定義 */
-export type WorkThreeDContextType = {
-  /** 3D作品ビュワーの状態 */
-  state: WorkThreeDState;
-
-  /** 状態更新ディスパッチ関数 */
-  dispatch: React.Dispatch<WorkThreeDAction>;
-
-  /** DOM ref 群 */
-  refs: WorkThreeDRefs;
-};
-
 /** PageHeaderContextType の型定義 */
 export type PageHeaderContextType = {
   /** ページヘッダー要素の ref */

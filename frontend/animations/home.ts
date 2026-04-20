@@ -5,9 +5,9 @@ import type { OrthographicCamera, PerspectiveCamera, Vector3 } from 'three';
 import { type Group, Material, MathUtils, type Mesh } from 'three';
 
 import {
+  IS_DEV,
   POWER2_OUT_OPACITY_LEFT_MOVE,
   POWER2_OUT_OPACITY_TOP_MOVE,
-  IS_DEV,
 } from '@/constants/common';
 import { getScrollTriggerOption } from '@/utils';
 

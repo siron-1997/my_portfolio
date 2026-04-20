@@ -10,7 +10,7 @@ import { introductionAnimation } from '@/animations/workThreeD';
 import { Container } from '@/components/common';
 import FingerPress from '@/components/works/workThreeD/FingerPress';
 import ToggleButton from '@/components/works/workThreeD/ToggleButton';
-import s from '@/styles/works/workThreeD/workThreeDodule.css';
+import s from '@/styles/workThreeD.module.css';
 import { type WorkDetail } from '@/types/api';
 import { type WorkThreeDAction } from '@/types/contexts';
 

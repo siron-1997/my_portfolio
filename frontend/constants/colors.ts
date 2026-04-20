@@ -19,6 +19,8 @@ export const COLOR_PALETTE = {
   borderHover: 'rgba(190, 190, 190, 0.8)',
   faviconTileColor: '#da532c',
   themeColor: '#ffffff',
+  borderWhiteSemi: 'rgba(255, 255, 255, 0.5)',
+  bgBlackSemi: 'rgb(0, 0, 0, 0.3)',
 };
 
 /** Three.js ワールド専用のカラーパレット */
@@ -110,6 +112,14 @@ export const TIME_POINT_ENV_COLORS: TimePointColorSet = {
     environment: WORLD_COLOR_PALETTE.environmentLunch,
   },
 };
+
+/** workThreeD UI コンポーネント専用のカラー定義 */
+export const WORK_THREE_D_UI_COLORS = {
+  /** コントロールアイテム・ナビゲーションのデフォルトボーダー色 */
+  borderDefault: COLOR_PALETTE.borderWhiteSemi,
+  /** コントロールアイテムの背景色 */
+  bgTransparent: COLOR_PALETTE.bgBlackSemi,
+} as const;
 
 /** ワークワールドのカラー定義 */
 export const WORK_WORLD_ENV_COLORS: WorkWorldColorSet = {

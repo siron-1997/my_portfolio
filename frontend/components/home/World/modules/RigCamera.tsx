@@ -11,7 +11,7 @@ import React, {
 
 import { CameraShake } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { buttonGroup, type useCreateStore, useControls } from 'leva';
+import { buttonGroup, useControls,type useCreateStore } from 'leva';
 import { Group, MathUtils, Mesh, Vector3 } from 'three';
 
 import { rigCameraAnimation } from '@/animations/home';

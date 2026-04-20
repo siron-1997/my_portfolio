@@ -1,9 +1,7 @@
 import { Object3D, PerspectiveCamera } from 'three';
 
-import { BREAK_POINTS } from '@/constants/common';
+import { BREAK_POINT_KEYS, BREAK_POINTS } from '@/constants/common';
 import {
-  BREAK_POINT_KEYS,
-  BREAK_POINT_MAP,
   DEFAULT_CONTROLS_VIEW_OFFSET,
   DEFAULT_SECTION_CAMERA_PARAMS,
   DEFAULT_VIEWER_TOGGLE_CAMERA_PARAMS,
@@ -167,8 +165,8 @@ export const generateControlsCameraConfigs = (
 
   /** 現在のウィンドウ幅に該当するブレークポイントを特定 */
   const currentBreakPointKey = BREAK_POINT_KEYS.find((key, i) => {
-    const min = i === 0 ? -Infinity : BREAK_POINT_MAP[BREAK_POINT_KEYS[i - 1]];
-    const max = BREAK_POINT_MAP[key];
+    const min = i === 0 ? -Infinity : BREAK_POINTS[BREAK_POINT_KEYS[i - 1]];
+    const max = BREAK_POINTS[key];
     return width >= min && width < max;
   });
 

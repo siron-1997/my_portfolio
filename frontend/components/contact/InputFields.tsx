@@ -1,4 +1,4 @@
-import React, { JSX } from 'react';
+import React, { type JSX } from 'react';
 
 import cn from 'classnames';
 import { type FormState, type UseFormRegister } from 'react-hook-form';

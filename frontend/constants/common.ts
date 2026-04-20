@@ -26,7 +26,14 @@ export const BREAK_POINTS = {
   LG: 1280,
   XL: 1536,
   '2XL': 1920,
-};
+  '3XL': Infinity,
+} as const;
+
+/** ブレークポイント名の型 */
+export type BreakPointKey = keyof typeof BREAK_POINTS;
+
+/** ブレークポイント名の順序付き配列 */
+export const BREAK_POINT_KEYS: BreakPointKey[] = ['XS', 'SM', 'LG', 'XL', '2XL', '3XL'];
 
 /** サイトマップ */
 export const SITE_MAP: SiteMapItem[] = [

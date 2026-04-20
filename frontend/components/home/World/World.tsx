@@ -27,8 +27,8 @@ import { DEFAULT_COORDINATES, IS_DEV } from '@/constants/common';
 import { useGeolocation } from '@/hooks';
 import s from '@/styles/home.module.css';
 import { type OpenWeatherCurrentData } from '@/types/api';
-import { disableScroll } from '@/utils';
 import { type TimePoint } from '@/types/api';
+import { disableScroll } from '@/utils';
 
 type Props = {
   /** portal セクション要素の参照 Ref */

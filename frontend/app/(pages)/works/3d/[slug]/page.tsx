@@ -1,14 +1,8 @@
-import '@/styles/works/workThreeD/index.css';
+import '@/styles/workThreeDGlobal.css';
 
-import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 
-import { PageHeader } from '@/components/common';
-import { Loading } from '@/components/works/workThreeD';
-import { Controls, Introduction, Portal } from '@/components/works/workThreeD';
-import { WorkWorld } from '@/components/world/work';
-import { WorkThreeDProvider } from '@/contexts';
-import s from '@/styles/works/workThreeD/index.module.css';
+import WorkThreeDClient from '@/components/works/workThreeD/WorkThreeDClient';
 import { type WorkDetail } from '@/types/api';
 
 async function getWorkDetail(slug: string) {
@@ -44,20 +38,5 @@ export default async function WorkPage({
     redirect('/works');
   }
 
-  return (
-    <WorkThreeDProvider>
-      <Suspense fallback={<Loading />}>
-        <WorkWorld content={content} />
-      </Suspense>
-      <PageHeader
-        id="3d-page-header"
-        figureClassName={s.figure}
-        figcaptionClassName={s.figcaption}
-      >
-        <Portal content={content} />
-      </PageHeader>
-      <Introduction content={content} />
-      <Controls content={content} />
-    </WorkThreeDProvider>
-  );
+  return <WorkThreeDClient content={content} />;
 }

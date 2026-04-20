@@ -1,0 +1,237 @@
+'use client';
+
+import React, { useCallback, useEffect, useRef, useLayoutEffect } from 'react';
+import type { Dispatch, JSX, RefObject, SetStateAction } from 'react';
+
+import { useFrame, useThree } from '@react-three/fiber';
+import { PerspectiveCamera as CustomPerspectiveCamera } from '@react-three/drei';
+import { Box3, Sphere } from 'three';
+import type { PerspectiveCamera, Vector3, Euler } from 'three';
+
+import {
+  controlsAnimation,
+  sectionsAnimation,
+  viewerToggleAnimation,
+} from '@/animations/workWorld';
+import type { WorldProps } from '@/components/works/workThreeD/World';
+import { BREAK_POINTS } from '@/constants/common';
+import { useWindowSize } from '@/hooks';
+import { type ModelChildren } from '@/types/world';
+import {
+  generateControlsCameraConfigs,
+  getSectionsCameraParams,
+  getViwerToggleCameraParams,
+} from '@/utils/world/work/getCameraParams';
+
+type Props = Omit<WorldProps, 'isLoading'> & {
+  /** カメラの参照 Ref */
+  cameraRef: RefObject<PerspectiveCamera | null>;
+
+  /** ナビゲーションの表示フラグの状態 */
+  setIsNavigationVisible: Dispatch<SetStateAction<boolean>>;
+
+  /** モデルの子要素リスト */
+  modelChildren: ModelChildren;
+};
+
+const CustomCamera = React.memo(
+  ({
+    cameraRef,
+    setIsNavigationVisible,
+    modelChildren,
+    content,
+    portalRef,
+    introductionRef,
+    controlsRef,
+    toggleButtonRef,
+    isInitialControl,
+    isStartControls,
+    isViewerActive,
+    currentIndex,
+    dispatch,
+  }: Props): JSX.Element => {
+    /** 前回のカメラ位置の参照 Ref */
+    const previousPositionRef = useRef<Vector3 | null>(null);
+
+    /** 前回のカメラ回転の参照 Ref */
+    const previousRotationRef = useRef<Euler | null>(null);
+
+    /** ページアンマウント状態の参照 Ref */
+    const isPageUnMountedRef = useRef<boolean>(false);
+
+    /** ウィンドウサイズを取得 */
+    const { width, height } = useWindowSize();
+
+    /** WebGL コンテキストを取得 */
+    const gl = useThree((state) => state.gl);
+
+    /**
+     * コントロール開始フラグを更新するコールバック
+     *
+     * @param valueOrUpdater - 更新する値または updater 関数
+     */
+    const updateStartControls = useCallback(
+      (valueOrUpdater: boolean | ((prev: boolean) => boolean)): void => {
+        dispatch({
+          type: 'SET_START_CONTROLS',
+          payload:
+            typeof valueOrUpdater === 'function'
+              ? valueOrUpdater(isStartControls)
+              : valueOrUpdater,
+        });
+      },
+      [dispatch, isStartControls],
+    );
+
+    /** カメラの位置・アングルを更新 */
+    useFrame(() => {
+      if (!cameraRef.current) return;
+      const previousPosition = cameraRef.current.position.clone();
+      const previousRotation = cameraRef.current.rotation.clone();
+      previousPositionRef.current = previousPosition;
+      previousRotationRef.current = previousRotation;
+      cameraRef.current.updateProjectionMatrix();
+    });
+
+    /** セクション・ビュワーモード アニメーション */
+    useLayoutEffect(() => {
+      if (
+        modelChildren.length === 0 ||
+        !cameraRef.current ||
+        !portalRef.current ||
+        !introductionRef.current ||
+        !controlsRef.current ||
+        !toggleButtonRef.current
+      )
+        return;
+
+      /** ブレークポイントに応じて、各セクションのカメラパラメータを取得 */
+      const sectionsCameraParams = getSectionsCameraParams(
+        modelChildren,
+        width,
+        height,
+      );
+
+      /** カメラアニメーションを作成 (セクションごとにカメラの位置・アングルを設定) */
+      const sectionsAnimations = sectionsAnimation({
+        portal: portalRef.current,
+        introduction: introductionRef.current,
+        controls: controlsRef.current,
+        camera: cameraRef.current,
+        updateStartControls,
+        setIsNavigationVisible,
+        cameraParams: sectionsCameraParams,
+      });
+
+      /** ブレークポイントに応じて、ビュワーモードのカメラパラメータを取得 */
+      const {
+        cameraParams: viewerCameraParams,
+        zoom,
+        offset,
+      } = getViwerToggleCameraParams(modelChildren, width, height);
+      /** アニメーション作成 (ビュワーモードのカメラ位置・アングルを設定) */
+      const viewerAnimation = viewerToggleAnimation({
+        introduction: introductionRef.current,
+        toggleButton: toggleButtonRef.current,
+        cameraRef,
+        cameraParams: viewerCameraParams,
+        zoom,
+        offset,
+      });
+
+      return () => {
+        sectionsAnimations.forEach((ctx) => ctx.revert());
+        viewerAnimation.revert();
+      };
+    }, [height, modelChildren, setIsNavigationVisible, width]);
+
+    useLayoutEffect(() => {
+      if (modelChildren.length === 0 || !cameraRef.current) return;
+
+      /** カメラ初期位置 */
+      previousPositionRef.current = cameraRef.current.position.clone();
+
+      /** カメラ初期アングル */
+      previousRotationRef.current = cameraRef.current.rotation.clone();
+
+      /** コントロール用のカメラパラメータを生成 */
+      const cameraConfigs = generateControlsCameraConfigs(
+        modelChildren,
+        width,
+        height,
+        content.controls || [],
+      );
+
+      /** シーンのバウンディングボックス中心と包容球半径を算出（Arc-Slerp 用） */
+      const bbox = new Box3();
+      modelChildren.forEach((child) => bbox.expandByObject(child));
+
+      /** シーンの包容球を取得 */
+      const sphere = bbox.getBoundingSphere(new Sphere());
+
+      /** シーンの中心座標 */
+      const sceneCenter = sphere.center;
+
+      /** シーンの包容球半径 */
+      const bboxRadius = sphere.radius > 0 ? sphere.radius : 5;
+
+      /** コントロール用のアニメーションを初期化 */
+      const ctx = controlsAnimation({
+        previousPosition: previousPositionRef.current,
+        previousRotation: previousRotationRef.current,
+        cameraRef,
+        currentIndex,
+        isInitialControl,
+        isStartControls,
+        cameraConfigs,
+        width,
+        height,
+        sceneCenter,
+        bboxRadius,
+      });
+
+      return () => {
+        if (isPageUnMountedRef.current) ctx.revert();
+      };
+    }, [
+      content.controls,
+      currentIndex,
+      height,
+      isInitialControl,
+      isStartControls,
+      modelChildren,
+      width,
+    ]);
+
+    /** ページアンマウント時に更新 */
+    useLayoutEffect(() => {
+      return () => {
+        isPageUnMountedRef.current = true;
+      };
+    }, []);
+
+    /** ビュワーモードの活性状態に応じて Canvas の z-index を更新 */
+    useEffect(() => {
+      const canvas: HTMLCanvasElement = gl.domElement;
+      canvas.style.zIndex = isViewerActive ? '200' : '20';
+    }, [gl, isViewerActive]);
+
+    return (
+      <CustomPerspectiveCamera
+        ref={cameraRef}
+        name="my-camera"
+        fov={
+          width < BREAK_POINTS.XS ? 50 : width < BREAK_POINTS.SM ? 45 : 26.9915
+        }
+        near={0.1}
+        far={200}
+        makeDefault
+        onUpdate={(c) => c.updateProjectionMatrix()}
+      />
+    );
+  },
+);
+
+CustomCamera.displayName = 'CustomCamera';
+
+export default CustomCamera;

@@ -185,7 +185,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
           crawlSpeed={200}
           height={3}
           crawl
-          showSpinner
+          showSpinner={false}
           easing="ease"
           speed={200}
           shadow={`0 0 10px ${APP_THEME_COLORS.navigation},0 0 5px ${APP_THEME_COLORS.navigation}`}

@@ -45,15 +45,15 @@ HomeClient（'use client'）
 
 ## 3. 状態管理
 
-| 状態 | 保持先 | 型 | 初期値 | 説明 |
-|---|---|---|---|---|
-| `isLoading` | `HomeProvider` (Context) | `boolean` | `true` | ページ全体のローディング状態。Canvas 準備完了で `false` |
-| `isCanvasReady` | `HomeClient` | `boolean` | `false` | Canvas `onCreated` で `true` になる |
-| `currentWeatherData` | `World` | `OpenWeatherCurrentData \| null` | `null` | OpenWeather API の生レスポンス |
-| `effectiveWeatherData` | `World` | `OpenWeatherCurrentData \| null` | `null` | Leva デバッグ上書き後のデータ（本番では常に `currentWeatherData` と同値） |
-| `timePoint` | `World` | `TimePoint` | `'night'` | 時間帯分類（API レスポンスから算出） |
-| `isInsideRoom` | `World` | `boolean` | `false` | ドアを通過して屋内に入ったかどうか |
-| `hasWeatherFetched` | `World` | `boolean` | `false` | 天気 API の呼び出し完了フラグ（成功/失敗問わず） |
+| 状態                   | 保持先                   | 型                               | 初期値    | 説明                                                                      |
+| ---------------------- | ------------------------ | -------------------------------- | --------- | ------------------------------------------------------------------------- |
+| `isLoading`            | `HomeProvider` (Context) | `boolean`                        | `true`    | ページ全体のローディング状態。Canvas 準備完了で `false`                   |
+| `isCanvasReady`        | `HomeClient`             | `boolean`                        | `false`   | Canvas `onCreated` で `true` になる                                       |
+| `currentWeatherData`   | `World`                  | `OpenWeatherCurrentData \| null` | `null`    | OpenWeather API の生レスポンス                                            |
+| `effectiveWeatherData` | `World`                  | `OpenWeatherCurrentData \| null` | `null`    | Leva デバッグ上書き後のデータ（本番では常に `currentWeatherData` と同値） |
+| `timePoint`            | `World`                  | `TimePoint`                      | `'night'` | 時間帯分類（API レスポンスから算出）                                      |
+| `isInsideRoom`         | `World`                  | `boolean`                        | `false`   | ドアを通過して屋内に入ったかどうか                                        |
+| `hasWeatherFetched`    | `World`                  | `boolean`                        | `false`   | 天気 API の呼び出し完了フラグ（成功/失敗問わず）                          |
 
 ---
 
@@ -83,12 +83,12 @@ useGeolocation(DEFAULT_COORDINATES)
 
 API レスポンスのタイムゾーン情報からサーバーサイドで算出し、レスポンスに含める。
 
-| 値 | 帯域（現地時刻） |
-|---|---|
-| `'morning'` | 日の出〜正午前 |
-| `'lunch'` | 正午〜日の入り前 |
-| `'evening'` | 日の入り〜夜前 |
-| `'night'` | 夜〜翌日の日の出前 |
+| 値          | 帯域（現地時刻）   |
+| ----------- | ------------------ |
+| `'morning'` | 日の出〜正午前     |
+| `'lunch'`   | 正午〜日の入り前   |
+| `'evening'` | 日の入り〜夜前     |
+| `'night'`   | 夜〜翌日の日の出前 |
 
 TimePoint はシーン全体の**背景色・環境色・照明強度・星の透明度**に影響する。
 
@@ -96,12 +96,12 @@ TimePoint はシーン全体の**背景色・環境色・照明強度・星の�
 
 OpenWeather の `weather[].description` を3種類に分類する（`getWeatherCategory` ユーティリティ）。
 
-| カテゴリ | 定数 | 対象天気 |
-|---|---|---|
-| 晴れ | `WEATHER_CATEGORY_CLEAR_SKY` | clear sky, few clouds（11-25%）|
-| 薄い雲 | `WEATHER_CATEGORY_THIN_CLOUD` | scattered clouds（25-50%）|
-| 厚い雲 | `WEATHER_CATEGORY_THICK_CLOUD` | broken clouds（51-84%）, overcast clouds（85-100%）|
-| 未対応 | `null` | snow 等（保留）|
+| カテゴリ | 定数                           | 対象天気                                            |
+| -------- | ------------------------------ | --------------------------------------------------- |
+| 晴れ     | `WEATHER_CATEGORY_CLEAR_SKY`   | clear sky, few clouds（11-25%）                     |
+| 薄い雲   | `WEATHER_CATEGORY_THIN_CLOUD`  | scattered clouds（25-50%）                          |
+| 厚い雲   | `WEATHER_CATEGORY_THICK_CLOUD` | broken clouds（51-84%）, overcast clouds（85-100%） |
+| 未対応   | `null`                         | snow 等（保留）                                     |
 
 Rain は `weather[].rain['1h']`（1時間降雨量 mm）を直接参照するため WeatherCategory には属さない。
 
@@ -121,13 +121,13 @@ Rain は `weather[].rain['1h']`（1時間降雨量 mm）を直接参照するた
 - `DirectionalLight` + PCFShadowMap によるシャドウ付きの太陽光
 - 強度（intensity）は **WeatherCategory × TimePoint** の組み合わせで変動する
 
-| WeatherCategory | ベース強度定数 |
-|---|---|
-| `clear sky` | `HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_CLEAR_SKY` |
-| `few clouds` | `HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_FEW_CLOUDS` |
+| WeatherCategory    | ベース強度定数                                         |
+| ------------------ | ------------------------------------------------------ |
+| `clear sky`        | `HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_CLEAR_SKY`        |
+| `few clouds`       | `HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_FEW_CLOUDS`       |
 | `scattered clouds` | `HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_SCATTERED_CLOUDS` |
-| `broken clouds` | `HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_BROKEN_CLOUDS` |
-| 厚い雲全般 | `HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_THICK_CLOUD` |
+| `broken clouds`    | `HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_BROKEN_CLOUDS`    |
+| 厚い雲全般         | `HOME_WORLD_SUN_LIGHT_INTENSITY_BASE_THICK_CLOUD`      |
 
 TimePoint ごとのオフセット（`lunch` は +、`night` は -）を加算して最終値を決定する。
 
@@ -166,14 +166,14 @@ TimePoint ごとのオフセット（`lunch` は +、`night` は -）を加算�
   2. **ドア開閉アニメーション** - `doorAnimStart%` 〜 `doorAnimEnd%` の範囲
 - ブレイクポイント別のカメラ設定（`HOME_WORLD_RIG_CAMERA_POSITIONS`）
 
-| ブレイクポイント | 適用設定キー |
-|---|---|
-| `>= 2XL` | `xxl` |
-| `>= XL` | `xl` |
-| `>= LG` | `lg` |
-| `>= SM` | `sm` |
-| `>= XS` | `xs` |
-| `< XS`（モバイル）| `mobile` |
+| ブレイクポイント   | 適用設定キー |
+| ------------------ | ------------ |
+| `>= 2XL`           | `xxl`        |
+| `>= XL`            | `xl`         |
+| `>= LG`            | `lg`         |
+| `>= SM`            | `sm`         |
+| `>= XS`            | `xs`         |
+| `< XS`（モバイル） | `mobile`     |
 
 - ドア回転角が `doorHideRainThresholdDeg` を超えたとき `onInsideRoomChange(true)` を呼び出す
 - `CameraShake` で微細なカメラ揺れを追加
@@ -211,10 +211,10 @@ TimePoint ごとのオフセット（`lunch` は +、`night` は -）を加算�
 `utils/world/getEnvMapIntensity.ts` 内の `setTimePointIntensity` が時間帯補正を加算する。
 
 | TimePoint | Model 補正 | Cloud 補正 |
-|---|---|---|
-| `night` | +6 | +50 |
-| `evening` | -2 | +20 |
-| `lunch` | +12 | +200 |
+| --------- | ---------- | ---------- |
+| `night`   | +6         | +50        |
+| `evening` | -2         | +20        |
+| `lunch`   | +12        | +200       |
 
 ---
 
@@ -224,14 +224,14 @@ TimePoint ごとのオフセット（`lunch` は +、`night` は -）を加算�
 Leva ストアは `World` で `useCreateStore` で生成し、`Experience` と `Rain` に props で渡す。
 パネルは `createPortal` で `document.body` 直下に描画する（レイヤー競合回避）。
 
-| グループ名 | 制御対象 |
-|---|---|
-| タイムポイント | 時間帯・天気説明・雲量・湿度の上書き |
-| 星 | 表示/非表示・色・透明度・サイズ・数 |
-| 雲 | 表示/非表示・雲量・環境マップ強度 |
-| 雨 | 表示/非表示・雨量・線幅・長さ・速度・透明度 |
-| 太陽光 | 強度・位置・シャドウヘルパー表示 |
-| カメラリグ | 始終点座標・モデル Y オフセット |
+| グループ名     | 制御対象                                    |
+| -------------- | ------------------------------------------- |
+| タイムポイント | 時間帯・天気説明・雲量・湿度の上書き        |
+| 星             | 表示/非表示・色・透明度・サイズ・数         |
+| 雲             | 表示/非表示・雲量・環境マップ強度           |
+| 雨             | 表示/非表示・雨量・線幅・長さ・速度・透明度 |
+| 太陽光         | 強度・位置・シャドウヘルパー表示            |
+| カメラリグ     | 始終点座標・モデル Y オフセット             |
 
 天気説明を変更すると `effectiveCurrentWeatherData` が合成データに差し替えられ、
 `onEffectiveWeatherDataChange` 経由で `World` → `Rain` にも伝播する。
@@ -249,33 +249,33 @@ Leva ストアは `World` で `useCreateStore` で生成し、`Experience` と `
 />
 ```
 
-| 項目 | 値 | 理由 |
-|---|---|---|
-| Shadow | PCFShadowMap | 柔らかいシャドウ |
-| DPR | [1, 2] | Retina 対応・パフォーマンス上限 |
-| ToneMapping | ReinhardToneMapping | 自然な露出再現 |
-| FOV | 45° | 標準的な透視投影 |
-| Near / Far | 0.01 / 200 | Z ファイティング防止・シーン範囲 |
+| 項目        | 値                  | 理由                             |
+| ----------- | ------------------- | -------------------------------- |
+| Shadow      | PCFShadowMap        | 柔らかいシャドウ                 |
+| DPR         | [1, 2]              | Retina 対応・パフォーマンス上限  |
+| ToneMapping | ReinhardToneMapping | 自然な露出再現                   |
+| FOV         | 45°                 | 標準的な透視投影                 |
+| Near / Far  | 0.01 / 200          | Z ファイティング防止・シーン範囲 |
 
 ---
 
 ## 10. 関連ファイル一覧
 
-| パス | 説明 |
-|---|---|
-| `components/home/World/World.tsx` | メインコンポーネント・状態管理・天気 API 呼び出し |
-| `components/home/World/Experience.tsx` | R3F シーングラフ・Leva デバッグ統合 |
-| `components/home/World/modules/` | 各シーンモジュール |
-| `app/api/getCurrentWeather/route.ts` | 天気 API Route Handler |
-| `services/getCurrentWeather.ts` | 天気 API ヘルパー関数 |
-| `animations/home.ts` | RigCamera・Portal の GSAP アニメーション定義 |
-| `utils/world/getEnvMapIntensity.ts` | 環境マップ強度算出ロジック |
-| `utils/world/getWeatherCategory.ts` | 天気カテゴリ分類ロジック |
-| `constants/home.ts` | シーン定数（位置・サイズ・閾値・デバッグ設定） |
-| `constants/colors.ts` | `TIME_POINT_ENV_COLORS`（時間帯別環境色） |
-| `types/api.ts` | `OpenWeatherCurrentData` / `TimePoint` 型定義 |
-| `types/home.ts` | `RainState` / `RainStateResult` 型定義 |
-| `docs/home-world-flow.md` | データフロー シーケンス図・状態遷移図 |
+| パス                                   | 説明                                              |
+| -------------------------------------- | ------------------------------------------------- |
+| `components/home/World/World.tsx`      | メインコンポーネント・状態管理・天気 API 呼び出し |
+| `components/home/World/Experience.tsx` | R3F シーングラフ・Leva デバッグ統合               |
+| `components/home/World/modules/`       | 各シーンモジュール                                |
+| `app/api/getCurrentWeather/route.ts`   | 天気 API Route Handler                            |
+| `services/getCurrentWeather.ts`        | 天気 API ヘルパー関数                             |
+| `animations/home.ts`                   | RigCamera・Portal の GSAP アニメーション定義      |
+| `utils/world/getEnvMapIntensity.ts`    | 環境マップ強度算出ロジック                        |
+| `utils/world/getWeatherCategory.ts`    | 天気カテゴリ分類ロジック                          |
+| `constants/home.ts`                    | シーン定数（位置・サイズ・閾値・デバッグ設定）    |
+| `constants/colors.ts`                  | `TIME_POINT_ENV_COLORS`（時間帯別環境色）         |
+| `types/api.ts`                         | `OpenWeatherCurrentData` / `TimePoint` 型定義     |
+| `types/home.ts`                        | `RainState` / `RainStateResult` 型定義            |
+| `docs/home-world-flow.md`              | データフロー シーケンス図・状態遷移図             |
 
 ---
 

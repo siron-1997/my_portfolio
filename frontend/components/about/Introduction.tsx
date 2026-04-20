@@ -1,6 +1,6 @@
 'use client';
 
-import React, { JSX, useEffect, useRef } from 'react';
+import React, { type JSX, useEffect, useRef } from 'react';
 
 import { Typography } from '@mui/material';
 

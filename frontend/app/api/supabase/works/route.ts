@@ -1,8 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { type WorkSummary } from '@/types/api';
-
 import { supabase } from '@/services/supabase';
+import { type WorkSummary } from '@/types/api';
 
 /**
  * 作品一覧を取得するAPIエンドポイント

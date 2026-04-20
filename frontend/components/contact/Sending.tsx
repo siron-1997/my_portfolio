@@ -1,6 +1,6 @@
 'use client';
 
-import React, { JSX, useEffect } from 'react';
+import React, { type JSX, useEffect } from 'react';
 
 import { Typography } from '@mui/material';
 import cn from 'classnames';

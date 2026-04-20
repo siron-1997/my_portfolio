@@ -2,7 +2,7 @@
 
 import React, { type JSX, useEffect, useMemo } from 'react';
 
-import { buttonGroup, type useCreateStore, useControls } from 'leva';
+import { buttonGroup, useControls,type useCreateStore } from 'leva';
 import { MathUtils } from 'three';
 
 import { IS_DEV } from '@/constants/common';

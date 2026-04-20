@@ -2,7 +2,7 @@
 
 import React, { type JSX, useEffect, useRef } from 'react';
 
-import { buttonGroup, type useCreateStore, useControls } from 'leva';
+import { buttonGroup, useControls,type useCreateStore } from 'leva';
 import { type Fog as ThreeFog } from 'three';
 
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';

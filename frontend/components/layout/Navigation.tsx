@@ -1,6 +1,6 @@
 'use client';
 
-import React, { JSX } from 'react';
+import React, { type JSX } from 'react';
 import Link from 'next/link';
 
 import { Typography } from '@mui/material';

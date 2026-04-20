@@ -2,7 +2,7 @@
 
 import 'react-modern-drawer/dist/index.css';
 
-import React, { JSX, useCallback, useEffect, useState } from 'react';
+import React, { type JSX, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 

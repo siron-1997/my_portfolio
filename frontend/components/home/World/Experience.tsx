@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 
 import { BakeShadows } from '@react-three/drei';
-import { type useCreateStore, useControls } from 'leva';
+import { useControls,type useCreateStore } from 'leva';
 import { type Group } from 'three';
 
 import {
