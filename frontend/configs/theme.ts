@@ -1,46 +1,34 @@
-import React from 'react';
 import { createTheme } from '@mui/material/styles';
-import { BREAK_POINTS } from '@/constants/common';
+import type React from 'react';
+
 import { APP_THEME_COLORS } from '@/constants/colors';
+import { BREAK_POINTS } from '@/constants/common';
+
+/** カスタム Typography バリアントのプロパティ定義 */
+type CustomTypographyVariantProps = {
+  logo: React.CSSProperties;
+  p: React.CSSProperties;
+  tag: React.CSSProperties;
+  label: React.CSSProperties;
+  label_name: React.CSSProperties;
+  navigation: React.CSSProperties & {
+    '&::after'?: React.CSSProperties;
+    '&:hover::after'?: React.CSSProperties;
+  };
+  model_navigation: React.CSSProperties & {
+    '&:hover'?: React.CSSProperties;
+  };
+  card_title: React.CSSProperties;
+  card_paragraph: React.CSSProperties & {
+    '&:hover'?: React.CSSProperties;
+  };
+};
 
 declare module '@mui/material/styles' {
-  interface TypographyVariants {
-    logo: React.CSSProperties;
-    p: React.CSSProperties;
-    tag: React.CSSProperties;
-    label: React.CSSProperties;
-    label_name: React.CSSProperties;
-    navigation: React.CSSProperties & {
-      '&::after'?: React.CSSProperties;
-      '&:hover::after'?: React.CSSProperties;
-    };
-    model_navigation: React.CSSProperties & {
-      '&:hover'?: React.CSSProperties;
-    };
-    card_title: React.CSSProperties;
-    card_paragraph: React.CSSProperties & {
-      '&:hover'?: React.CSSProperties;
-    };
-  }
-  // allow configuration using `createTheme`
-  interface TypographyVariantsOptions {
-    logo: React.CSSProperties;
-    p: React.CSSProperties;
-    tag: React.CSSProperties;
-    label: React.CSSProperties;
-    label_name: React.CSSProperties;
-    navigation: React.CSSProperties & {
-      '&::after'?: React.CSSProperties;
-      '&:hover::after'?: React.CSSProperties;
-    };
-    model_navigation: React.CSSProperties & {
-      '&:hover'?: React.CSSProperties;
-    };
-    card_title: React.CSSProperties;
-    card_paragraph: React.CSSProperties & {
-      '&:hover'?: React.CSSProperties;
-    };
-  }
+  /** ランタイム型: Typography コンポーネントの variant に使用 */
+  interface TypographyVariants extends CustomTypographyVariantProps {}
+  /** createTheme 型: テーマ定義時の型チェックに使用 */
+  interface TypographyVariantsOptions extends CustomTypographyVariantProps {}
 }
 declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides {
@@ -56,6 +44,11 @@ declare module '@mui/material/Typography' {
   }
 }
 
+/**
+ * アプリケーション全体の MUI テーマ定義。
+ * ブレークポイント・パレット・タイポグラフィ・コンポーネント override を一元管理する。
+ * フォントファミリーは ThemeProviderWrapper で next/font の CSS 変数を注入して上書きする。
+ */
 export const theme = createTheme({
   breakpoints: {
     values: {
@@ -78,9 +71,11 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: ['var(--font-noto-sans-jp)', 'var(--font-roboto)', 'sans-serif'].join(
-      ',',
-    ),
+    fontFamily: [
+      'var(--font-noto-sans-jp)',
+      'var(--font-roboto)',
+      'sans-serif',
+    ].join(','),
     logo: {
       fontSize: 30,
       lineHeight: 1,
@@ -254,11 +249,11 @@ export const theme = createTheme({
       },
     },
     card_title: {
-      // WorkCard タイトル
+      /** WorkCard タイトル */
       fontWeight: 600,
     },
     card_paragraph: {
-      // WorkCard 段落
+      /** WorkCard 段落 */
       textDecoration: 'none',
       transition: 'all 0.3s',
       '&:hover': {

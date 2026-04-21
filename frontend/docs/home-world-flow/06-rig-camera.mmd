@@ -1,0 +1,19 @@
+flowchart TD
+    A["Canvas onCreated<br/>→ setIsLoading(false)"] --> B["HomeContext: isLoading = false"]
+    B --> C["RigCamera: useLayoutEffect 発火<br/>（portalRef, windowSize が確定）"]
+    C --> D{windowSize 有効?}
+    D -- No --> E["early return（待機）"]
+    D -- Yes --> F["scene から 'models' グループを取得<br/>doorRef から 'door-container' / 'room' を取得"]
+    F --> G{3要素すべて揃っている?}
+    G -- No --> H["アニメーション実行なし"]
+    G -- Yes --> I{window.width の範囲}
+    I --> |width >= 1920| J["camera.position = xxl.start<br/>models.y = -0.85"]
+    I --> |1536 to 1920| K["camera.position = xl.start<br/>models.y = -0.6"]
+    I --> |1280 to 1536| L["camera.position = lg.start<br/>models.y = -0.4"]
+    I --> |1024 to 1280| M["camera.position = tb.start<br/>models.y = -1.4"]
+    I --> |768 to 1024| N["camera.position = sp.start<br/>models.y = -0.x"]
+    J --> O["rigCameraAnimation 実行<br/>GSAP: startPosition to endPosition<br/>portalRef にドア通過アニメーション"]
+    K --> O
+    L --> O
+    M --> O
+    N --> O

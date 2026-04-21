@@ -1,4 +1,14 @@
-import { SiteMapItem, Sns, GsapAnimationConfig } from '@/types/common';
+import {
+  type GsapAnimationConfig,
+  type SiteMapItem,
+  type Sns,
+} from '@/types/common';
+
+/** 開発環境フラグ */
+export const IS_DEV = process.env.NODE_ENV === 'development';
+
+/** サイト公開年（著作権表記の開始年） */
+export const SITE_START_YEAR = 2023;
 
 /**
  * 現在地のデフォルト座標（比叡山）
@@ -16,7 +26,14 @@ export const BREAK_POINTS = {
   LG: 1280,
   XL: 1536,
   '2XL': 1920,
-};
+  '3XL': Infinity,
+} as const;
+
+/** ブレークポイント名の型 */
+export type BreakPointKey = keyof typeof BREAK_POINTS;
+
+/** ブレークポイント名の順序付き配列 */
+export const BREAK_POINT_KEYS: BreakPointKey[] = ['XS', 'SM', 'LG', 'XL', '2XL', '3XL'];
 
 /** サイトマップ */
 export const SITE_MAP: SiteMapItem[] = [
@@ -24,6 +41,12 @@ export const SITE_MAP: SiteMapItem[] = [
   { href: '/works', title: 'Works' },
   { href: '/contact', title: 'Contact' },
 ];
+
+/** アイコン画像のファイルパス */
+export const LOADING_ICON_PATH = '/icons/circle_loading.svg';
+export const CLOSE_ICON_PATH = '/icons/close.svg';
+export const HAMBURGER_ICON_PATH = '/icons/hamburger.svg';
+export const SCROLL_TO_TOP_ICON_PATH = '/icons/keyboard_arrow_up_24.svg';
 
 /**  SNSリスト */
 export const SNS_LIST: Sns[] = [

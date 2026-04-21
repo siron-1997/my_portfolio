@@ -1,27 +1,33 @@
-import { Metadata } from 'next';
-import { CategoryFilter, Contents, Portal } from '@/components/works';
-import { Container } from '@/components/common';
-import { WorksProvider } from '@/contexts';
-import { getWorks, getWorkCategories } from '@/services/works';
+import { type Metadata } from 'next';
 
-export const revalidate = 3600; // ISR 1時間
+import { Container } from '@/components/common';
+import { Portal, WorksClient } from '@/components/works';
+import { WORKS_PORTAL_TITLE } from '@/constants/works';
+import { getWorkCategories, getWorks } from '@/services/works';
+
+/** ISR 1時間 */
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Works',
+  title: WORKS_PORTAL_TITLE,
 };
 
 export default async function Works() {
+  /** ポートフォリオ作品一覧を取得 */
   const worksData = await getWorks();
-  const categoriesData = await getWorkCategories();
+  /** 作品カテゴリ一覧を取得 */
+  const workCategoriesData = await getWorkCategories();
 
   return (
     <div className="root_container">
       <Container className="top_container">
-        <WorksProvider>
-          <Portal title="Works" />
-          <CategoryFilter data={categoriesData} />
-          <Contents data={worksData} />
-        </WorksProvider>
+        {/** タイトル */}
+        <Portal title={WORKS_PORTAL_TITLE} />
+        {/** カテゴリフィルターとコンテンツ表示 */}
+        <WorksClient
+          worksDatum={worksData}
+          workCategoriesDatum={workCategoriesData}
+        />
       </Container>
     </div>
   );

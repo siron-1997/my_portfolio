@@ -8,25 +8,27 @@ applyTo: "frontend/**"
 
 ## 技術スタック
 
-| パッケージ                           | バージョン | 用途                                                                                                                                            |
-| ------------------------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `next`                               | 15.5.14    | フレームワーク（App Router）**※ v15 系に固定（MUI v5 / 他パッケージとの互換性・安定性を優先）。アップグレードは MUI v7 対応と合わせて検討する** |
-| `react` / `react-dom`                | ^19        | UI ライブラリ                                                                                                                                   |
-| `typescript`                         | ^5         | 型システム                                                                                                                                      |
-| `@mui/material`                      | ^5.13.1    | UI コンポーネント                                                                                                                               |
-| `@emotion/react` / `@emotion/styled` | ^11.14.0   | MUI スタイルエンジン                                                                                                                            |
-| `gsap`                               | ^3.14.2    | アニメーション                                                                                                                                  |
-| `three`                              | ^0.183.2   | 3D レンダリング                                                                                                                                 |
-| `@types/three`                       | 0.183.1    | three.js 型定義（devDependency）                                                                                                                |
-| `@react-three/fiber`                 | ^9         | Three.js の React バインディング                                                                                                                |
-| `@react-three/drei`                  | ^10        | Three.js ヘルパー集                                                                                                                             |
-| `@react-three/postprocessing`        | ^3.0.4     | ポストプロセスエフェクト                                                                                                                        |
-| `@supabase/supabase-js`              | ^2.99.3    | Supabase クライアント                                                                                                                           |
-| `axios`                              | ^1.13.6    | HTTP クライアント                                                                                                                               |
-| `classnames`                         | ^2.5.1     | 条件付きクラス名結合                                                                                                                            |
-| `sharp`                              | ^0.34.5    | 画像最適化                                                                                                                                      |
-| **Node.js**                          | 22.14.0    | ランタイム                                                                                                                                      |
-| **pnpm**                             | >=10.0.0   | パッケージマネージャー                                                                                                                          |
+| パッケージ                           | バージョン | 用途                                                                                                                                                                    |
+| ------------------------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `next`                               | 15.5.14    | フレームワーク（App Router）**※ v15 系に固定（MUI v5 / 他パッケージとの互換性・安定性を優先）。アップグレードは MUI v7 対応と合わせて検討する**                         |
+| `react` / `react-dom`                | ^19        | UI ライブラリ                                                                                                                                                           |
+| `typescript`                         | ^5         | 型システム                                                                                                                                                              |
+| `@mui/material`                      | ^5.13.1    | UI コンポーネント                                                                                                                                                       |
+| `@emotion/react` / `@emotion/styled` | ^11.14.0   | MUI スタイルエンジン                                                                                                                                                    |
+| `gsap`                               | ^3.14.2    | アニメーション                                                                                                                                                          |
+| `three`                              | 0.182.0    | 3D レンダリング **※ r183 で `THREE.Clock` が deprecated され `@react-three/fiber` 内部起因の警告が発生するため v0.182.0 に固定。R3F v10 stable リリース時に再評価する** |
+| `@types/three`                       | 0.182.0    | three.js 型定義（devDependency）**※ three に合わせて固定**                                                                                                              |
+| `@react-three/fiber`                 | ^9         | Three.js の React バインディング                                                                                                                                        |
+| `@react-three/drei`                  | ^10        | Three.js ヘルパー集                                                                                                                                                     |
+| `@react-three/postprocessing`        | ^3.0.4     | ポストプロセスエフェクト                                                                                                                                                |
+| `leva`                               | 0.10.1     | 3D デバッグ UI（開発環境のみ使用）                                                                                                                                      |
+| `r3f-perf`                           | 7.2.3      | R3F パフォーマンスモニター（開発環境のみ使用）                                                                                                                          |
+| `@supabase/supabase-js`              | ^2.99.3    | Supabase クライアント                                                                                                                                                   |
+| `axios`                              | ^1.13.6    | HTTP クライアント                                                                                                                                                       |
+| `classnames`                         | ^2.5.1     | 条件付きクラス名結合                                                                                                                                                    |
+| `sharp`                              | ^0.34.5    | 画像最適化                                                                                                                                                              |
+| **Node.js**                          | 22.14.0    | ランタイム                                                                                                                                                              |
+| **pnpm**                             | >=10.0.0   | パッケージマネージャー                                                                                                                                                  |
 
 ## JSDoc ルール
 
@@ -89,16 +91,33 @@ frontend/
 
 ### 2. ファイル構成パターン
 
-コンポーネントはディレクトリ単位で分割し、以下の 3 ファイル構成を基本とする。
+コンポーネントのファイル構成は、ロジックの複雑さに応じて以下のいずれかを選択する。
+
+**シンプルパターン（単一ファイル）**： `useXxx` フックが不要な場合（ref + 単純な useEffect・cn・定数のみ）に使用する。統合後のファイルが 500 行未満であることを目安とする。
+
+```text
+ComponentName.tsx   # UI + ロジックをまとめて記述（親フォルダへ直接配置）
+```
+
+**ディレクトリパターン（フック分離）**： ロジックが複雑で独立した `useXxx` フックの価値がある場合に使用する。具体的には、`useState` による状態管理・複数の `useCallback`/`useMemo`・複雑な副作用・多数の返り値 などを持つ場合が該当する。
 
 ```text
 ComponentName/
 ├── ComponentName.tsx   # UI レンダリング（ロジックは持たない）
 ├── useComponentName.ts # コンポーネント固有ロジック（カスタムフック）
-└── index.ts            # export { default } from './ComponentName'
+└── index.ts            # export { default as ComponentName } from './ComponentName'
 ```
 
-- ロジックが極めて少ない場合は `useXxx.ts` を省略可能。
+**どちらを選ぶか判断基準**：
+
+| 条件                                       | パターン     |
+| ------------------------------------------ | ------------ |
+| ref + 1 つの useEffect（アニメーション等） | シンプル     |
+| cn・useIconSize など派生値の計算のみ       | シンプル     |
+| useState を持つ / 複数の useCallback       | ディレクトリ |
+| useMemo で複雑な計算を行う                 | ディレクトリ |
+| フックの行数が約 50 行を超える             | ディレクトリ |
+
 - Props の型はコンポーネントファイル内で `type Props = { ... }` として定義する。JSDoc ルールに従い、型の直上と各プロパティにコメントを付け、プロパティ間は空行で区切る。
 
 ```ts
@@ -243,6 +262,23 @@ const handleSelect = useCallback(
 );
 ```
 
+## React フック記述順序
+
+コンポーネント内のフックは以下の順序で記述する。フック呼び出しの順序を統一することで可読性を高め、副作用の依存関係を見つけやすくする。
+
+```
+1. useRef / useContext / useReducer  （外部依存なしの状態・参照）
+2. useState                          （ローカル状態）
+3. カスタムフック                      （useXxx）
+4. useMemo / useCallback             （派生値・メモ化関数）
+5. useEffect                         （副作用） ← JSX の直上に配置
+6. return (...)                      （JSX）
+```
+
+- **`useEffect` は必ず `return` の直上にまとめて配置する**。`useMemo` や `useCallback` と混在させない。
+- `useFrame`（R3F）は `useEffect` と同じ副作用レイヤーとして扱い、`useEffect` の直前に配置する。
+- 複数の `useEffect` がある場合は関連性の薄いものから順に並べ、最も「天気・状態の同期」など外部条件に反応するものを最後（JSX の直前）に置く。
+
 ## 定数
 
 - **命名**: 全べて `UPPER_SNAKE_CASE` で記述する。
@@ -353,6 +389,47 @@ const notoSansJP = localFont({
 .body {
   font-family: var(--font-noto-sans-jp), sans-serif;
 }
+```
+
+## インポート規約
+
+インポートの順序・グループ分けは `eslint-plugin-simple-import-sort` によって自動強制・自動整列される（保存時 ESLint auto-fix で適用）。記述順と空行の挿入は以下のルールに従うこと。
+
+### グループ順序（上から下へ）
+
+```
+1. 副作用インポート（CSS・フォント等）
+2. React / Next.js（フレームワーク）
+3. 外部パッケージ（npm / @スコープパッケージ。ただし @/ は除く）
+4. 内部エイリアス（@/ プレフィックス）
+5. 相対インポート（./・../）
+```
+
+### ルール
+
+- 各グループの間は**必ず空行 1 行**で区切る。
+- 同一グループ内はアルファベット順に並べる。
+- 型のみのインポートは `import type { Foo }` ではなく `import { type Foo }` のインライン形式を使用する（`@typescript-eslint/consistent-type-imports` による強制）。
+- import 並び順は保存時に ESLint auto-fix が自動整列するため、手動でのソートは不要。
+
+```ts
+/** 副作用 */
+import "@/styles/globals.css";
+
+/** React / Next.js */
+import { useCallback, useMemo } from "react";
+import Image from "next/image";
+
+/** 外部パッケージ */
+import axios from "axios";
+import { Canvas } from "@react-three/fiber";
+
+/** 内部エイリアス（@/） */
+import { Button } from "@/components/common";
+import { type WorkItem } from "@/types/api";
+
+/** 相対パス */
+import { helper } from "./utils";
 ```
 
 ## デバッグ・動作確認（Playwright MCP）

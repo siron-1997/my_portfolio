@@ -1,47 +1,24 @@
-import React from 'react';
-import { FormStep } from '@/types/common';
+import type React from 'react';
+
 import { WorkCategory } from '@/types/api';
 
-export type ContactFormAction =
-  | { type: 'CHANGE_NAME'; payload: { value: string; isValid: boolean } }
-  | {
-      type: 'CHANGE_EMAIL';
-      payload: { value: string; isValid: boolean; errorMessage: string };
-    }
-  | { type: 'CHANGE_MESSAGE'; payload: { value: string; isValid: boolean } }
-  | { type: 'SET_EMAIL_ERROR_MESSAGE'; payload: string }
-  | { type: 'SET_FORM_STEP'; payload: FormStep }
-  | { type: 'SET_VALIDATION_ERROR'; payload: boolean }
-  | { type: 'SET_INITIAL_VALIDATION_CHECK'; payload: boolean }
-  | { type: 'START_SENDING' }
-  | { type: 'FINISH_SENDING'; payload: { isSended: boolean | undefined } };
-
+/** HomeContextType の型定義 */
 export type HomeContextType = {
+  /** ホームページのポータルセクションのルート要素の ref */
   portalRef: React.MutableRefObject<HTMLDivElement>;
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-};
 
-export type ContactFormContextType = {
-  name: string;
-  email: string;
-  message: string;
-  isNotNameEmpty: boolean;
-  isNotEmailValid: boolean;
-  emailErrorMessage: string;
-  isNotMessageEmpty: boolean;
-  isSending: boolean;
-  isSended: boolean | undefined;
-  formStep: FormStep;
-  isValidationError: boolean;
-  isInitialValidationCheck: boolean;
-  dispatch: React.Dispatch<ContactFormAction>;
+  /** 3D モデルのロード中かどうか */
+  isLoading: boolean;
+
+  /** ローディング状態を更新するセッター */
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 /**
  * 3D作品ビュワーで管理する状態。
  * useReducer に渡す state の型。
  */
+/** WorkThreeDState の型定義 */
 export type WorkThreeDState = {
   /** 3Dモデルのロード中フラグ */
   isLoading: boolean;
@@ -82,6 +59,7 @@ export type WorkThreeDAction =
 /**
  * 3D作品ビュワーで使用する DOM ref 群。
  */
+/** WorkThreeDRefs の型定義 */
 export type WorkThreeDRefs = {
   /** Portal セクションのルート要素の ref */
   portalRef: React.MutableRefObject<HTMLElement>;
@@ -96,26 +74,8 @@ export type WorkThreeDRefs = {
   toggleButtonRef: React.MutableRefObject<HTMLDivElement>;
 };
 
-/**
- * WorkThreeDContext の公開型。
- * state と dispatch、ref 群の 3 点のみを外部に露出する。
- */
-export type WorkThreeDContextType = {
-  /** 3D作品ビュワーの状態 */
-  state: WorkThreeDState;
-
-  /** 状態更新ディスパッチ関数 */
-  dispatch: React.Dispatch<WorkThreeDAction>;
-
-  /** DOM ref 群 */
-  refs: WorkThreeDRefs;
-};
-
+/** PageHeaderContextType の型定義 */
 export type PageHeaderContextType = {
+  /** ページヘッダー要素の ref */
   pageHeaderRef: React.MutableRefObject<HTMLElement>;
-};
-
-export type WorksContextType = {
-  categories: WorkCategory[];
-  setCategories: React.Dispatch<React.SetStateAction<WorkCategory[]>>;
 };

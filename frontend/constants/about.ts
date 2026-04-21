@@ -1,7 +1,26 @@
-import SchoolIcon from '@mui/icons-material/School';
-import WorkIcon from '@mui/icons-material/Work';
-import CodeIcon from '@mui/icons-material/Code';
-import { SectionHeader, Skills, CareerHistory } from '@/types/common';
+import {
+  type CareerHistory,
+  type SectionHeader,
+  type Skills,
+} from '@/types/common';
+
+/** About ページのポータルタイトル */
+export const ABOUT_PORTAL_TITLE = 'About';
+
+/** プロフィール画像のファイルパス */
+export const ABOUT_PROFILE_IMAGE_PATH = '/images/siron/siron.webp';
+
+/** プロフィール画像の代替テキスト */
+export const ABOUT_PROFILE_IMAGE_ALT = 'プロフィール画像';
+
+/** プロフィール画像要素の ID */
+export const ABOUT_PROFILE_IMAGE_ID = 'profile-image';
+
+/** 自己紹介セクション要素の ID */
+export const ABOUT_INTRODUCTION_SECTION_ID = 'about-introduction-section';
+
+/** キャリアヒストリーアイテムのクラス名 */
+export const ABOUT_CAREER_HISTORY_ITEM_CLASS = 'career-history-item';
 
 const path = '/icons/';
 const svg = '.svg';

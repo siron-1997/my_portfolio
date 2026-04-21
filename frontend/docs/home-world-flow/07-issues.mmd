@@ -1,0 +1,16 @@
+flowchart TB
+    subgraph naming["命名の反転"]
+        A["isViewerLoading: false → LoadingUI を表示<br/>（Loading なのに false が ローディング中）"]
+        B["isLoading: true → Canvas 未初期化状態<br/>（Loading が true = まだ読み込んでいない）"]
+    end
+
+    subgraph resp["責務分散"]
+        C["HomeContext（グローバル）<br/>ポータルアニメーション専用の isLoading を管理"]
+        D["useHomeWorld（ローカル）<br/>天気取得完了の isViewerLoading を管理"]
+        E["2つの Loading フラグが異なる層で同時に動いている"]
+    end
+
+    subgraph unintuitive["非直感的なフロー"]
+        F["Canvas onCreated（3D ライブラリの内部イベント）<br/>→ Context の setIsLoading を更新"]
+        G["レンダリングシステムの内部状態変化が<br/>React Context に直接影響する構造"]
+    end

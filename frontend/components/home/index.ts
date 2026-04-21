@@ -1,3 +1,1 @@
-export { ModelViewerLoading } from './ModelViewerLoading';
-export { Portal } from './Portal';
-export { Works } from './Works';
+export { default as HomeClient } from './HomeClient';

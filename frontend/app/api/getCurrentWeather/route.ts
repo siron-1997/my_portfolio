@@ -1,89 +1,56 @@
-import { NextRequest, NextResponse } from 'next/server';
-import axios, { AxiosError } from 'axios';
-import { OpenWeatherCurrentData } from '@/types/api';
-import { API_ALLOWED_KEYS } from '@/constants/api';
-import { LOG_MESSAGES } from '@/constants/api';
+import { type NextRequest } from 'next/server';
 
-const createResponse = (
-  success: boolean,
-  message: string,
-  data: unknown = null,
-  status: number = 200,
-) => {
-  return NextResponse.json({ success, message, data }, { status });
-};
+import axios from 'axios';
+
+import { API_ALLOWED_KEYS, LOG_MESSAGES } from '@/constants/api';
+import { IS_DEV } from '@/constants/common';
+import {
+  convertToLocalTime,
+  createResponse,
+  handleAxiosError,
+  handleUnknownError,
+} from '@/services/getCurrentWeather';
+import { type OpenWeatherCurrentData } from '@/types/api';
 
 /**
- * UTC時間を指定されたタイムゾーンのローカル時間に変換します。
- * @param utcTime UTC時間
- * @param timezoneOffset タイムゾーンオフセット（秒単位）
- * @returns ローカル時間
+ * 現在の天気情報を取得する API エンドポイント
+ *
+ * クライアントから送信された緯度・経度をもとに OpenWeather API から現在の天気情報を取得し、クライアントに返す。
+ *
+ * @param request - クライアントからのリクエストオブジェクト
+ * @returns NextResponse オブジェクト
+ * @throws 400 - 無効なリクエストデータ（許可されていないキー、無効な緯度・経度）
+ * @throws 500 - API キーが設定されていない、予期しないエラー、未知のエラー
+ * @throws 503 - API からのレスポンスが受信されない場合
  */
-const convertToLocalTime = (utcTime: Date, timezoneOffset: number): Date => {
-  return new Date(utcTime.getTime() + timezoneOffset * 1000);
-};
-
-const handleAxiosError = (error: AxiosError, apiName: string) => {
-  const url = error.config?.url || 'Unknown URL';
-
-  if (error.response) {
-    console.error(
-      LOG_MESSAGES.API_REQUEST_FAILED(
-        apiName,
-        error.response.status,
-        error.response.statusText,
-        url,
-      ),
-    );
-    return createResponse(
-      false,
-      `API Error: ${error.response.statusText}`,
-      null,
-      error.response.status,
-    );
-  } else if (error.request) {
-    console.error(LOG_MESSAGES.NO_RESPONSE(apiName, url));
-    return createResponse(false, 'No response received from API', null, 503);
-  }
-};
-
-const handleUnknownError = (error: unknown, apiName: string) => {
-  // 予期しないエラー
-  if (error instanceof Error) {
-    console.error(LOG_MESSAGES.UNEXPECTED_ERROR(apiName, error.message));
-    return createResponse(false, `Unexpected Error: ${error.message}`, null, 500);
-    // 未知のエラー
-  } else {
-    console.error(LOG_MESSAGES.UNKNOWN_ERROR(apiName, error));
-    return createResponse(false, 'An unknown error occurred', null, 500);
-  }
-};
-
 export async function POST(request: NextRequest) {
   const apiName = 'Open Weather API - Current Weather';
 
   try {
-    const isDevelopment = process.env.NODE_ENV === 'development';
+    if (IS_DEV) console.info(`${apiName}: 取得開始...`);
 
-    if (isDevelopment) console.log(`${apiName}: 取得開始...`);
-
+    /** リクエストボディを取得 */
     const body = await request.json();
-    // リクエストデータのキー項目を検証
+
+    /** リクエストデータのキー項目を検証 */
     const keys = Object.keys(body);
     const invalidKeys = keys.filter(
       (key) => !API_ALLOWED_KEYS.CURRENT_WEATHER.includes(key),
     );
 
-    // 許可されていないキー項目が含まれている場合
+    /** 許可されていないキー項目が含まれている場合 */
     if (invalidKeys.length > 0) {
-      console.error(LOG_MESSAGES.INVALID_KEYS(apiName, invalidKeys));
+      if (IS_DEV) {
+        console.error(LOG_MESSAGES.INVALID_KEYS(apiName, invalidKeys));
+      }
       return createResponse(false, '無効なリクエストデータ', null, 400);
     }
 
+    /** 緯度・経度を取得 */
     const { latitude, longitude } = body;
 
+    /** 経緯度のバリデーション (数値かつ範囲内) を確認 */
     if (
-      // 経緯度のバリデーション (数値かつ範囲内) を確認
       typeof latitude !== 'number' ||
       latitude < -90 ||
       latitude > 90 ||
@@ -91,77 +58,89 @@ export async function POST(request: NextRequest) {
       longitude < -180 ||
       longitude > 180
     ) {
-      console.error(LOG_MESSAGES.INVALID_COORDINATES(apiName));
+      if (IS_DEV) {
+        console.error(LOG_MESSAGES.INVALID_COORDINATES(apiName));
+      }
       return createResponse(false, '無効な緯度または経度', null, 400);
     }
 
-    // 環境変数からAPIキーを取得
+    /** 環境変数から API キーを取得 */
     const apiKey = process.env.OPEN_WEATHER_API_KEY;
-    // APIキーが設定されていない場合のエラーハンドリング
+
+    /** API キーが設定されていない場合のエラーハンドリング */
     if (!apiKey) {
-      console.error(LOG_MESSAGES.MISSING_ENV_VARIABLE('OPEN_WEATHER_API_KEY'));
+      if (IS_DEV) {
+        console.error(
+          LOG_MESSAGES.MISSING_ENV_VARIABLE('OPEN_WEATHER_API_KEY'),
+        );
+      }
       return createResponse(false, 'API キーが設定されていません', null, 500);
     }
 
+    /** OpenWeather API の URL を作成 */
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`;
+
+    /** OpenWeather API からデータを取得 */
     const res = await axios.get<OpenWeatherCurrentData>(url);
 
-    // ステータスコードが 2xx の場合は成功、それ以外は失敗
-    if (res.status >= 200 && res.status < 300) {
-      if (isDevelopment) console.log(`${apiName}: 取得成功`);
-      const data = res.data;
+    if (IS_DEV) console.info(`${apiName}: 取得成功`);
+    const data = res.data;
 
-      // 現在のUTC時間を取得
-      const utcTime = new Date(new Date().toISOString());
-      // タイムゾーンオフセット (秒単位) をミリ秒に変換し加算
-      const localTime = convertToLocalTime(utcTime, data.timezone);
+    /** 現在の UTC 時間を取得 */
+    const utcTime = new Date(new Date().toISOString());
 
-      // 現在の時間をポイントに変換
-      const currentHour = localTime.getHours();
-      const currentMinute = localTime.getMinutes() / 100;
-      const currentPoint = currentHour + currentMinute;
+    /** タイムゾーンオフセット (秒単位) をミリ秒に変換し加算 */
+    const localTime = convertToLocalTime(utcTime, data.timezone);
 
-      // 日の出・日の入り時間を計算
-      const sunriseTime = convertToLocalTime(
-        new Date(data.sys.sunrise * 1000),
-        data.timezone,
-      );
-      const sunsetTime = convertToLocalTime(
-        new Date(data.sys.sunset * 1000),
-        data.timezone,
-      );
+    /** 現在の時間をポイントに変換 */
+    const currentHour = localTime.getUTCHours();
+    const currentMinute = localTime.getUTCMinutes() / 100;
+    const currentPoint = currentHour + currentMinute;
 
-      const startSunrise = sunriseTime.getHours() + sunriseTime.getMinutes() / 100;
-      const endSunrise = startSunrise + 1; // 日の出終了時間を1時間後に設定
-      const startSunset = sunsetTime.getHours() + sunsetTime.getMinutes() / 100;
-      const endSunset = startSunset + 1; // 日の入り終了時間を1時間後に設定
+    /** 日の出時間を計算 */
+    const sunriseTime = convertToLocalTime(
+      new Date(data.sys.sunrise * 1000),
+      data.timezone,
+    );
 
-      // 時間帯を設定
-      const isLunch = currentPoint > endSunrise && currentPoint <= startSunset;
-      const isEvening =
-        (currentPoint > startSunrise && currentPoint <= endSunrise) ||
-        (currentPoint > startSunset && currentPoint <= endSunset);
-      // 時間帯を判定
-      const timePoint = isLunch ? 'lunch' : isEvening ? 'evening' : 'night';
+    /** 日の入り時間を計算 */
+    const sunsetTime = convertToLocalTime(
+      new Date(data.sys.sunset * 1000),
+      data.timezone,
+    );
 
-      return createResponse(
-        true,
-        'Current Weather data fetched successfully',
-        { data, timePoint },
-        res.status,
-      );
-    } else {
-      console.error(
-        LOG_MESSAGES.API_REQUEST_FAILED(apiName, res.status, res.statusText, url),
-      );
-      return createResponse(false, 'APIリクエストに失敗しました', null, res.status);
-    }
+    /** 日の出の時間帯を設定 */
+    const startSunrise =
+      sunriseTime.getUTCHours() + sunriseTime.getUTCMinutes() / 100;
+    const endSunrise = startSunrise + 1;
+
+    /** 日の入りの時間帯を設定 */
+    const startSunset = sunsetTime.getUTCHours() + sunsetTime.getUTCMinutes() / 100;
+    const endSunset = startSunset + 1;
+
+    /** 昼の時間帯を設定 */
+    const isLunch = currentPoint > endSunrise && currentPoint <= startSunset;
+
+    /** 夕方の時間帯を設定 */
+    const isEvening =
+      (currentPoint > startSunrise && currentPoint <= endSunrise) ||
+      (currentPoint > startSunset && currentPoint <= endSunset);
+
+    /** 時間帯を判定 */
+    const timePoint = isLunch ? 'lunch' : isEvening ? 'evening' : 'night';
+
+    return createResponse(
+      true,
+      'Current Weather data fetched successfully',
+      { data, timePoint },
+      res.status,
+    );
   } catch (error) {
-    // AxiosError の場合の処理
+    /** AxiosError の場合の処理 */
     if (axios.isAxiosError(error)) {
       return handleAxiosError(error, apiName);
     }
-    // 予期しない or 未知のエラー
+    /** 予期しない or 未知のエラー */
     return handleUnknownError(error, apiName);
   }
 }

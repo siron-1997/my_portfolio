@@ -1,37 +1,57 @@
-import React from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import getScrollTriggerOption from '@/utils/gsap';
-import { BREAK_POINTS } from '@/constants/common';
+import type React from 'react';
+
 import {
-  BACK_OUT_OPACITY_RIGHT_MOVE,
   BACK_OUT_OPACITY_LEFT_MOVE,
+  BACK_OUT_OPACITY_RIGHT_MOVE,
+  BREAK_POINTS,
   POWER4_OUT_OPACITY_TOP_MOVE,
 } from '@/constants/common';
+import { getScrollTriggerOption } from '@/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
-type CardsProps = {
-  contentItems: NodeListOf<Element>;
-  contentsRef: React.RefObject<HTMLDivElement>;
+type ContentsAnimationProps = {
+  /** アニメーション対象のコンテンツカード要素のリスト */
+  contentItems: NodeListOf<HTMLElement>;
+
+  /** コンテンツコンテナの参照 Ref */
+  ref: React.RefObject<HTMLDivElement | null>;
 };
 
-type CategoryFilterProps = {
+type CategoryFilterAnimationProps = {
+  /** アニメーション対象のカテゴリフィルター要素 */
   categoryFilter: HTMLDivElement;
-  categoryFilterRef: React.RefObject<HTMLDivElement>;
+
+  /** カテゴリフィルターコンテナの参照 Ref */
+  ref: React.RefObject<HTMLDivElement | null>;
 };
 
-type PortalProps = {
+type PortalAnimationProps = {
+  /** アニメーション対象のタイトル要素 */
   title: HTMLHeadingElement;
-  titleRef: React.RefObject<HTMLHeadingElement>;
+
+  /** タイトル要素の参照 Ref */
+  titleRef: React.RefObject<HTMLHeadingElement | null>;
 };
 
-export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => {
-  const ctx = gsap.context(() => {
+/**
+ * コンテンツのアニメーション初期化処理
+ * ウィンドウ幅に応じて左右交互にスライドインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
+export const contentsAnimation = ({
+  contentItems,
+  ref,
+}: ContentsAnimationProps): gsap.Context => {
+  return gsap.context(() => {
     const width = window.innerWidth;
+
     let point = true;
 
-    Array.from(contentItems).forEach((item: any, i: number) => {
+    Array.from(contentItems).forEach((item: HTMLElement, i: number) => {
       const cardAnimate = gsap.timeline({
         ...getScrollTriggerOption({
           delay: 0.4,
@@ -45,7 +65,7 @@ export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => 
 
       cardAnimate.fromTo(
         item,
-        // from
+        /** アニメーション開始値 */
         width < BREAK_POINTS.XS && !((i + 1) % 2 === 0)
           ? BACK_OUT_OPACITY_RIGHT_MOVE.from
           : width < BREAK_POINTS.XS && (i + 1) % 2 === 0
@@ -53,7 +73,8 @@ export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => 
             : point
               ? BACK_OUT_OPACITY_RIGHT_MOVE.from
               : BACK_OUT_OPACITY_LEFT_MOVE.from,
-        // to
+
+        /** アニメーション終了値 */
         width < BREAK_POINTS.XS && !((i + 1) % 2 === 0)
           ? BACK_OUT_OPACITY_RIGHT_MOVE.to
           : width < BREAK_POINTS.XS && (i + 1) % 2 === 0
@@ -64,40 +85,53 @@ export const contentsAnimation = ({ contentItems, contentsRef }: CardsProps) => 
       );
 
       switch (true) {
-        case (i + 1) % 2 === 0 && width >= BREAK_POINTS.XS && width < BREAK_POINTS.SM: // tb
-        case (i + 1) % 3 === 0 && width >= BREAK_POINTS.SM: // pc
+        /** タブレット幅（XS 〜 SM）では 2 列のため、2 番目ごとに反転 */
+        case (i + 1) % 2 === 0 &&
+          width >= BREAK_POINTS.XS &&
+          width < BREAK_POINTS.SM:
+        /** PC 幅（SM 以上）では 3 列のため、3 番目ごとに反転 */
+        case (i + 1) % 3 === 0 && width >= BREAK_POINTS.SM:
           point = !point;
           break;
         default:
           break;
       }
     });
-  }, contentsRef);
-
-  return ctx;
+  }, ref);
 };
 
+/**
+ * カテゴリフィルターのアニメーション初期化処理
+ * ページ表示時に上からフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
 export const categoryFilterAnimation = ({
   categoryFilter,
-  categoryFilterRef,
-}: CategoryFilterProps) => {
-  const ctx = gsap.context(() => {
+  ref,
+}: CategoryFilterAnimationProps): gsap.Context => {
+  return gsap.context(() => {
     gsap.fromTo(categoryFilter, POWER4_OUT_OPACITY_TOP_MOVE.from, {
       ...POWER4_OUT_OPACITY_TOP_MOVE.to,
       delay: 0.8,
     });
-  }, categoryFilterRef);
-
-  return ctx;
+  }, ref);
 };
 
-export const portalAnimation = ({ title, titleRef }: PortalProps) => {
-  const ctx = gsap.context(() => {
+/**
+ * ポータルタイトルのアニメーション初期化処理
+ * ページ表示時に左からフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
+export const portalAnimation = ({
+  title,
+  titleRef,
+}: PortalAnimationProps): gsap.Context => {
+  return gsap.context(() => {
     gsap.fromTo(title, BACK_OUT_OPACITY_LEFT_MOVE.from, {
       ...BACK_OUT_OPACITY_LEFT_MOVE.to,
       delay: 0.4,
     });
   }, titleRef);
-
-  return ctx;
 };

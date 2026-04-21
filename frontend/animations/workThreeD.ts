@@ -1,57 +1,95 @@
+import { RefObject } from 'react';
+
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import getScrollTriggerOption from '@/utils/gsap';
+
 import {
-  POWER2_OUT_OPACITY_TOP_MOVE,
+  POWER2_OUT_OPACITY_BOTTOM_MOVE,
   POWER2_OUT_OPACITY_LEFT_MOVE,
   POWER2_OUT_OPACITY_RIGHT_MOVE,
-  POWER2_OUT_OPACITY_BOTTOM_MOVE,
+  POWER2_OUT_OPACITY_TOP_MOVE,
 } from '@/constants/common';
+import { getScrollTriggerOption } from '@/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
 type ControlsProps = {
+  /** Controls セクションの要素 */
   section: HTMLElement;
+
+  /** デスクトップ時に表示されるリストの要素 */
   listPC: HTMLDivElement;
+
+  /** モバイル時に表示されるリストの要素 */
   listMB: HTMLDivElement;
-  controlsRef: React.RefObject<HTMLDivElement>;
+
+  /** Controls セクションのルート要素の ref */
+  ref: RefObject<HTMLDivElement | null>;
 };
 
 type IntroductionProps = {
+  /** Introduction セクションの要素 */
   section: HTMLElement;
-  introductionRef: React.RefObject<HTMLDivElement>;
+
+  /** Introduction セクションの参照 Ref */
+  ref: RefObject<HTMLDivElement | null>;
 };
 
 type PortalProps = {
+  /** portal セクションの要素 */
   portal: HTMLElement;
-  portalRef: React.RefObject<HTMLElement>;
+
+  /** portal セクションの参照 Ref */
+  ref: RefObject<HTMLElement | null>;
 };
 
 type FingerPressProps = {
+  /** 画像の要素 */
   image: HTMLImageElement;
+
+  /** 説明文の要素 */
   text: HTMLParagraphElement;
-  fingerPressRef: React.RefObject<HTMLDivElement>;
+
+  /** 指アイコンの参照 Ref */
+  ref: RefObject<HTMLDivElement | null>;
+
+  /** 現在の幅 */
   currentWidth: number;
+
+  /** 指アイコン表示フラグ */
   isFingerVisible: boolean;
 };
 
 type ToggleButtonProps = {
-  bg: HTMLDivElement;
-  toggleButtonRef: React.RefObject<HTMLDivElement>;
+  /** トグルボタンの背景要素 */
+  bgButton: HTMLDivElement;
+
+  /** トグルボタンの参照 Ref */
+  ref: RefObject<HTMLDivElement | null>;
+
+  /** ビュワーアクティブフラグ */
   isViewerActive: boolean;
 };
 
+/**
+ * Controls セクションのアニメーション初期化処理
+ * ページ表示時に Controls セクションの子要素が順番にフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
 export const controlsAnimation = ({
   section,
   listPC,
   listMB,
-  controlsRef,
-}: ControlsProps) => {
-  const ctx = gsap.context(() => {
-    /* セクション */
-    const controlsChildElement = controlsRef.current
+  ref,
+}: ControlsProps): gsap.Context => {
+  return gsap.context(() => {
+    /** Controls セクション内の子要素を取得 */
+    const controlsChildElement = ref.current
       ?.querySelector('div')
       ?.querySelector('div');
+
+    /** Controls セクション内の子要素が存在する場合、アニメーションを適用 */
     if (controlsChildElement) {
       gsap.fromTo(section, POWER2_OUT_OPACITY_TOP_MOVE.from, {
         ...POWER2_OUT_OPACITY_TOP_MOVE.to,
@@ -62,123 +100,177 @@ export const controlsAnimation = ({
         }),
       });
     }
-    /* コントロールリスト PC */
+
+    /** デスクトップ時に表示されるリストの要素が存在する場合 */
     if (listPC.style.display !== 'none') {
       const list = listPC.querySelector('ul');
+
+      /** デスクトップ時に表示されるリストの要素が存在する場合、アニメーションを適用 */
       if (list) {
         gsap.fromTo(list, POWER2_OUT_OPACITY_LEFT_MOVE.from, {
           ...POWER2_OUT_OPACITY_LEFT_MOVE.to,
-          ...getScrollTriggerOption({ delay: 0.4, element: list, markers: false }),
+          ...getScrollTriggerOption({
+            delay: 0.4,
+            element: list,
+            markers: false,
+          }),
         });
       }
     }
-    /* コントロールリスト MB */
+
+    /** モバイル時に表示されるリストの要素が存在する場合 */
     if (listMB.style.display !== 'none') {
-      const list: HTMLUListElement | null = listMB.querySelector('#controls-mb-text');
-      if (list) {
+      const list = listMB.querySelector('#controls-mb-text');
+
+      /** モバイル時に表示されるリストの要素が存在する場合、アニメーションを適用 */
+      if (list && list instanceof HTMLDivElement) {
         gsap.fromTo(list, POWER2_OUT_OPACITY_RIGHT_MOVE.from, {
           ...POWER2_OUT_OPACITY_RIGHT_MOVE.to,
-          ...getScrollTriggerOption({ delay: 0.4, element: list, markers: false }),
+          ...getScrollTriggerOption({
+            delay: 0.4,
+            element: list,
+            markers: false,
+          }),
         });
-        /* コントロールバー */
+
+        /** カルーセルの要素のアニメーション */
         gsap.fromTo(
           listMB.querySelector('#controls-mb-carousel'),
           POWER2_OUT_OPACITY_TOP_MOVE.from,
           {
             ...POWER2_OUT_OPACITY_TOP_MOVE.to,
-            ...getScrollTriggerOption({ delay: 0.4, element: listMB, markers: false }),
+            ...getScrollTriggerOption({
+              delay: 0.4,
+              element: listMB,
+              markers: false,
+            }),
           },
         );
       }
     }
-  }, controlsRef);
-
-  return ctx;
+  }, ref);
 };
 
+/**
+ * Introduction セクションのアニメーション初期化処理
+ * ページ表示時に Introduction セクションの見出し、説明文、トグルボタンが順番にフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
 export const introductionAnimation = ({
   section,
-  introductionRef,
-}: IntroductionProps) => {
-  const ctx = gsap.context(() => {
+  ref,
+}: IntroductionProps): gsap.Context => {
+  return gsap.context(() => {
+    /** トグルボタン要素を取得 */
     const toggleButton = section.querySelector('#toggle-button');
+
+    /** 見出し要素を取得 */
     const title = section.querySelector('h2');
+
+    /** 説明文要素を取得 */
     const text = section.querySelector('p');
+
     /* 見出し */
     gsap.fromTo(title, POWER2_OUT_OPACITY_TOP_MOVE.from, {
       ...POWER2_OUT_OPACITY_TOP_MOVE.to,
-      ...getScrollTriggerOption({ delay: 0.4, element: section, markers: false }),
+      ...getScrollTriggerOption({
+        delay: 0.4,
+        element: section,
+        markers: false,
+      }),
     });
+
     /* 説明文 */
     gsap.fromTo(text, POWER2_OUT_OPACITY_TOP_MOVE.from, {
       ...POWER2_OUT_OPACITY_TOP_MOVE.to,
-      ...getScrollTriggerOption({ delay: 0.4, element: section, markers: false }),
+      ...getScrollTriggerOption({
+        delay: 0.4,
+        element: section,
+        markers: false,
+      }),
     });
+
     /* トグルボタン */
     gsap.fromTo(toggleButton, POWER2_OUT_OPACITY_BOTTOM_MOVE.from, {
       ...POWER2_OUT_OPACITY_BOTTOM_MOVE.to,
-      ...getScrollTriggerOption({ delay: 0.8, element: section, markers: false }),
+      ...getScrollTriggerOption({
+        delay: 0.8,
+        element: section,
+        markers: false,
+      }),
     });
-  }, introductionRef);
-
-  return ctx;
+  }, ref);
 };
 
-export const portalAnimation = ({ portal, portalRef }: PortalProps) => {
-  const ctx = gsap.context(() => {
+/**
+ * portal セクションのアニメーション初期化処理
+ * ページ表示時に portal セクションが右からフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
+export const portalAnimation = ({ portal, ref }: PortalProps): gsap.Context => {
+  return gsap.context(() => {
     gsap.fromTo(portal, POWER2_OUT_OPACITY_RIGHT_MOVE.from, {
       ...POWER2_OUT_OPACITY_RIGHT_MOVE.to,
       delay: 1.5,
     });
-  }, portalRef);
-  return ctx;
+  }, ref);
 };
 
+/**
+ * 指アイコンのアニメーション初期化処理
+ * ページ表示時に指アイコンがフェードイン・スライドするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
 export const fingerPressAnimation = ({
   image,
   text,
-  fingerPressRef,
+  ref,
   currentWidth,
   isFingerVisible,
-}: FingerPressProps) => {
-  const ctx = gsap.context(() => {
+}: FingerPressProps): gsap.Context => {
+  return gsap.context(() => {
+    /** 不透明度の設定 */
     const opacities = { point1: 0, point2: 0.85, point3: 0.4 };
-    const imageAnimation = gsap.timeline({ repeat: -1 });
-    const textAnimation = gsap.timeline({});
-    const arrowIconAnimation = gsap.timeline({ paused: true });
 
-    if (image !== null) {
-      imageAnimation.fromTo(
+    /** アイコン画像のアニメーション */
+    const imageAnimation = gsap
+      .timeline({ repeat: -1 })
+      .fromTo(
         image,
         { opacity: 0 },
         { opacity: 0.85, scale: 1.2, duration: 0.3, ease: 'power1.out' },
-      );
-      imageAnimation.fromTo(
+      )
+      .fromTo(
         image,
         { opacity: 0.85 },
         { opacity: 0.4, scale: 1.0, duration: 0.3, ease: 'power1.out' },
-      );
-      imageAnimation.fromTo(
+      )
+      .fromTo(
         image,
         { x: -currentWidth },
         { x: currentWidth, duration: 1, ease: 'power2.out' },
-      );
-      imageAnimation.fromTo(
+      )
+      .fromTo(
         image,
         { opacity: opacities.point3 },
         { opacity: opacities.point1, duration: 0.5, ease: 'power1.out' },
       );
 
-      if (isFingerVisible) imageAnimation.play();
-    }
+    /** アイコンが表示されている場合、アニメーションを再生 */
+    if (isFingerVisible) imageAnimation.play();
 
-    if (text !== null) {
-      textAnimation.fromTo(
+    /** テキストのアニメーション */
+    gsap
+      .timeline({})
+      .fromTo(
         text,
         { opacity: opacities.point1, y: 50 },
         { opacity: opacities.point2, y: 0 },
-      );
-      textAnimation.fromTo(
+      )
+      .fromTo(
         text,
         { opacity: opacities.point2 - 0.15 },
         {
@@ -189,27 +281,38 @@ export const fingerPressAnimation = ({
           ease: 'none',
         },
       );
-      arrowIconAnimation.fromTo(
-        text.children[1],
-        { y: 0 },
-        { y: 20, duration: 1.2, delay: 1.2, yoyo: true, repeat: -1, ease: 'none' },
-      );
-    }
-  }, fingerPressRef);
 
-  return ctx;
+    /** 矢印アイコンのアニメーション */
+    gsap.timeline({ paused: true }).fromTo(
+      text.children[1],
+      { y: 0 },
+      {
+        y: 20,
+        duration: 1.2,
+        delay: 1.2,
+        yoyo: true,
+        repeat: -1,
+        ease: 'none',
+      },
+    );
+  }, ref);
 };
 
+/**
+ * トグルボタンのアニメーション初期化処理
+ * ビュワーアクティブフラグに応じてトグルボタンの背景が左右にスライドするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
+ */
 export const toggleButtonAnimation = ({
-  bg,
-  toggleButtonRef,
+  bgButton,
+  ref,
   isViewerActive,
-}: ToggleButtonProps) => {
-  const ctx = gsap.context(() => {
+}: ToggleButtonProps): gsap.Context => {
+  return gsap.context(() => {
     let positionX = 0;
+    /** ビュワーアクティブフラグに応じてトグルボタンの位置を設定 */
     if (isViewerActive) positionX = -130;
-    gsap.to(bg, { x: positionX, duration: 0.2, ease: 'power1.out' });
-  }, toggleButtonRef);
-
-  return ctx;
+    gsap.to(bgButton, { x: positionX, duration: 0.2, ease: 'power1.out' });
+  }, ref);
 };

@@ -32,7 +32,8 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-noto-sans-jp), var(--font-roboto), Arial, Helvetica, sans-serif;
+  font-family:
+    var(--font-noto-sans-jp), var(--font-roboto), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -44,8 +45,6 @@ body {
 }
 
 main {
-  /* background-color: #18161d; */
-  /* background-color: #191820; */
   background-color: rgb(29, 23, 48);
 }
 
@@ -275,4 +274,21 @@ p {
     font-size: 24px;
     margin-bottom: 10px;
   }
+}
+
+/**
+ * Leva デバッグパネル — コンテンツエリアの最大高さ制御。
+ *
+ * createPortal で document.body に直接マウントされる Leva パネルは
+ * position: fixed で高さ制約がないため、全項目を展開すると下端が
+ * ビューポート外に出る。
+ * body の直接子要素かつ Leva 生成クラス (leva-c-*) を持つコンテナの
+ * 最後の子要素（コントロール一覧の ScrollWrapper）に
+ * max-height と overflow-y: auto を設定してスクロール可能にする。
+ *
+ * タイトルバー高（約 40px）+ パネル Y オフセット（70px）+ パネル下部マージン（30px）= 140px を引いた値を使用する。
+ */
+body > [class^='leva-c'] > *:last-child {
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
 }

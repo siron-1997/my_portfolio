@@ -1,0 +1,48 @@
+sequenceDiagram
+    participant Browser
+    participant HomeProvider
+    participant HomeWorld
+    participant useHomeWorld
+    participant useGeolocation
+    participant API as Next.js API Route
+    participant OpenWeather as OpenWeatherMap API
+
+    Browser->>HomeProvider: マウント
+    Note over HomeProvider: isLoading = true<br/>portalRef 初期化
+    HomeProvider->>HomeWorld: レンダリング
+    HomeWorld->>useHomeWorld: 呼び出し
+    Note over useHomeWorld: isViewerLoading = false<br/>currentWeatherData = null<br/>weather = DEFAULT_WEATHER<br/>timePoint = "night"
+
+    useHomeWorld->>useGeolocation: DEFAULT_COORDINATES を渡して呼び出し
+    Note over useGeolocation: isPermissionHandled = false
+    HomeWorld-->>Browser: ModelViewerLoading 表示<br/>（isViewerLoading が false のため）
+
+    useGeolocation->>Browser: Geolocation API 呼び出し
+    alt 位置情報を許可
+        Browser-->>useGeolocation: 緯度・経度を取得
+        Note over useGeolocation: coordinates = 実際の座標<br/>isPermissionHandled = true
+    else 位置情報を拒否 or ブラウザ非対応
+        Browser-->>useGeolocation: エラー / undefined
+        Note over useGeolocation: coordinates = DEFAULT_COORDINATES（東京駅）<br/>isPermissionHandled = true
+    end
+
+    useGeolocation-->>useHomeWorld: { coordinates, isPermissionHandled }
+    Note over useHomeWorld: isPermissionHandled が true になった<br/>→ useEffect 発火
+
+    useHomeWorld->>API: POST /api/getCurrentWeather<br/>{ latitude, longitude }
+    API->>API: キーバリデーション<br/>座標バリデーション<br/>API KEY 確認
+    API->>OpenWeather: GET /data/2.5/weather
+    OpenWeather-->>API: OpenWeatherCurrentData
+    API->>API: タイムゾーンから timePoint 計算<br/>（morning / lunch / evening / night）
+    API-->>useHomeWorld: { success, data: { data, timePoint } }
+
+    Note over useHomeWorld: setCurrentWeatherData(data)<br/>setTimePoint(timePoint)<br/>setWeather(data.weather)
+    Note over useHomeWorld: [finally] setIsViewerLoading(true)
+
+    useHomeWorld-->>HomeWorld: isViewerLoading = true
+
+    HomeWorld-->>Browser: Canvas + Experience + Rain (DOM canvas) を表示
+
+    Note over Browser: Canvas onCreated コールバック発火
+    HomeWorld->>HomeProvider: setIsLoading(false)
+    Note over HomeProvider: isLoading = false<br/>→ ポータルアニメーション開始トリガー

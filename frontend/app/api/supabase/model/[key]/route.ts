@@ -1,10 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import { supabase } from '@/services/supabase';
 
 /**
  * 3D モデルファイルのプロキシストリーミング。
@@ -16,6 +12,10 @@ const supabase = createClient(
  * @param req - Next.js リクエストオブジェクト
  * @param params - URL パラメータ（key: 作品キー）
  * @returns GLB バイナリの ReadableStream レスポンス
+ 
+ *
+ * @example
+ * await GET(req, {});
  */
 export async function GET(
   req: NextRequest,
@@ -50,7 +50,10 @@ export async function GET(
     .download(path);
 
   if (downloadError || !fileData) {
-    return NextResponse.json({ error: 'Failed to download model' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to download model' },
+      { status: 500 },
+    );
   }
 
   /** Blob を ReadableStream としてクライアントへストリーミングする */

@@ -2,26 +2,46 @@
 
 import { useEffect, useState } from 'react';
 
-const useScrollDirection = () => {
-  const [scrollDirection, setScrollDirection] = useState<string>('');
+type UseScrollDirection = 'down' | 'up' | '';
+
+/**
+ * ページのスクロール方向を返すカスタムフック。
+ * スクロール下以降で "down"、上方向で "up"、初期状態は空文字を返す。
+ *
+ * @returns {UseScrollDirection} スクロール方向
+ *
+ * @example
+ * const scrollDirection = useScrollDirection();
+ */
+const useScrollDirection = (): UseScrollDirection => {
+  /** スクロール方向の状態 */
+  const [scrollDirection, setScrollDirection] =
+    useState<UseScrollDirection>('');
 
   useEffect(() => {
-    let lastScrollTop = window.scrollY;
+    /** 前回のスクロール位置 */
+    let prevScrollY = window.scrollY;
 
     const handleScroll = (): void => {
-      const scrollTop = window.scrollY;
-      // スクロール方向を判定 (down or up)
-      if (scrollTop > lastScrollTop) {
+      /** 現在のスクロール位置 */
+      const currentScrollY = window.scrollY;
+
+      /** スクロール方向が下方向の場合 */
+      if (currentScrollY > prevScrollY) {
         setScrollDirection('down');
-      } else if (scrollTop < lastScrollTop) {
+      }
+
+      /** スクロール方向が上方向の場合 */
+      if (currentScrollY < prevScrollY) {
         setScrollDirection('up');
       }
-      // スクロール位置を更新 (0以下の場合は0にする)
-      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+
+      /** 前回のスクロール位置を更新 (0 以下の場合は 0 にする) */
+      prevScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
     };
-    // イベントリスナーを登録
-    window.addEventListener('scroll', handleScroll);
-    // クリーンアップ
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };

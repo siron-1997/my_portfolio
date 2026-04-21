@@ -4,12 +4,12 @@
  */
 export const API_ALLOWED_KEYS = {
   CURRENT_WEATHER: ['latitude', 'longitude'],
-  SENDGRID: ['name', 'email', 'message'],
+  RESEND: ['name', 'email', 'message'],
   FORECAST: ['latitude', 'longitude', 'days'],
 };
 
-/** SendGrid でメールを送信する際に使用するキー */
-export const SENDGRID_EMAIL_KEYS = ['to', 'from', 'subject', 'body'];
+/** Resend でメールを送信する際に使用するキー */
+export const RESEND_EMAIL_KEYS = ['to', 'from', 'subject', 'html'];
 
 /**
  * API 関連 ログメッセージ
@@ -34,10 +34,10 @@ export const LOG_MESSAGES = {
     `${apiName}: 未知のエラーが発生しました。詳細: ${JSON.stringify(error)}`,
   INVALID_KEYS: (apiName: string, invalidKeys: string[]) =>
     `${apiName}: 許可されていないキー項目が含まれています。無効なキー: ${invalidKeys.join(', ')}`,
-  SENDGRID_MISSING_EMAIL: (apiName: string) =>
+  RESEND_MISSING_EMAIL: (apiName: string) =>
     `${apiName}: リクエストにメールアドレスが含まれていません`,
-  SENDGRID_EMAIL_SENT: (apiName: string, email: string) =>
+  RESEND_EMAIL_SENT: (apiName: string, email: string) =>
     `${apiName}: メールが正常に送信されました。送信先: ${email}`,
-  SENDGRID_ERROR: (apiName: string, error: string) =>
+  RESEND_ERROR: (apiName: string, error: string) =>
     `${apiName}: メール送信中にエラーが発生しました。エラー: ${error}`,
 };

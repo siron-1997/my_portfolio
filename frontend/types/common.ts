@@ -1,85 +1,113 @@
-// --- ページ共通コンポーネントの型 ---
-export type SectionHeader = {
-  readonly title: string;
-  readonly description: string;
-};
+/** ページ共通コンポーネントの型 */
+export type SectionHeader = Readonly<{
+  /** セクションのタイトル文字列 */
+  title: string;
 
-export type SiteMapItem = {
-  readonly title: string;
-  readonly href: string;
-};
+  /** セクションの説明文 */
+  description: string;
+}>;
 
-export type Sns = {
-  readonly imageFilePath: string;
-  readonly alt: string;
-  readonly href: string;
-};
+/** SiteMapItem の型定義 */
+export type SiteMapItem = Readonly<{
+  /** ナビゲーションに表示するリンクテキスト */
+  title: string;
 
-// --- About ページ関連の型 ---
-export type Skill = {
-  readonly image: string;
-  readonly alt: string;
-  readonly name: string;
-  readonly year: string;
-};
+  /** リンク先のパス */
+  href: string;
+}>;
 
-export type Skills = {
-  readonly title: string;
-  readonly skills: Skill[];
-};
+/** Sns の型定義 */
+export type Sns = Readonly<{
+  /** SNS アイコン画像のファイルパス */
+  imageFilePath: string;
 
-export type CareerHistory = {
-  readonly year: string;
-  readonly title: string;
-  readonly description: string;
-  readonly iconType: 'school' | 'work';
-  readonly color: 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-};
+  /** アイコン画像の代替テキスト */
+  alt: string;
 
-// --- Contact フォーム関連の型 ---
-/** フォームの段階 */
-export type FormStep = 'FIRST_STEP' | 'SECOND_STEP' | 'LAST_STEP';
+  /** SNS プロフィールページへの URL */
+  href: string;
+}>;
 
-/** 各ステップの状態 */
-export type StepPointState = 'not_started' | 'current' | 'error' | 'completed';
+/** About ページ関連の型 */
+export type Skill = Readonly<{
+  /** スキルアイコン画像のパス */
+  image: string;
 
-export type StepPoint = {
-  label: string;
+  /** スキルアイコンの代替テキスト */
+  alt: string;
+
+  /** スキル名 */
   name: string;
-  content: React.ReactNode;
-  state?: StepPointState;
-};
 
-/** StepPointState の定数オブジェクト */
-export type StepStates = {
-  NOT_STARTED: 'not_started';
-  CURRENT: 'current';
-  ERROR: 'error';
-  COMPLETED: 'completed';
-};
+  /** 経験年数の表示文字列 */
+  year: string;
+}>;
 
-export type StepPointAction = {
-  index: number;
-  state: StepPointState;
-};
+/** Skills の型定義 */
+export type Skills = Readonly<{
+  /** スキルカテゴリのタイトル */
+  title: string;
 
-// --- GSAP アニメーション設定の型 ---
-export type AnimationFrom = {
-  readonly x?: number;
-  readonly y?: number;
-  readonly opacity: number;
-};
+  /** カテゴリに属するスキルの配列 */
+  skills: Skill[];
+}>;
 
-export type AnimationTo = {
-  readonly x?: number;
-  readonly y?: number;
-  readonly opacity: number;
-  readonly duration: number;
-  readonly delay?: number;
-  readonly ease: string;
-};
+/** CareerHistory の型定義 */
+export type CareerHistory = Readonly<{
+  /** 経歴の年（表示用文字列） */
+  year: string;
 
-export type GsapAnimationConfig = {
-  readonly from: AnimationFrom;
-  readonly to: AnimationTo;
-};
+  /** 経歴のタイトル */
+  title: string;
+
+  /** 経歴の説明文 */
+  description: string;
+
+  /** タイムラインアイコンの種別（学校 or 職歴） */
+  iconType: 'school' | 'work';
+
+  /** タイムラインドットの色（MUI color） */
+  color: 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+}>;
+
+/** GSAP アニメーション設定の型 */
+export type AnimationFrom = Readonly<{
+  /** アニメーション開始時の X 方向オフセット（px） */
+  x?: number;
+
+  /** アニメーション開始時の Y 方向オフセット（px） */
+  y?: number;
+
+  /** アニメーション開始時の不透明度（0、1） */
+  opacity: number;
+}>;
+
+/** AnimationTo の型定義 */
+export type AnimationTo = Readonly<{
+  /** アニメーション終了時の X 方向オフセット（px） */
+  x?: number;
+
+  /** アニメーション終了時の Y 方向オフセット（px） */
+  y?: number;
+
+  /** アニメーション終了時の不透明度（0、1） */
+  opacity: number;
+
+  /** アニメーションの再生時間（秒） */
+  duration: number;
+
+  /** アニメーション開始までの遅延時間（秒） */
+  delay?: number;
+
+  /** GSAP のイージング関数名 */
+  ease: string;
+}>;
+
+/** GsapAnimationConfig の型定義 */
+export type GsapAnimationConfig = Readonly<{
+  /** アニメーション開始時の状態 */
+  from: AnimationFrom;
+
+  /** アニメーション終了時の状態 */
+  to: AnimationTo;
+}>;

@@ -1,4 +1,4 @@
-export { Button } from './button';
-export { Close } from './close';
-export { Hamburger } from './hamburger';
-export { ScrollToTop } from './scrollToTop';
+export { default as Button } from './Button';
+export { default as Close } from './Close';
+export { default as Hamburger } from './Hamburger';
+export { default as ScrollToTop } from './ScrollToTop';

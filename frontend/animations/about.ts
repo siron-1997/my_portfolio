@@ -1,108 +1,125 @@
-import React from 'react';
 import { gsap } from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import { getScrollTriggerOption } from '@/utils';
+import type React from 'react';
+
 import {
   BACK_OUT_OPACITY_LEFT_MOVE,
   POWER2_OUT_OPACITY_LEFT_MOVE,
   POWER2_OUT_OPACITY_RIGHT_MOVE,
 } from '@/constants/common';
-import { GsapAnimationConfig } from '@/types/common';
+import { getScrollTriggerOption } from '@/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
 type PortalProps = {
+  /** ポータルの見出し要素 */
   title: HTMLHeadingElement;
-  titleRef: React.RefObject<HTMLHeadingElement>;
+
+  /** コンテナの参照 Ref */
+  ref: React.RefObject<HTMLHeadingElement | null>;
 };
 
 type IntroductionProps = {
+  /** 自己紹介のセクション要素 */
   section: HTMLElement;
-  introductionRef: React.RefObject<HTMLDivElement>;
+
+  /** コンテナの参照 Ref */
+  ref: React.RefObject<HTMLDivElement | null>;
 };
 
 type ProfileImageProps = {
+  /** プロフィール画像要素 */
   image: HTMLImageElement;
-  profileImageRef: React.RefObject<HTMLDivElement>;
+
+  /** コンテナの参照 Ref */
+  ref: React.RefObject<HTMLDivElement | null>;
 };
 
 type SkillsProps = {
+  /** スキルリスト要素のノードリスト */
   skillList: NodeListOf<Element>;
-  skillsListRef: React.RefObject<HTMLDivElement>;
+
+  /** コンテナの参照 Ref */
+  ref: React.RefObject<HTMLDivElement | null>;
 };
 
 type CareerHistoryProps = {
+  /** キャリアヒストリー要素のノードリスト */
   elements: NodeListOf<Element>;
-  careerHistoryRef: React.RefObject<HTMLDivElement>;
+
+  /** コンテナの参照 Ref */
+  ref: React.RefObject<HTMLDivElement | null>;
 };
 
-/** ポータルタイトルのアニメーション
- * @param title - ポータルタイトルの要素
- * @param titleRef - ポータルタイトル全体の ref
- * @returns gsap.Context
+/**
+ * ポータルタイトルのアニメーション初期化処理
+ * ページ表示時に左からフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
  */
-export const portalAnimation = ({ title, titleRef }: PortalProps): gsap.Context => {
-  const ctx = gsap.context(() => {
+export const portalAnimation = ({ title, ref }: PortalProps): gsap.Context => {
+  return gsap.context(() => {
     gsap.fromTo(title, BACK_OUT_OPACITY_LEFT_MOVE.from, {
       ...BACK_OUT_OPACITY_LEFT_MOVE.to,
       delay: 0.4,
     });
-  }, titleRef);
-
-  return ctx;
+  }, ref);
 };
 
-/** 紹介文のアニメーション
- * @param section - 紹介文のセクション要素
- * @param introductionRef - 紹介文全体の ref
- * @returns gsap.Context
+/**
+ * 紹介文のアニメーション初期化処理
+ * ページ表示時に左からフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
  */
 export const introductionAnimation = ({
   section,
-  introductionRef,
+  ref,
 }: IntroductionProps): gsap.Context => {
-  const ctx = gsap.context(() => {
+  return gsap.context(() => {
     gsap.fromTo(section, POWER2_OUT_OPACITY_LEFT_MOVE.from, {
       ...POWER2_OUT_OPACITY_LEFT_MOVE.to,
       delay: 0.4,
     });
-  }, introductionRef);
-
-  return ctx;
+  }, ref);
 };
 
-/** プロフィール画像のアニメーション
- * @param image - プロフィール画像の要素
- * @param profileImageRef - プロフィール画像全体の ref
- * @returns gsap.Context
+/**
+ * プロフィール画像のアニメーション初期化処理
+ * ページ表示時に右からフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
  */
 export const profileImageAnimation = ({
   image,
-  profileImageRef,
+  ref,
 }: ProfileImageProps): gsap.Context => {
-  const ctx = gsap.context(() => {
+  return gsap.context(() => {
     gsap.fromTo(image, POWER2_OUT_OPACITY_RIGHT_MOVE.from, {
       ...POWER2_OUT_OPACITY_RIGHT_MOVE.to,
     });
-  }, profileImageRef);
-
-  return ctx;
+  }, ref);
 };
 
-/** スキルリストのアニメーション
- * @param skillList - スキルリストの要素群
- * @param skillsListRef - スキルリスト全体の ref
- * @returns gsap.Context
+/**
+ * スキルリストのアニメーション初期化処理
+ * ページ表示時に左からフェードインするアニメーションを設定する。
+ *
+ * @returns {gsap.Context} GSAP コンテキスト
  */
 export const skillsListAnimation = ({
   skillList,
-  skillsListRef,
+  ref,
 }: SkillsProps): gsap.Context => {
-  const ctx = gsap.context(() => {
+  return gsap.context(() => {
     Array.from(skillList).forEach((item: Element, i: number) => {
+      /** スキルリストのタイトル要素 */
       const title = item.querySelector('h3');
+
+      /** スキルリストの要素 */
       const list = item.querySelectorAll('.skill-list');
-      /* title animation */
+
+      /** タイトルのアニメーション */
       gsap.fromTo(title, POWER2_OUT_OPACITY_LEFT_MOVE.from, {
         ...POWER2_OUT_OPACITY_LEFT_MOVE.to,
         ...getScrollTriggerOption({
@@ -111,7 +128,8 @@ export const skillsListAnimation = ({
           id: i.toString(),
         }),
       });
-      /* list animation */
+
+      /** リストのアニメーション */
       gsap.fromTo(list, POWER2_OUT_OPACITY_LEFT_MOVE.from, {
         ...POWER2_OUT_OPACITY_LEFT_MOVE.to,
         ...getScrollTriggerOption({
@@ -121,21 +139,20 @@ export const skillsListAnimation = ({
         }),
       });
     });
-  }, skillsListRef);
-
-  return ctx;
+  }, ref);
 };
 
-/** キャリアヒストリーのアニメーション
- * @param elements - キャリアヒストリーの要素群
- * @param careerHistoryRef - キャリアヒストリー全体の ref
+/** キャリアヒストリーのアニメーション初期化処理
+ * ページ表示時に左からフェードインするアニメーションを設定する。
+ *
  * @returns gsap.Context
  */
 export const careerHistoryAnimation = ({
   elements,
-  careerHistoryRef,
+  ref,
 }: CareerHistoryProps): gsap.Context => {
-  const ctx = gsap.context(() => {
+  return gsap.context(() => {
+    /** キャリアヒストリーの要素ごとのアニメーション */
     Array.from(elements).forEach((element: Element, i: number) => {
       gsap.fromTo(element, POWER2_OUT_OPACITY_LEFT_MOVE.from, {
         ...POWER2_OUT_OPACITY_LEFT_MOVE.to,
@@ -146,7 +163,5 @@ export const careerHistoryAnimation = ({
         }),
       });
     });
-  }, careerHistoryRef);
-
-  return ctx;
+  }, ref);
 };

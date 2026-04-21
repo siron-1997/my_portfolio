@@ -1,4 +1,4 @@
-export { Controls } from './Controls';
-export { Introduction } from './Introduction';
-export { Loading } from './Loading';
-export { Portal } from './Portal';
+export { default as Controls } from './Controls';
+export { default as Introduction } from './Introduction';
+export { default as Portal } from './Portal';
+export { default as WorkThreeDClient } from './WorkThreeDClient';

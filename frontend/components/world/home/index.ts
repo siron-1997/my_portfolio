@@ -1,1 +1,0 @@
-export { HomeWorld } from './HomeWorld';

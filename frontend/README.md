@@ -21,6 +21,10 @@ Next.js 15 (App Router) + Three.js + GSAP で構築しています。
 | `@react-three/postprocessing`        | ^3.0.4     | ポストプロセスエフェクト         |
 | `@supabase/supabase-js`              | ^2.99.3    | Supabase クライアント            |
 | `axios`                              | ^1.13.6    | HTTP クライアント                |
+| `react-hook-form`                    | ^7         | フォーム状態管理・バリデーション |
+| `zod`                                | ^4         | スキーマバリデーション           |
+| `@hookform/resolvers`                | ^4         | RHF × Zod バインディング         |
+| `resend`                             | ^6         | メール送信（コンタクトフォーム） |
 | `sharp`                              | ^0.34.5    | 画像最適化                       |
 | **Node.js**                          | 22.14.0    | ランタイム                       |
 | **pnpm**                             | >=10.0.0   | パッケージマネージャー           |
@@ -49,7 +53,8 @@ cp .env.example .env
 | `BASE_URL`                  | サーバーサイドで使用するベース URL               |
 | `MY_NAME`                   | お問い合わせメールの送信者名                     |
 | `MY_EMAIL`                  | 送信元・受信先メールアドレス                     |
-| `SENDGRID_API_KEY`          | SendGrid API キー                                |
+| `RESEND_API_KEY`            | Resend API キー                                  |
+| `RESEND_FROM_EMAIL`         | 送信元メールアドレス（Resend 認証済みドメイン）  |
 | `OPEN_WEATHER_API_KEY`      | OpenWeatherMap API キー                          |
 | `SUPABASE_URL`              | Supabase プロジェクト URL                        |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service_role キー（サーバーサイド専用） |
@@ -85,8 +90,8 @@ frontend/
 │   │   ├── contact/
 │   │   └── works/
 │   └── api/              # Route Handlers（サーバーサイド API）
+│       ├── contact/
 │       ├── getCurrentWeather/
-│       ├── sendGridEmail/
 │       └── supabase/
 ├── animations/           # GSAP アニメーション定義（ページ単位で分割）
 ├── components/           # UI コンポーネント（ドメイン別フォルダ）
@@ -125,3 +130,6 @@ frontend/
 - [React Three Fiber ドキュメント](https://docs.pmnd.rs/react-three-fiber)
 - [GSAP ドキュメント](https://gsap.com/docs/v3/)
 - [Supabase ドキュメント](https://supabase.com/docs)
+- [React Hook Form ドキュメント](https://react-hook-form.com/)
+- [Zod ドキュメント](https://zod.dev/)
+- [Resend ドキュメント](https://resend.com/docs)

@@ -1,6 +1,10 @@
-import { AppThemeColors, TimePointColorSet, WorkWorldColorSet } from '@/types/colors';
+import {
+  type AppThemeColors,
+  type TimePointColorSet,
+  type WorkWorldColorSet,
+} from '@/types/colors';
 
-// 共通のカラーパレット
+/** UI テーマ用のカラーパレット */
 export const COLOR_PALETTE = {
   white: '#FFFFFF',
   black: '#1D1730',
@@ -13,6 +17,14 @@ export const COLOR_PALETTE = {
   navigation: '#00FFFF',
   borderDefault: 'rgba(190, 190, 190, 0.4)',
   borderHover: 'rgba(190, 190, 190, 0.8)',
+  faviconTileColor: '#da532c',
+  themeColor: '#ffffff',
+  borderWhiteSemi: 'rgba(255, 255, 255, 0.5)',
+  bgBlackSemi: 'rgb(0, 0, 0, 0.3)',
+};
+
+/** Three.js ワールド専用のカラーパレット */
+export const WORLD_COLOR_PALETTE = {
   ambientLight: '#3F1F4E',
   directionalLight: '#ECE0F8',
   fogEvening: 'rgb(125, 87, 124)',
@@ -41,11 +53,9 @@ export const COLOR_PALETTE = {
   environmentEvening: 'rgb(170, 85, 175)',
   environmentNight: 'rgb(77, 32, 109)',
   environmentLunch: 'rgb(61, 70, 69)',
-  faviconTileColor: '#da532c',
-  themeColor: '#ffffff',
 };
 
-// 構造化されたカラー定義
+/** 構造化されたカラー定義 */
 export const APP_THEME_COLORS: AppThemeColors = {
   border: {
     dark: {
@@ -75,37 +85,45 @@ export const APP_THEME_COLORS: AppThemeColors = {
   navigation: COLOR_PALETTE.navigation,
 };
 
-// 環境ごとのカラー定義
+/** 環境ごとのカラー定義 */
 export const TIME_POINT_ENV_COLORS: TimePointColorSet = {
   evening: {
-    fog: COLOR_PALETTE.fogEvening,
-    clearSky: COLOR_PALETTE.clearSkyEvening,
-    thinCloud: COLOR_PALETTE.thinCloudEvening,
-    thickCloud: COLOR_PALETTE.thickCloudEvening,
-    background: COLOR_PALETTE.backgroundEvening,
-    environment: COLOR_PALETTE.environmentEvening,
+    fog: WORLD_COLOR_PALETTE.fogEvening,
+    clearSky: WORLD_COLOR_PALETTE.clearSkyEvening,
+    thinCloud: WORLD_COLOR_PALETTE.thinCloudEvening,
+    thickCloud: WORLD_COLOR_PALETTE.thickCloudEvening,
+    background: WORLD_COLOR_PALETTE.backgroundEvening,
+    environment: WORLD_COLOR_PALETTE.environmentEvening,
   },
   night: {
-    fog: COLOR_PALETTE.fogNight,
-    clearSky: COLOR_PALETTE.clearSkyNight,
-    thinCloud: COLOR_PALETTE.thinCloudNight,
-    thickCloud: COLOR_PALETTE.thickCloudNight,
-    background: COLOR_PALETTE.backgroundNight,
-    environment: COLOR_PALETTE.environmentNight,
+    fog: WORLD_COLOR_PALETTE.fogNight,
+    clearSky: WORLD_COLOR_PALETTE.clearSkyNight,
+    thinCloud: WORLD_COLOR_PALETTE.thinCloudNight,
+    thickCloud: WORLD_COLOR_PALETTE.thickCloudNight,
+    background: WORLD_COLOR_PALETTE.backgroundNight,
+    environment: WORLD_COLOR_PALETTE.environmentNight,
   },
   lunch: {
-    fog: COLOR_PALETTE.fogLunch,
-    clearSky: COLOR_PALETTE.clearSkyLunch,
-    thinCloud: COLOR_PALETTE.thinCloudLunch,
-    thickCloud: COLOR_PALETTE.thickCloudLunch,
-    background: COLOR_PALETTE.backgroundLunch,
-    environment: COLOR_PALETTE.environmentLunch,
+    fog: WORLD_COLOR_PALETTE.fogLunch,
+    clearSky: WORLD_COLOR_PALETTE.clearSkyLunch,
+    thinCloud: WORLD_COLOR_PALETTE.thinCloudLunch,
+    thickCloud: WORLD_COLOR_PALETTE.thickCloudLunch,
+    background: WORLD_COLOR_PALETTE.backgroundLunch,
+    environment: WORLD_COLOR_PALETTE.environmentLunch,
   },
 };
 
-// ワークワールドのカラー定義
+/** workThreeD UI コンポーネント専用のカラー定義 */
+export const WORK_THREE_D_UI_COLORS = {
+  /** コントロールアイテム・ナビゲーションのデフォルトボーダー色 */
+  borderDefault: COLOR_PALETTE.borderWhiteSemi,
+  /** コントロールアイテムの背景色 */
+  bgTransparent: COLOR_PALETTE.bgBlackSemi,
+} as const;
+
+/** ワークワールドのカラー定義 */
 export const WORK_WORLD_ENV_COLORS: WorkWorldColorSet = {
-  ambientLight: COLOR_PALETTE.ambientLight,
-  directionalLight: COLOR_PALETTE.directionalLight,
+  ambientLight: WORLD_COLOR_PALETTE.ambientLight,
+  directionalLight: WORLD_COLOR_PALETTE.directionalLight,
   fog: COLOR_PALETTE.black,
 };

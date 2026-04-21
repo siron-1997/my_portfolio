@@ -1,1 +1,4 @@
-export { getSectionsCameraParams, getViwerToggleCameraParams } from './getCameraParams';
+export {
+  getSectionsCameraParams,
+  getViwerToggleCameraParams,
+} from './getCameraParams';
