@@ -3,10 +3,8 @@ import type { Dispatch, RefObject, SetStateAction } from 'react';
 import { gsap } from 'gsap';
 import { Euler, type PerspectiveCamera, Quaternion, Vector3 } from 'three';
 
+import { IS_DEV } from '@/constants/common';
 import { computeArcPosition } from '@/utils/world/work/cameraArc';
-
-/** 弧状補間の横バイアス強度（0=直線, 1=デフォルト） */
-const ARC_BIAS = 0.3;
 import {
   type CameraParams,
   type ControlCameraConfigs,
@@ -15,6 +13,21 @@ import {
   type ViewOffset,
   type WorkWorldSectionsCameraParams,
 } from '@/types/world';
+
+/** 弧状補間の横バイアス強度（0=直線, 1=デフォルト） */
+const ARC_BIAS = 0.3;
+
+/** セクション種別に応じた「開始・終了位置」情報 */
+type GetSectionAnimationParamsReturn = {
+  /** 開始位置 */
+  startPoint: string;
+
+  /** 終了位置 */
+  endPoint: string;
+
+  /** セクション名 */
+  sectionName: string;
+};
 
 /**
  * Three.js の `PerspectiveCamera.view` オブジェクトに対応する型。
@@ -103,17 +116,22 @@ type SectionsAnimationProps = {
 };
 
 type ViewerToggleAnimationProps = {
-  /** introduction */
+  /** introduction セクションの要素 */
   introduction: HTMLElement;
-  /** toggleButton */
+
+  /** トグルボタンの要素 */
   toggleButton: HTMLElement;
+
   /** カメラの参照 Ref */
   cameraRef: RefObject<PerspectiveCamera | null>;
-  /** cameraParams */
+
+  /** カメラの基本パラメータ */
   cameraParams: CameraParams;
-  /** zoom */
+
+  /** ズーム */
   zoom: number;
-  /** offset */
+
+  /** オフセット */
   offset: number;
 };
 
@@ -150,6 +168,38 @@ type controlsAnimationProps = {
 
   /** シーンの包容球半径 */
   bboxRadius: number;
+};
+
+/** セクション種別に応じた「開始・終了位置」情報を取得する処理 */
+const getSectionAnimationParams = (
+  elementId: string,
+): GetSectionAnimationParamsReturn => {
+  switch (elementId) {
+    case 'model-viewer':
+      return {
+        startPoint: 'top top',
+        endPoint: '85% top',
+        sectionName: 'Model Viewer',
+      };
+    case 'introduction':
+      return {
+        startPoint: '0% top',
+        endPoint: '90% top',
+        sectionName: 'Introduction',
+      };
+    case 'controls':
+      return {
+        startPoint: '0% top',
+        endPoint: '100% top',
+        sectionName: 'Controls',
+      };
+    default:
+      return {
+        startPoint: '',
+        endPoint: '',
+        sectionName: '',
+      };
+  }
 };
 
 /**
@@ -189,213 +239,220 @@ const handleReverseComplete = (
     rotation: Rotation;
     viewOffset: CameraViewState;
   },
-  setIsStartControls: React.Dispatch<React.SetStateAction<boolean>>,
-  setIsNavigationVisible: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsStartControls: Dispatch<SetStateAction<boolean>>,
+  setIsNavigationVisible: Dispatch<SetStateAction<boolean>>,
 ) => {
   const animation = gsap.timeline({ paused: true });
 
-  /** カメラ位置のとき */
-  if (type === 'position') {
-    /**
-     * Controls セクション内アニメーション再生の無効およびコントロールボタンの非表示。
-     * カメラ位置・アングルを元に戻すアニメーションを再生（再生が終了するまでスクロール位置を固定）。
-     */
-    if (element.id === 'controls') {
-      if (setIsStartControls) setIsStartControls(() => false);
-      if (setIsNavigationVisible) setIsNavigationVisible(() => false);
-      const html = document.documentElement;
-      const body = document.body;
-
-      /** コントロールセクション要素の絶対位置を取得 */
-      const rect = element.getBoundingClientRect();
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
-      const elementTop = rect.top + scrollTop;
-
-      /**
-       * スクロール位置を強制的に固定する。
-       * @returns {void} 戻り値は返さない
-       */
-      const forceScroll = () => {
-        if (window.scrollY !== elementTop) {
-          window.scrollTo(0, elementTop);
-        }
-      };
-
-      /**
-       * スクロール操作を無効化する。
-       * @param e - スクロール関連イベント
-       * @returns {void} 戻り値は返さない
-       
- *
- * @example
- * preventDefault(e);
- */
-      const preventDefault = (e: Event) => e.preventDefault();
-
-      /** 即座に位置を戻してロック */
-      forceScroll();
-      html.style.overflow = 'hidden';
-      body.style.overflow = 'hidden';
-
-      /** 慣性スクロールや追加入力を防ぐためにイベントを無効化 (passive: false が重要) */
-      window.addEventListener('wheel', preventDefault, { passive: false });
-      window.addEventListener('touchmove', preventDefault, { passive: false });
-
-      /** アニメーション中は毎フレーム強制的に位置を補正し続ける */
-      gsap.ticker.add(forceScroll);
-
-      /** 他のScrollTriggerによる干渉を防ぐためにカメラ更新をロックする */
-      camera.userData.isLocked = true;
-
-      /** カメラ位置を「スクロールされる前の位置（initialState）」に強制的に戻す */
-      /** 行き過ぎたスクロールによるズレを解消し、ユーザーが操作していた位置からアニメーションを開始する */
-      if (initialState) {
-        camera.position.set(
-          initialState.position.x,
-          initialState.position.y,
-          initialState.position.z,
-        );
-        camera.rotation.set(
-          initialState.rotation.x,
-          initialState.rotation.y,
-          initialState.rotation.z,
-        );
-        const vo = initialState.viewOffset;
-        if (vo?.enabled) {
-          camera.setViewOffset(
-            vo.fullWidth ?? 0,
-            vo.fullHeight ?? 0,
-            vo.offsetX ?? 0,
-            vo.offsetY ?? 0,
-            vo.width ?? 0,
-            vo.height ?? 0,
-          );
-        }
-        camera.updateProjectionMatrix();
-      }
-
-      /** アニメーションの始点として使用 */
-      const initialCameraState: {
-        position: Position;
-        rotation: Rotation;
-        viewOffset: CameraViewState;
-      } = initialState
-        ? {
-            position: initialState.position,
-            rotation: initialState.rotation,
-            viewOffset: initialState.viewOffset,
-          }
-        : {
-            position: camera.position.clone(),
-            rotation: camera.rotation.clone(),
-            viewOffset: camera.view ? { ...camera.view } : null,
-          };
-
-      const onStart = () => {
-        if (process.env.NODE_ENV === 'development')
-          console.log('アニメーション再生開始');
-        forceScroll();
-      };
-      const onComplete = () => {
-        if (process.env.NODE_ENV === 'development')
-          console.log('アニメーション再生終了');
-        html.style.overflow = '';
-        body.style.overflow = '';
-
-        /** ロック解除 */
-        window.removeEventListener('wheel', preventDefault);
-        window.removeEventListener('touchmove', preventDefault);
-        gsap.ticker.remove(forceScroll);
-
-        /** カメラ更新ロックを解除 */
-        camera.userData.isLocked = false;
-
-        animation.kill();
-      };
-
-      const interpolator = { value: 0 };
-      animation.to(
-        interpolator,
-        {
-          value: 1,
-          duration: 2,
-          ease: 'power2.inOut',
-          onStart: onStart,
-          onUpdate: () => {
-            /** position */
-            camera.position.x = gsap.utils.interpolate(
-              initialCameraState.position.x,
-              startPosition.x,
-              interpolator.value,
-            );
-            camera.position.y = gsap.utils.interpolate(
-              initialCameraState.position.y,
-              startPosition.y,
-              interpolator.value,
-            );
-            camera.position.z = gsap.utils.interpolate(
-              initialCameraState.position.z,
-              startPosition.z,
-              interpolator.value,
-            );
-
-            /** rotation */
-            camera.rotation.x = gsap.utils.interpolate(
-              initialCameraState.rotation.x,
-              startRotation.x,
-              interpolator.value,
-            );
-            camera.rotation.y = gsap.utils.interpolate(
-              initialCameraState.rotation.y,
-              startRotation.y,
-              interpolator.value,
-            );
-            camera.rotation.z = gsap.utils.interpolate(
-              initialCameraState.rotation.z,
-              startRotation.z,
-              interpolator.value,
-            );
-
-            /** viewOffset */
-            const vo = initialCameraState.viewOffset;
-            const currentX = gsap.utils.interpolate(
-              vo?.offsetX ?? 0,
-              startViewOffset.x,
-              interpolator.value,
-            );
-            const currentY = gsap.utils.interpolate(
-              vo?.offsetY ?? 0,
-              startViewOffset.y,
-              interpolator.value,
-            );
-            const currentWidth = gsap.utils.interpolate(
-              vo?.width ?? 0,
-              startViewOffset.width,
-              interpolator.value,
-            );
-            const currentHeight = gsap.utils.interpolate(
-              vo?.height ?? 0,
-              startViewOffset.height,
-              interpolator.value,
-            );
-            camera.setViewOffset(
-              startViewOffset.fullWidth,
-              startViewOffset.fullHeight,
-              currentX,
-              currentY,
-              currentWidth,
-              currentHeight,
-            );
-            camera.updateProjectionMatrix();
-          },
-          onComplete: onComplete,
-        },
-        0,
-      );
-      animation.play();
-    }
+  /** カメラ位置またはコントロールセクション以外の場合はスキップ */
+  if (type !== 'position' || element.id !== 'controls') {
+    return;
   }
+
+  /** Controls セクションを抜けた状態に更新 */
+  setIsStartControls(false);
+
+  /** ナビゲーションを非表示に更新 */
+  setIsNavigationVisible(false);
+
+  const html = document.documentElement;
+  const body = document.body;
+
+  /** コントロールセクション要素の絶対位置を取得 */
+  const rect = element.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const elementTop = rect.top + scrollTop;
+
+  /** スクロール位置を強制的に固定する処理 */
+  const forceScroll = (): void => {
+    /** スクロール位置が目標位置と異なる場合に強制的にスクロールを戻す */
+    if (window.scrollY !== elementTop) {
+      window.scrollTo(0, elementTop);
+    }
+  };
+
+  /**
+   * スクロール操作を無効化する処理
+   *
+   * @param e - スクロール関連イベント
+   */
+  const disableScroll = (e: Event): void => e.preventDefault();
+
+  /** 即座に位置を戻す */
+  forceScroll();
+
+  /** スクロールを無効化 */
+  html.style.overflow = 'hidden';
+  body.style.overflow = 'hidden';
+
+  /** 慣性スクロールや追加入力を防ぐためにイベントを無効化 */
+  window.addEventListener('wheel', disableScroll, { passive: false });
+  window.addEventListener('touchmove', disableScroll, { passive: false });
+
+  /** アニメーション中は毎フレーム強制的に位置を補正し続ける */
+  gsap.ticker.add(forceScroll);
+
+  /** 他の ScrollTrigger による干渉を防ぐためにカメラ更新をロックする */
+  camera.userData.isLocked = true;
+
+  /** カメラ位置を「スクロールされる前の位置（initialState）」に強制的に戻す */
+  /** 行き過ぎたスクロールによるズレを解消し、ユーザーが操作していた位置からアニメーションを開始する */
+  if (initialState) {
+    camera.position.set(
+      initialState.position.x,
+      initialState.position.y,
+      initialState.position.z,
+    );
+    camera.rotation.set(
+      initialState.rotation.x,
+      initialState.rotation.y,
+      initialState.rotation.z,
+    );
+    const vo = initialState.viewOffset;
+    if (vo?.enabled) {
+      camera.setViewOffset(
+        vo.fullWidth ?? 0,
+        vo.fullHeight ?? 0,
+        vo.offsetX ?? 0,
+        vo.offsetY ?? 0,
+        vo.width ?? 0,
+        vo.height ?? 0,
+      );
+    }
+    camera.updateProjectionMatrix();
+  }
+
+  /** アニメーションの始点として使用 */
+  const initialCameraState: {
+    position: Position;
+    rotation: Rotation;
+    viewOffset: CameraViewState;
+  } = initialState
+    ? {
+        position: initialState.position,
+        rotation: initialState.rotation,
+        viewOffset: initialState.viewOffset,
+      }
+    : {
+        position: camera.position.clone(),
+        rotation: camera.rotation.clone(),
+        viewOffset: camera.view ? { ...camera.view } : null,
+      };
+
+  const onStart = () => {
+    if (IS_DEV) console.log('アニメーション再生開始');
+    forceScroll();
+  };
+
+  const onComplete = () => {
+    if (IS_DEV) console.log('アニメーション再生終了');
+
+    /** スクロール制御の解除 */
+    html.style.overflow = '';
+    body.style.overflow = '';
+
+    /** ロック解除 */
+    window.removeEventListener('wheel', disableScroll);
+    window.removeEventListener('touchmove', disableScroll);
+
+    /** 強制スクロール補正の解除 */
+    gsap.ticker.remove(forceScroll);
+
+    /** カメラ更新ロックを解除 */
+    camera.userData.isLocked = false;
+
+    /** アニメーションの破棄 */
+    animation.kill();
+  };
+
+  const interpolator = { value: 0 };
+
+  animation.to(
+    interpolator,
+    {
+      value: 1,
+      duration: 2,
+      ease: 'power2.inOut',
+      onStart: onStart,
+      onUpdate: () => {
+        /** カメラ位置の補間 */
+        camera.position.set(
+          gsap.utils.interpolate(
+            initialCameraState.position.x,
+            startPosition.x,
+            interpolator.value,
+          ),
+          gsap.utils.interpolate(
+            initialCameraState.position.y,
+            startPosition.y,
+            interpolator.value,
+          ),
+          gsap.utils.interpolate(
+            initialCameraState.position.z,
+            startPosition.z,
+            interpolator.value,
+          ),
+        );
+
+        /** カメラの回転の補間 */
+        camera.rotation.set(
+          gsap.utils.interpolate(
+            initialCameraState.rotation.x,
+            startRotation.x,
+            interpolator.value,
+          ),
+          gsap.utils.interpolate(
+            initialCameraState.rotation.y,
+            startRotation.y,
+            interpolator.value,
+          ),
+          gsap.utils.interpolate(
+            initialCameraState.rotation.z,
+            startRotation.z,
+            interpolator.value,
+          ),
+        );
+
+        /** カメラの viewOffset の補間 */
+        const vo = initialCameraState.viewOffset;
+        const currentX = gsap.utils.interpolate(
+          vo?.offsetX ?? 0,
+          startViewOffset.x,
+          interpolator.value,
+        );
+        const currentY = gsap.utils.interpolate(
+          vo?.offsetY ?? 0,
+          startViewOffset.y,
+          interpolator.value,
+        );
+        const currentWidth = gsap.utils.interpolate(
+          vo?.width ?? 0,
+          startViewOffset.width,
+          interpolator.value,
+        );
+        const currentHeight = gsap.utils.interpolate(
+          vo?.height ?? 0,
+          startViewOffset.height,
+          interpolator.value,
+        );
+
+        camera.setViewOffset(
+          startViewOffset.fullWidth,
+          startViewOffset.fullHeight,
+          currentX,
+          currentY,
+          currentWidth,
+          currentHeight,
+        );
+
+        camera.updateProjectionMatrix();
+      },
+      onComplete: onComplete,
+    },
+    0,
+  );
+
+  animation.play();
 };
 
 /**
@@ -421,31 +478,10 @@ const createSectionAnimation = ({
   camera,
 }: CreateSectionAnimationProps): gsap.Context => {
   return gsap.context(() => {
-    let startPoint = '';
-    let endPoint = '';
-    let sectionName = '';
-
-    /** セクション種別に応じて、開始・終了位置を設定 */
-    switch (element.id) {
-      case 'model-viewer':
-        startPoint = 'top top';
-        endPoint = '85% top';
-        sectionName = 'Model Viewer';
-        break;
-      case 'introduction':
-        startPoint = '0% top';
-        endPoint = '90% top';
-        sectionName = 'Introduction';
-        break;
-      case 'controls':
-        startPoint = '0% top';
-        endPoint = '100% top';
-        sectionName = 'Controls';
-        break;
-      default:
-        sectionName = 'Unknown';
-        break;
-    }
+    /** セクション種別に応じた開始・終了位置情報を取得 */
+    const { startPoint, endPoint, sectionName } = getSectionAnimationParams(
+      element.id,
+    );
 
     /** カメラの状態を追跡 */
     const lastCameraState: {
@@ -458,28 +494,45 @@ const createSectionAnimation = ({
       viewOffset: camera.view ? { ...camera.view } : null,
     };
 
-    /**
-     * 毎フレームカメラの状態を保存する。
-     * @returns {void} 戻り値は返さない
-     */
-    const updateLastCameraState = () => {
-      lastCameraState.position.copy(camera.position);
-      lastCameraState.rotation.copy(camera.rotation);
-      lastCameraState.viewOffset = camera.view ? { ...camera.view } : null;
+    /** 各セクション・アニメーションタイプの開始前の処理 */
+    const handleStart = (): void => {
+      /** Controls セクション以外はスキップ */
+      if (element.id !== 'controls') {
+        return;
+      }
+
+      /** Controls セクションに入った状態に更新 */
+      updateStartControls && updateStartControls(true);
+
+      /** ナビゲーションの表示を有効化 */
+      setIsNavigationVisible && setIsNavigationVisible(true);
+
+      /** カメラ位置の追跡を開始 */
+      gsap.ticker.add(() => {
+        lastCameraState.position.copy(camera.position);
+        lastCameraState.rotation.copy(camera.rotation);
+        lastCameraState.viewOffset = camera.view ? { ...camera.view } : null;
+      });
     };
 
-    /**
-     * 各セクション・アニメーションタイプの開始前処理を実行する。
-     * @returns {void} 戻り値は返さない
-     */
-    const handleStart = () => {
-      /** コントロールセクションに入ったとき */
-      if (element.id === 'controls') {
-        if (updateStartControls) updateStartControls(true);
-        if (setIsNavigationVisible) setIsNavigationVisible(true);
-        /** カメラ位置の追跡を開始 */
-        gsap.ticker.add(updateLastCameraState);
+    /** セクションを逆方向に離脱した時の処理*/
+    const onLeaveBackCallback = (): void => {
+      /** Controls セクション以外はスキップ */
+      if (element.id !== 'controls') {
+        return;
       }
+
+      handleReverseComplete(
+        'position',
+        element,
+        camera,
+        startPosition,
+        startRotation,
+        startViewOffset,
+        lastCameraState,
+        updateStartControls!,
+        setIsNavigationVisible!,
+      );
     };
 
     /** 変更されたカメラアングルを元に戻すアニメーション (将来の実装用) */
@@ -490,42 +543,21 @@ const createSectionAnimation = ({
     });
     void _reverseAnimation; /** 未使用変数抑制 */
 
-    /**
-     * セクションを逆方向に離脱した際のコールバック。
-     * @returns {void} 戻り値は返さない
-     */
-    const onLeaveBackCallback = () => {
-      if (element.id === 'controls') {
-        handleReverseComplete(
-          'position',
-          element,
-          camera,
-          startPosition,
-          startRotation,
-          startViewOffset,
-          lastCameraState,
-          updateStartControls!,
-          setIsNavigationVisible!,
-        );
-      }
-    };
-
     /** マスタータイムラインを1つ作成し、ScrollTriggerを設定 */
     const masterTimeline = gsap.timeline({
       ease: 'power4.out',
       duration: 0.7,
       scrollTrigger: {
         trigger: element,
-        markers:
-          process.env.NODE_ENV === 'development'
-            ? {
-                startColor: 'green',
-                endColor: 'red',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                indent: 20,
-              }
-            : false,
+        markers: IS_DEV
+          ? {
+              startColor: 'green',
+              endColor: 'red',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              indent: 20,
+            }
+          : false,
         scrub: 0.7,
         start: startPoint,
         end: endPoint,
@@ -536,95 +568,112 @@ const createSectionAnimation = ({
       },
     });
 
-    /** Controls セクション以外 */
-    if (element.id !== 'controls') {
-      const interpolator = { value: 0 };
+    /** Controls セクションのときはスキップ */
+    if (element.id === 'controls') {
+      return;
+    }
 
-      masterTimeline.to(
-        interpolator,
-        {
-          value: 1,
-          ease: 'power4.out',
-          duration: 0.7,
-          onUpdate: () => {
-            /** カメラがブロックされている場合はスキップ */
-            if (camera.userData.isLocked) return;
+    /** 補間用オブジェクト */
+    const interpolator = { value: 0 };
 
-            /** position */
-            if (targetPosition) {
-              camera.position.x = gsap.utils.interpolate(
+    /** カメラの位置、回転、viewOffset を補間 (アニメーション再生) */
+    masterTimeline.to(
+      interpolator,
+      {
+        value: 1,
+        ease: 'power4.out',
+        duration: 0.7,
+        onUpdate: () => {
+          /** カメラがブロックされている場合はスキップ */
+          if (camera.userData.isLocked) return;
+
+          /** 目標のカメラ位置に移動 */
+          if (targetPosition) {
+            camera.position.set(
+              gsap.utils.interpolate(
                 startPosition.x,
                 targetPosition.x,
                 interpolator.value,
-              );
-              camera.position.y = gsap.utils.interpolate(
+              ),
+              gsap.utils.interpolate(
                 startPosition.y,
                 targetPosition.y,
                 interpolator.value,
-              );
-              camera.position.z = gsap.utils.interpolate(
+              ),
+              gsap.utils.interpolate(
                 startPosition.z,
                 targetPosition.z,
                 interpolator.value,
-              );
-            }
+              ),
+            );
+          }
 
-            /** rotation */
-            if (targetRotation) {
-              camera.rotation.x = gsap.utils.interpolate(
+          /** 目標のカメラ回転に移動 */
+          if (targetRotation) {
+            camera.rotation.set(
+              gsap.utils.interpolate(
                 startRotation.x,
                 targetRotation.x,
                 interpolator.value,
-              );
-              camera.rotation.y = gsap.utils.interpolate(
+              ),
+              gsap.utils.interpolate(
                 startRotation.y,
                 targetRotation.y,
                 interpolator.value,
-              );
-              camera.rotation.z = gsap.utils.interpolate(
+              ),
+              gsap.utils.interpolate(
                 startRotation.z,
                 targetRotation.z,
                 interpolator.value,
-              );
-            }
+              ),
+            );
+          }
 
-            /** viewOffset */
-            if (targetViewOffset) {
-              const currentX = gsap.utils.interpolate(
-                startViewOffset.x,
-                targetViewOffset.x,
-                interpolator.value,
-              );
-              const currentY = gsap.utils.interpolate(
-                startViewOffset.y,
-                targetViewOffset.y,
-                interpolator.value,
-              );
-              const currentWidth = gsap.utils.interpolate(
-                startViewOffset.width,
-                targetViewOffset.width,
-                interpolator.value,
-              );
-              const currentHeight = gsap.utils.interpolate(
-                startViewOffset.height,
-                targetViewOffset.height,
-                interpolator.value,
-              );
-              camera.setViewOffset(
-                startViewOffset.fullWidth,
-                startViewOffset.fullHeight,
-                currentX,
-                currentY,
-                currentWidth,
-                currentHeight,
-              );
-              camera.updateProjectionMatrix();
-            }
-          },
+          /** 目標のカメラ viewOffset に移動 */
+          if (targetViewOffset) {
+            /** 目標のカメラ viewOffset の X 座標に移動 */
+            const currentX = gsap.utils.interpolate(
+              startViewOffset.x,
+              targetViewOffset.x,
+              interpolator.value,
+            );
+
+            /** 目標のカメラ viewOffset の Y 座標に移動 */
+            const currentY = gsap.utils.interpolate(
+              startViewOffset.y,
+              targetViewOffset.y,
+              interpolator.value,
+            );
+
+            /** 目標のカメラ viewOffset の幅に移動 */
+            const currentWidth = gsap.utils.interpolate(
+              startViewOffset.width,
+              targetViewOffset.width,
+              interpolator.value,
+            );
+
+            /** 目標のカメラ viewOffset の高さに移動 */
+            const currentHeight = gsap.utils.interpolate(
+              startViewOffset.height,
+              targetViewOffset.height,
+              interpolator.value,
+            );
+
+            camera.setViewOffset(
+              startViewOffset.fullWidth,
+              startViewOffset.fullHeight,
+              currentX,
+              currentY,
+              currentWidth,
+              currentHeight,
+            );
+
+            camera.updateProjectionMatrix();
+          }
         },
-        0,
-      );
-    }
+      },
+      0,
+    );
   }, element);
 };
 

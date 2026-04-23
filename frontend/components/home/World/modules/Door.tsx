@@ -13,6 +13,7 @@ import {
 } from 'three';
 
 import { WORLD_COLOR_PALETTE } from '@/constants/colors';
+import { DRACO_DECODER_PATH } from '@/constants/common';
 import {
   DEFAULT_WEATHER,
   ENV_MAP_MODEL_TYPE_MODEL,
@@ -40,7 +41,7 @@ type Props = {
 const Door = React.memo(
   ({ currentWeatherData, timePoint, ref }: Props): JSX.Element => {
     /** ドアモデルのノードを取得 */
-    const { nodes } = useGLTF(HOME_WORLD_DOOR_MODEL_PATH);
+    const { nodes } = useGLTF(HOME_WORLD_DOOR_MODEL_PATH, true);
     /** 環境マップを取得 */
     const environment = useThree((state) => state.scene.environment);
 
@@ -171,6 +172,7 @@ const Door = React.memo(
 
 Door.displayName = 'Door';
 
-useGLTF.preload(HOME_WORLD_DOOR_MODEL_PATH);
+useGLTF.setDecoderPath(DRACO_DECODER_PATH);
+useGLTF.preload(HOME_WORLD_DOOR_MODEL_PATH, true);
 
 export default Door;

@@ -6,6 +6,7 @@ import { useGLTF } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { type Color, Mesh, MeshStandardMaterial } from 'three';
 
+import { DRACO_DECODER_PATH } from '@/constants/common';
 import {
   DEFAULT_WEATHER,
   ENV_MAP_MODEL_TYPE_MODEL,
@@ -31,7 +32,7 @@ const Model = React.memo(
     const { scene } = useThree();
 
     /** オブジェクトを読み込み、名前を設定 */
-    const model = useGLTF(HOME_WORLD_MOUNTAIN_MODEL_PATH);
+    const model = useGLTF(HOME_WORLD_MOUNTAIN_MODEL_PATH, true);
     model.scene.name = 'mountain';
 
     /** シーン子要素をメモ化して依存配列の安定性を確保 */
@@ -176,6 +177,7 @@ const Model = React.memo(
 
 Model.displayName = 'Model';
 
-useGLTF.preload(HOME_WORLD_MOUNTAIN_MODEL_PATH);
+useGLTF.setDecoderPath(DRACO_DECODER_PATH);
+useGLTF.preload(HOME_WORLD_MOUNTAIN_MODEL_PATH, true);
 
 export default Model;
