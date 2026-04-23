@@ -1,17 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import type { Dispatch, JSX, SetStateAction } from 'react';
 
-import { useFrame, useLoader } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import { AnimationMixer, FrontSide, LoopOnce } from 'three';
 import type { AnimationClip, Group, Mesh, Object3D } from 'three';
-/** @ts-expect-error three/examples/jsm モジュールに型定義が存在しないため */
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-/** @ts-expect-error three/examples/jsm モジュールに型定義が存在しないため */
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
+import { DRACO_DECODER_PATH } from '@/constants/common';
 import {
   WORK_WORLD_ANIMATION_NAME_REGEX,
-  WORK_WORLD_DRACO_DECODER_PATH,
   WORK_WORLD_FLOOR_PLANE_REGEX,
   WORK_WORLD_MODEL_API_BASE_PATH,
 } from '@/constants/workThreeD';
@@ -35,16 +32,12 @@ type Props = {
   currentIndex: number;
 };
 
-/**
- * DRACOLoader シングルトン
- * useLoader のセットアップ関数が複数回呼ばれても WASM 仮想 FS を二重マウントしないよう
- * モジュールレベルで1インスタンスのみ生成する。
- */
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath(WORK_WORLD_DRACO_DECODER_PATH);
+/** DRACO デコーダーパスを設定 */
+useGLTF.setDecoderPath(DRACO_DECODER_PATH);
 
 /**
- * animationName と AnimationClip.name の部位名を正規化する処理
+ * 「アニメーション名」と 「アニメーションクリップ名」 の部位名を正規化する処理
+ *
  * 正規化することで、AnimationClip.name に部位名以外の情報が含まれていても、
  * animationName と対応する AnimationClip を特定できるようにする。
  *
@@ -71,13 +64,10 @@ const Model = React.memo(
     /** Group オブジェクトの参照 Ref */
     const groupRef = useRef<Group | null>(null);
 
-    /** GLTFLoader でモデルをプロキシ経由で読み込む（Storage URL をクライアントに公開しない） */
-    const gltf = useLoader(
-      GLTFLoader,
+    /** useGLTF でモデルをプロキシ経由で読み込む（Storage URL をクライアントに公開しない） */
+    const gltf = useGLTF(
       `${WORK_WORLD_MODEL_API_BASE_PATH}${content.key}`,
-      (loader) => {
-        loader.setDRACOLoader(dracoLoader);
-      },
+      true,
     );
 
     /** アニメーションを更新 */

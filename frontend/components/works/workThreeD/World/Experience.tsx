@@ -18,6 +18,7 @@ import {
   CustomModel,
   CustomCamera,
   CustomControls,
+  Room,
 } from '@/components/works/workThreeD/World/modules';
 import { WORK_WORLD_ENV_COLORS } from '@/constants/colors';
 import { BREAK_POINTS, IS_DEV } from '@/constants/common';
@@ -295,6 +296,9 @@ const Experience = React.memo(
           currentIndex={currentIndex}
           dispatch={dispatch}
         />
+
+        {/* 部屋 */}
+        <Room />
 
         {/* カスタムコントロール */}
         <CustomControls isViewerActive={isViewerActive} />

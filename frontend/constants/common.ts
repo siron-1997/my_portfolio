@@ -33,7 +33,14 @@ export const BREAK_POINTS = {
 export type BreakPointKey = keyof typeof BREAK_POINTS;
 
 /** ブレークポイント名の順序付き配列 */
-export const BREAK_POINT_KEYS: BreakPointKey[] = ['XS', 'SM', 'LG', 'XL', '2XL', '3XL'];
+export const BREAK_POINT_KEYS: BreakPointKey[] = [
+  'XS',
+  'SM',
+  'LG',
+  'XL',
+  '2XL',
+  '3XL',
+];
 
 /** サイトマップ */
 export const SITE_MAP: SiteMapItem[] = [
@@ -47,6 +54,9 @@ export const LOADING_ICON_PATH = '/icons/circle_loading.svg';
 export const CLOSE_ICON_PATH = '/icons/close.svg';
 export const HAMBURGER_ICON_PATH = '/icons/hamburger.svg';
 export const SCROLL_TO_TOP_ICON_PATH = '/icons/keyboard_arrow_up_24.svg';
+
+/** DRACO デコーダーの配置パス */
+export const DRACO_DECODER_PATH = '/draco/' as const;
 
 /**  SNSリスト */
 export const SNS_LIST: Sns[] = [

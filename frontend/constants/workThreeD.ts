@@ -300,11 +300,12 @@ export const WORK_WORLD_DOF_PARAMS = {
  *  World - モデル
  * ============================================ */
 
-/** DRACOデコーダーのパス */
-export const WORK_WORLD_DRACO_DECODER_PATH = '/draco/' as const;
-
 /** モデル取得 API のベースパス */
 export const WORK_WORLD_MODEL_API_BASE_PATH = '/api/supabase/model/' as const;
+
+/** Room モデルのパス */
+export const WORK_WORLD_ROOM_MODEL_PATH =
+  '/models/gltf/work_world_room.glb' as const;
 
 /** 床面メッシュ名の判定正規表現 */
 export const WORK_WORLD_FLOOR_PLANE_REGEX = /_Plane$/;
