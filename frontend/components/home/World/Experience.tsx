@@ -8,8 +8,8 @@ import React, {
   useRef,
 } from 'react';
 
-import { BakeShadows } from '@react-three/drei';
-import { useControls,type useCreateStore } from 'leva';
+import { BakeShadows, useGLTF } from '@react-three/drei';
+import { useControls, type useCreateStore } from 'leva';
 import { type Group } from 'three';
 
 import {
@@ -31,6 +31,8 @@ import {
   HOME_WORLD_DEBUG_WEATHER_CONFIGS,
   HOME_WORLD_DEBUG_WEATHER_DESCRIPTION_LABELS,
   HOME_WORLD_SCENE_NAME_MODELS,
+  HOME_WORLD_SM_DOOR_MODEL_PATH,
+  HOME_WORLD_TERRAIN_MODEL_PATH,
   WEATHER_CATEGORY_CLEAR_SKY,
   WEATHER_DESCRIPTION_CLEAR_SKY,
   WEATHER_TYPES,
@@ -48,6 +50,40 @@ const WEATHER_DESCRIPTION_OPTIONS: Record<string, string> = Object.fromEntries(
     ([desc, label]) => [label, desc],
   ),
 );
+
+/**
+ * SM_Terrain.glb の比較表示用デバッグコンポーネント。
+ * 開発環境でのみ使用し、旧 mountain.glb との外観比較に利用する。
+ * トグルが ON のときだけマウントされ、useGLTF のフェッチが走る。
+ */
+const DebugTerrainModel = React.memo(
+  (): JSX.Element => {
+    const { scene } = useGLTF(HOME_WORLD_TERRAIN_MODEL_PATH, true);
+    return (
+      <group name="debug_terrain">
+        <primitive object={scene} />
+      </group>
+    );
+  },
+);
+DebugTerrainModel.displayName = 'DebugTerrainModel';
+
+/**
+ * SM_Door.glb の比較表示用デバッグコンポーネント。
+ * 開発環境でのみ使用し、旧 door.glb との外観比較に利用する。
+ * トグルが ON のときだけマウントされ、useGLTF のフェッチが走る。
+ */
+const DebugDoorModel = React.memo(
+  (): JSX.Element => {
+    const { scene } = useGLTF(HOME_WORLD_SM_DOOR_MODEL_PATH, true);
+    return (
+      <group name="debug_door">
+        <primitive object={scene} />
+      </group>
+    );
+  },
+);
+DebugDoorModel.displayName = 'DebugDoorModel';
 
 type Props = {
   /** portal 要素の参照 Ref */
@@ -147,6 +183,27 @@ const Experience = React.memo(
       { collapsed: true },
       { store: levaStore },
     );
+
+    /** モデル比較コントロール（開発環境デバッグ用） */
+    const { showOldMountain, showNewTerrain, showOldDoor, showNewDoor } =
+      useControls(
+        'モデル比較',
+        {
+          /** 旧 mountain.glb の表示フラグ */
+          showOldMountain: { value: true, label: '旧 mountain.glb' },
+
+          /** 新 SM_Terrain.glb の表示フラグ */
+          showNewTerrain: { value: false, label: '新 SM_Terrain.glb' },
+
+          /** 旧 door.glb の表示フラグ */
+          showOldDoor: { value: true, label: '旧 door.glb' },
+
+          /** 新 SM_Door.glb の表示フラグ */
+          showNewDoor: { value: false, label: '新 SM_Door.glb' },
+        },
+        { collapsed: true },
+        { store: levaStore },
+      );
 
     /**
      * 天気説明のデバッグ上書きを反映した currentWeatherData。
@@ -252,14 +309,22 @@ const Experience = React.memo(
           <Model
             currentWeatherData={effectiveCurrentWeatherData}
             timePoint={timePoint}
+            visible={!IS_DEV || showOldMountain}
           />
+
+          {/** 新地形（デバッグ比較用）: ON 時のみマウントしてフェッチ */}
+          {IS_DEV && showNewTerrain && <DebugTerrainModel />}
 
           {/** ドア */}
           <Door
             currentWeatherData={effectiveCurrentWeatherData}
             timePoint={timePoint}
             ref={doorRef}
+            visible={!IS_DEV || showOldDoor}
           />
+
+          {/** 新ドア（デバッグ比較用）: ON 時のみマウントしてフェッチ */}
+          {IS_DEV && showNewDoor && <DebugDoorModel />}
 
           {/** 雨の時、シーンに追加 */}
           <Ocean

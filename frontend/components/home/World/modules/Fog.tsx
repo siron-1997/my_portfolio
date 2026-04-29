@@ -48,9 +48,10 @@ const Fog = React.memo(
     };
 
     /** 霧コントロール（開発環境デバッグ用） */
-    const { debugColor, debugNear, debugFar } = useControls(
+    const { debugVisible, debugColor, debugNear, debugFar } = useControls(
       '霧',
       {
+        debugVisible: { value: true, label: '表示' },
         debugColor: {
           ...HOME_WORLD_DEBUG_FOG_COLOR_CONTROL,
           value: defaults.color,
@@ -117,14 +118,16 @@ const Fog = React.memo(
     }, [debugColor, debugNear, debugFar]);
 
     return (
-      <fog
-        ref={ref}
-        attach="fog"
-        args={[color, near, far]}
-        color={color}
-        near={near}
-        far={far}
-      />
+      (IS_DEV ? debugVisible : true) ? (
+        <fog
+          ref={ref}
+          attach="fog"
+          args={[color, near, far]}
+          color={color}
+          near={near}
+          far={far}
+        />
+      ) : null
     );
   },
 );

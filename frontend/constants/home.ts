@@ -26,6 +26,12 @@ export const HOME_WORLD_MOUNTAIN_MODEL_PATH = '/models/gltf/mountain.glb';
 /** ドアモデルのファイルパス */
 export const HOME_WORLD_DOOR_MODEL_PATH = '/models/gltf/door.glb';
 
+/** 地形モデル（新）のファイルパス。旧 mountain.glb との比較デバッグ用 */
+export const HOME_WORLD_TERRAIN_MODEL_PATH = '/models/gltf/SM_Terrain.glb';
+
+/** ドアモデル（新）のファイルパス。旧 door.glb との比較デバッグ用 */
+export const HOME_WORLD_SM_DOOR_MODEL_PATH = '/models/gltf/SM_Door.glb';
+
 /** 水面の法線マップテクスチャファイルパス */
 export const HOME_WORLD_WATER_NORMALS_TEXTURE =
   'images/textures/waternormals.jpg';

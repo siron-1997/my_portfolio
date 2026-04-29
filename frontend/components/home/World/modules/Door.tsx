@@ -36,10 +36,13 @@ type Props = {
 
   /** ドアグループへの Ref */
   ref: React.RefObject<Group | null>;
+
+  /** モデルの表示・非表示（デバッグ比較用、省略時は表示） */
+  visible?: boolean;
 };
 
 const Door = React.memo(
-  ({ currentWeatherData, timePoint, ref }: Props): JSX.Element => {
+  ({ currentWeatherData, timePoint, ref, visible = true }: Props): JSX.Element => {
     /** ドアモデルのノードを取得 */
     const { nodes } = useGLTF(HOME_WORLD_DOOR_MODEL_PATH, true);
     /** 環境マップを取得 */
@@ -78,6 +81,7 @@ const Door = React.memo(
         name={HOME_WORLD_SCENE_NAME_DOOR}
         scale={[groupScale, groupScale, groupScale]}
         rotation-y={MathUtils.degToRad(-90)}
+        visible={visible}
         position={[-3.6, 0.002, 4.2]}
       >
         {/* 部屋 */}

@@ -25,10 +25,13 @@ type Props = {
 
   /** 時間帯（朝昼晩） */
   timePoint: TimePoint;
+
+  /** モデルの表示・非表示（デバッグ比較用、省略時は表示） */
+  visible?: boolean;
 };
 
 const Model = React.memo(
-  ({ currentWeatherData, timePoint }: Props): JSX.Element => {
+  ({ currentWeatherData, timePoint, visible = true }: Props): JSX.Element => {
     const { scene } = useThree();
 
     /** オブジェクトを読み込み、名前を設定 */
@@ -168,7 +171,7 @@ const Model = React.memo(
     ]);
 
     return (
-      <group renderOrder={0} name={HOME_WORLD_SCENE_NAME_MOUNTAIN}>
+      <group renderOrder={0} name={HOME_WORLD_SCENE_NAME_MOUNTAIN} visible={visible}>
         <primitive object={model.scene} />
       </group>
     );
