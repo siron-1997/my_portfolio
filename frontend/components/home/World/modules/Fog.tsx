@@ -2,7 +2,7 @@
 
 import React, { type JSX, useEffect, useRef } from 'react';
 
-import { buttonGroup, useControls,type useCreateStore } from 'leva';
+import { buttonGroup, useControls, type useCreateStore } from 'leva';
 import { type Fog as ThreeFog } from 'three';
 
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';
@@ -117,18 +117,16 @@ const Fog = React.memo(
       ref.current.far = debugFar;
     }, [debugColor, debugNear, debugFar]);
 
-    return (
-      (IS_DEV ? debugVisible : true) ? (
-        <fog
-          ref={ref}
-          attach="fog"
-          args={[color, near, far]}
-          color={color}
-          near={near}
-          far={far}
-        />
-      ) : null
-    );
+    return (IS_DEV ? debugVisible : true) ? (
+      <fog
+        ref={ref}
+        attach="fog"
+        args={[color, near, far]}
+        color={color}
+        near={near}
+        far={far}
+      />
+    ) : null;
   },
 );
 

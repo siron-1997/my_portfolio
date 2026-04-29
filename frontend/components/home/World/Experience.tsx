@@ -56,16 +56,14 @@ const WEATHER_DESCRIPTION_OPTIONS: Record<string, string> = Object.fromEntries(
  * 開発環境でのみ使用し、旧 mountain.glb との外観比較に利用する。
  * トグルが ON のときだけマウントされ、useGLTF のフェッチが走る。
  */
-const DebugTerrainModel = React.memo(
-  (): JSX.Element => {
-    const { scene } = useGLTF(HOME_WORLD_TERRAIN_MODEL_PATH, true);
-    return (
-      <group name="debug_terrain">
-        <primitive object={scene} />
-      </group>
-    );
-  },
-);
+const DebugTerrainModel = React.memo((): JSX.Element => {
+  const { scene } = useGLTF(HOME_WORLD_TERRAIN_MODEL_PATH, true);
+  return (
+    <group name="debug_terrain">
+      <primitive object={scene} />
+    </group>
+  );
+});
 DebugTerrainModel.displayName = 'DebugTerrainModel';
 
 /**
@@ -73,16 +71,14 @@ DebugTerrainModel.displayName = 'DebugTerrainModel';
  * 開発環境でのみ使用し、旧 door.glb との外観比較に利用する。
  * トグルが ON のときだけマウントされ、useGLTF のフェッチが走る。
  */
-const DebugDoorModel = React.memo(
-  (): JSX.Element => {
-    const { scene } = useGLTF(HOME_WORLD_SM_DOOR_MODEL_PATH, true);
-    return (
-      <group name="debug_door">
-        <primitive object={scene} />
-      </group>
-    );
-  },
-);
+const DebugDoorModel = React.memo((): JSX.Element => {
+  const { scene } = useGLTF(HOME_WORLD_SM_DOOR_MODEL_PATH, true);
+  return (
+    <group name="debug_door">
+      <primitive object={scene} />
+    </group>
+  );
+});
 DebugDoorModel.displayName = 'DebugDoorModel';
 
 type Props = {

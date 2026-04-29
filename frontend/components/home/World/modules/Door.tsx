@@ -42,7 +42,12 @@ type Props = {
 };
 
 const Door = React.memo(
-  ({ currentWeatherData, timePoint, ref, visible = true }: Props): JSX.Element => {
+  ({
+    currentWeatherData,
+    timePoint,
+    ref,
+    visible = true,
+  }: Props): JSX.Element => {
     /** ドアモデルのノードを取得 */
     const { nodes } = useGLTF(HOME_WORLD_DOOR_MODEL_PATH, true);
     /** 環境マップを取得 */

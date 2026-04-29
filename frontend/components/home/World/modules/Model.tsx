@@ -171,7 +171,11 @@ const Model = React.memo(
     ]);
 
     return (
-      <group renderOrder={0} name={HOME_WORLD_SCENE_NAME_MOUNTAIN} visible={visible}>
+      <group
+        renderOrder={0}
+        name={HOME_WORLD_SCENE_NAME_MOUNTAIN}
+        visible={visible}
+      >
         <primitive object={model.scene} />
       </group>
     );
