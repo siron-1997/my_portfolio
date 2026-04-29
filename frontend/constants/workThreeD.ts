@@ -290,9 +290,13 @@ export const WORK_WORLD_FOG_FAR = { SM: 12, default: 11 } as const;
 
 /** 被写界深度のパラメータ */
 export const WORK_WORLD_DOF_PARAMS = {
-  focusDistance: 0,
-  focalLength: 0.1,
-  bokehScale: 8,
+  /** 正規化フォーカス距離（0〜1）。0 = カメラ位置、1 = far クリップ面。
+   *  near=0.1 / far=200 の場合、シーン中心（約 5u）≈ 0.025 */
+  focusDistance: 0.025,
+  /** 正規化焦点距離（0〜1）。小さいほどボケ範囲が狭くシネマティックになる */
+  focalLength: 0.02,
+  /** ボケの強さ。0 = なし、8 = 強烈。2〜3 が自然なシネマティック表現 */
+  bokehScale: 3,
   height: 1080,
 } as const;
 

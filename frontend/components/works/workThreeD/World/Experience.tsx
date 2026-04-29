@@ -186,6 +186,34 @@ const Experience = React.memo(
       },
     );
 
+    /** 被写界深度パラメータ（開発環境デバッグ用 leva コントロール） */
+    const { dofFocusDistance, dofFocalLength, dofBokehScale } = useControls(
+      '被写界深度 (DepthOfField)',
+      {
+        dofFocusDistance: {
+          value: WORK_WORLD_DOF_PARAMS.focusDistance,
+          min: 0,
+          max: 1,
+          step: 0.001,
+          label: 'focusDistance',
+        },
+        dofFocalLength: {
+          value: WORK_WORLD_DOF_PARAMS.focalLength,
+          min: 0,
+          max: 1,
+          step: 0.001,
+          label: 'focalLength',
+        },
+        dofBokehScale: {
+          value: WORK_WORLD_DOF_PARAMS.bokehScale,
+          min: 0,
+          max: 20,
+          step: 0.1,
+          label: 'bokehScale',
+        },
+      },
+    );
+
     /** Three.js のシーンオブジェクトへ環境マップを適用する */
     useEffect(() => {
       scene.environment = cubeTexture;
@@ -311,9 +339,9 @@ const Experience = React.memo(
           <EffectComposer>
             {/** 被写界深度の設定 */}
             <DepthOfField
-              focusDistance={WORK_WORLD_DOF_PARAMS.focusDistance}
-              focalLength={WORK_WORLD_DOF_PARAMS.focalLength}
-              bokehScale={WORK_WORLD_DOF_PARAMS.bokehScale}
+              focusDistance={IS_DEV ? dofFocusDistance : WORK_WORLD_DOF_PARAMS.focusDistance}
+              focalLength={IS_DEV ? dofFocalLength : WORK_WORLD_DOF_PARAMS.focalLength}
+              bokehScale={IS_DEV ? dofBokehScale : WORK_WORLD_DOF_PARAMS.bokehScale}
               height={WORK_WORLD_DOF_PARAMS.height}
             />
           </EffectComposer>
