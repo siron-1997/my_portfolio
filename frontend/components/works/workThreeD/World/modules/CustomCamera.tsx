@@ -93,27 +93,26 @@ const CustomCamera = React.memo(
       cameraRef.current.updateProjectionMatrix();
     });
 
-    /** セクション・ビュワーモード アニメーション */
+    /** 各セクションのアニメーションを管理 */
     useLayoutEffect(() => {
       if (
         modelChildren.length === 0 ||
         !cameraRef.current ||
         !portalRef.current ||
         !introductionRef.current ||
-        !controlsRef.current ||
-        !toggleButtonRef.current
+        !controlsRef.current
       )
         return;
 
-      /** ブレークポイントに応じて、各セクションのカメラパラメータを取得 */
+      /** ブレークポイントに応じた、各セクションのカメラパラメータを取得 */
       const sectionsCameraParams = getSectionsCameraParams(
         modelChildren,
         width,
         height,
       );
 
-      /** カメラアニメーションを作成 (セクションごとにカメラの位置・アングルを設定) */
-      const sectionsAnimations = sectionsAnimation({
+      /** 各セクションのカメラアニメーションを初期化 */
+      const sectionsAnimationCtx = sectionsAnimation({
         portal: portalRef.current,
         introduction: introductionRef.current,
         controls: controlsRef.current,
@@ -123,27 +122,60 @@ const CustomCamera = React.memo(
         cameraParams: sectionsCameraParams,
       });
 
-      /** ブレークポイントに応じて、ビュワーモードのカメラパラメータを取得 */
+      return () => {
+        sectionsAnimationCtx.forEach((ctx) => ctx.revert());
+      };
+    }, [height, modelChildren, setIsNavigationVisible, width]);
+
+    /** ビュワーモードのアニメーションを管理 */
+    useLayoutEffect(() => {
+      if (
+        modelChildren.length === 0 ||
+        !introductionRef.current ||
+        !toggleButtonRef.current
+      )
+        return;
+
+      /** ブレークポイントに応じた、ビュワーモードのカメラパラメータを取得 */
       const {
         cameraParams: viewerCameraParams,
         zoom,
         offset,
       } = getViwerToggleCameraParams(modelChildren, width, height);
-      /** アニメーション作成 (ビュワーモードのカメラ位置・アングルを設定) */
-      const viewerAnimation = viewerToggleAnimation({
+
+      /** ビュワーモードのアニメーションを初期化 */
+      const viewerAnimationCtx = viewerToggleAnimation({
         introduction: introductionRef.current,
-        toggleButton: toggleButtonRef.current,
         cameraRef,
         cameraParams: viewerCameraParams,
         zoom,
         offset,
       });
 
+      /** アニメーションの開始時のイベントハンドラ */
+      const handleStart = () => viewerAnimationCtx.onStart();
+
+      /** アニメーションの終了時のイベントハンドラ */
+      const handleEnd = () => viewerAnimationCtx.onEnd();
+
+      /** 開始ボタンの要素を取得 */
+      const startButton = toggleButtonRef.current.children[1].children[0];
+
+      /** 終了ボタンの要素を取得 */
+      const endButton = toggleButtonRef.current.children[2].children[0];
+
+      /** 開始ボタンにアニメーション開始時のイベントハンドラを追加 */
+      startButton.addEventListener('click', handleStart);
+
+      /** 終了ボタンにアニメーション終了時のイベントハンドラを追加 */
+      endButton.addEventListener('click', handleEnd);
+
       return () => {
-        sectionsAnimations.forEach((ctx) => ctx.revert());
-        viewerAnimation.revert();
+        viewerAnimationCtx.revert();
+        startButton.removeEventListener('click', handleStart);
+        endButton.removeEventListener('click', handleEnd);
       };
-    }, [height, modelChildren, setIsNavigationVisible, width]);
+    }, [height, modelChildren, width]);
 
     useLayoutEffect(() => {
       if (modelChildren.length === 0 || !cameraRef.current) return;

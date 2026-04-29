@@ -331,3 +331,34 @@ export const WORK_WORLD_ORBIT_CONTROLS = {
   maxAzimuthAngleDeg: 180,
   maxPolarAngleDeg: 85,
 } as const;
+
+/** ============================================
+ *  World - アニメーション
+ * ============================================ */
+
+/** 弧状補間の横バイアス強度（0=直線, 1=デフォルト） */
+export const CAMERA_ARC_BIAS = 0.3 as const;
+
+/** Controls → 元位置に戻るアニメーションの時間 (秒) */
+export const REVERSE_COMPLETE_DURATION = 2 as const;
+
+/** セクション ScrollTrigger スクラブ係数 */
+export const SECTION_ANIMATION_SCRUB = 0.7 as const;
+
+/** セクション補間アニメーションの時間 (秒) */
+export const SECTION_ANIMATION_DURATION = 0.7 as const;
+
+/** Controls カメラ移動アニメーションの時間 (秒) */
+export const CONTROLS_ANIMATION_DURATION = 2 as const;
+
+/** Controls カメラ位置アニメーションの遅延 (秒) */
+export const CONTROLS_ANIMATION_DELAY = 0.5 as const;
+
+/** ビュワーモード開始時のカメラアニメーション時間 (秒) */
+export const VIEWER_TOGGLE_START_DURATION = 0.6 as const;
+
+/** ビュワーモード終了時のカメラアニメーション時間 (秒) */
+export const VIEWER_TOGGLE_END_DURATION = 1.2 as const;
+
+/** ナビゲーション表示切り替えアニメーションの時間 (秒) */
+export const NAVIGATION_ANIMATION_DURATION = 0.3 as const;

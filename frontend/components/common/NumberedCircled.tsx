@@ -4,7 +4,7 @@ import React, { type JSX, useEffect, useRef } from 'react';
 
 import { type SxProps, type Theme, Typography } from '@mui/material';
 
-import { modelAnimation } from '@/animations/workWorld';
+import { navigationVisibleAnimation } from '@/animations/workWorld';
 
 type Props = {
   /** 表示するインデックス番号 */
@@ -26,8 +26,17 @@ const NumberedCircled = React.memo(
     const ref = useRef<HTMLSpanElement | null>(null);
 
     useEffect(() => {
-      /** モデルアニメーションの実行 */
-      return modelAnimation(ref.current, isNavigationVisible);
+      if (!ref.current) return;
+
+      /** ナビゲーションの表示アニメーションを初期化 */
+      const ctx = navigationVisibleAnimation({
+        ref,
+        isVisible: isNavigationVisible,
+      });
+
+      return () => {
+        ctx.revert();
+      };
     }, [isNavigationVisible]);
 
     return (
