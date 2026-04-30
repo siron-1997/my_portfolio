@@ -29,8 +29,13 @@ export const HOME_WORLD_DOOR_MODEL_PATH = '/models/gltf/door.glb';
 /** 地形モデル（新）のファイルパス。旧 mountain.glb との比較デバッグ用 */
 export const HOME_WORLD_TERRAIN_MODEL_PATH = '/models/gltf/SM_Terrain.glb';
 
+export const HOME_WORLD_GEO_TERRAIN_MODEL_PATH = '/models/gltf/Geo_Terrain.glb';
+
 /** ドアモデル（新）のファイルパス。旧 door.glb との比較デバッグ用 */
 export const HOME_WORLD_SM_DOOR_MODEL_PATH = '/models/gltf/SM_Door.glb';
+
+/** 地形モデル（新）のファイルパス。旧 Geo_Door.glb との比較デバッグ用 */
+export const HOME_WORLD_GEO_DOOR_MODEL_PATH = '/models/gltf/Geo_Door.glb';
 
 /** 水面の法線マップテクスチャファイルパス */
 export const HOME_WORLD_WATER_NORMALS_TEXTURE =
@@ -803,8 +808,8 @@ export const HOME_WORLD_DEBUG_RAIN_CONTROLS = {
  */
 export const HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS = {
   startX: { min: -15, max: 5, step: 0.01, label: '開始 X' },
-  startY: { min: -5, max: 15, step: 0.01, label: '開始 Y' },
-  startZ: { min: 0, max: 45, step: 0.01, label: '開始 Z' },
+  startY: { min: -5, max: 35, step: 0.01, label: '開始 Y' },
+  startZ: { min: 0, max: 85, step: 0.01, label: '開始 Z' },
   endX: { min: -8, max: 0, step: 0.01, label: '終了 X' },
   endY: { min: -5, max: 5, step: 0.01, label: '終了 Y' },
   endZ: { min: 0, max: 10, step: 0.01, label: '終了 Z' },

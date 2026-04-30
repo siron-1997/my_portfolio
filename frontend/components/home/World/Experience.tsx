@@ -32,7 +32,9 @@ import {
   HOME_WORLD_DEBUG_WEATHER_DESCRIPTION_LABELS,
   HOME_WORLD_SCENE_NAME_MODELS,
   HOME_WORLD_SM_DOOR_MODEL_PATH,
+  HOME_WORLD_GEO_DOOR_MODEL_PATH,
   HOME_WORLD_TERRAIN_MODEL_PATH,
+  HOME_WORLD_GEO_TERRAIN_MODEL_PATH,
   WEATHER_CATEGORY_CLEAR_SKY,
   WEATHER_DESCRIPTION_CLEAR_SKY,
   WEATHER_TYPES,
@@ -57,7 +59,11 @@ const WEATHER_DESCRIPTION_OPTIONS: Record<string, string> = Object.fromEntries(
  * トグルが ON のときだけマウントされ、useGLTF のフェッチが走る。
  */
 const DebugTerrainModel = React.memo((): JSX.Element => {
-  const { scene } = useGLTF(HOME_WORLD_TERRAIN_MODEL_PATH, true);
+  const { scene } = useGLTF(
+    // HOME_WORLD_TERRAIN_MODEL_PATH,
+    HOME_WORLD_GEO_TERRAIN_MODEL_PATH,
+    true,
+  );
   return (
     <group name="debug_terrain">
       <primitive object={scene} />
@@ -72,7 +78,11 @@ DebugTerrainModel.displayName = 'DebugTerrainModel';
  * トグルが ON のときだけマウントされ、useGLTF のフェッチが走る。
  */
 const DebugDoorModel = React.memo((): JSX.Element => {
-  const { scene } = useGLTF(HOME_WORLD_SM_DOOR_MODEL_PATH, true);
+  const { scene } = useGLTF(
+    // HOME_WORLD_SM_DOOR_MODEL_PATH,
+    HOME_WORLD_GEO_DOOR_MODEL_PATH,
+    true,
+  );
   return (
     <group name="debug_door">
       <primitive object={scene} />
