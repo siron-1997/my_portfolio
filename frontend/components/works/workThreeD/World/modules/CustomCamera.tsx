@@ -3,6 +3,8 @@
 import React, { useCallback, useEffect, useRef, useLayoutEffect } from 'react';
 import type { Dispatch, JSX, RefObject, SetStateAction } from 'react';
 
+import type { WorkControl } from '@/types/api';
+
 import { useFrame, useThree } from '@react-three/fiber';
 import { PerspectiveCamera as CustomPerspectiveCamera } from '@react-three/drei';
 import { Box3, Sphere } from 'three';
@@ -32,6 +34,12 @@ type Props = Omit<WorldProps, 'isLoading'> & {
 
   /** モデルの子要素リスト */
   modelChildren: ModelChildren;
+
+  /**
+   * GLB 数値順にソートされた Controls データを通知するコールバック。
+   * Controls セクションのカメラ設定が確定したタイミングで一度だけ呼ばれる。
+   */
+  onControlsSorted: (sortedControls: WorkControl[]) => void;
 };
 
 const CustomCamera = React.memo(
@@ -49,6 +57,7 @@ const CustomCamera = React.memo(
     isViewerActive,
     currentIndex,
     dispatch,
+    onControlsSorted,
   }: Props): JSX.Element => {
     /** 前回のカメラ位置の参照 Ref */
     const previousPositionRef = useRef<Vector3 | null>(null);
@@ -110,6 +119,22 @@ const CustomCamera = React.memo(
         width,
         height,
       );
+
+      /** [DEBUG] sectionsCameraParams の内容確認 */
+      if (process.env.NODE_ENV === 'development') {
+        console.group('[Camera DEBUG] sectionsAnimation 起動');
+        console.group('▼ sectionsCameraParams');
+        Object.entries(sectionsCameraParams).forEach(([key, val]) =>
+          console.log(`  [${key}]`, val),
+        );
+        console.groupEnd();
+        console.group('▼ modelChildren 名前一覧');
+        modelChildren.forEach((child) =>
+          console.log(`  [${child.type}] ${child.name}`),
+        );
+        console.groupEnd();
+        console.groupEnd();
+      }
 
       /** 各セクションのカメラアニメーションを初期化 */
       const sectionsAnimationCtx = sectionsAnimation({
@@ -177,6 +202,7 @@ const CustomCamera = React.memo(
       };
     }, [height, modelChildren, width]);
 
+    /** コントロール用のカメラアニメーションを管理 */
     useLayoutEffect(() => {
       if (modelChildren.length === 0 || !cameraRef.current) return;
 
@@ -186,13 +212,17 @@ const CustomCamera = React.memo(
       /** カメラ初期アングル */
       previousRotationRef.current = cameraRef.current.rotation.clone();
 
-      /** コントロール用のカメラパラメータを生成 */
-      const cameraConfigs = generateControlsCameraConfigs(
-        modelChildren,
-        width,
-        height,
-        content.controls || [],
-      );
+      /** コントロール用のカメラパラメータを生成（GLB 数値インデックス順） */
+      const { configs: cameraConfigs, sortedControls } =
+        generateControlsCameraConfigs(
+          modelChildren,
+          width,
+          height,
+          content.controls || [],
+        );
+
+      /** ソート済み Controls データを親に通知 */
+      onControlsSorted(sortedControls);
 
       /** シーンのバウンディングボックス中心と包容球半径を算出（Arc-Slerp 用） */
       const bbox = new Box3();
@@ -206,6 +236,34 @@ const CustomCamera = React.memo(
 
       /** シーンの包容球半径 */
       const bboxRadius = sphere.radius > 0 ? sphere.radius : 5;
+
+      /** [DEBUG] cameraConfigs の内容確認 */
+      if (process.env.NODE_ENV === 'development') {
+        console.group('[Camera DEBUG] controlsAnimation 起動');
+        console.log(
+          'isInitialControl:',
+          isInitialControl,
+          '/ isStartControls:',
+          isStartControls,
+          '/ currentIndex:',
+          currentIndex,
+        );
+        console.group('▼ cameraConfigs (GLB 数値順)');
+        cameraConfigs.forEach((cfg, i) =>
+          console.log(
+            `  [${i}] name="${cfg.name}"`,
+            cfg.position,
+            cfg.rotation,
+          ),
+        );
+        console.groupEnd();
+        console.group('▼ sortedControls (GLB 数値順)');
+        sortedControls.forEach((c, i) =>
+          console.log(`  [${i}] animation_name="${c.animation_name}"`, c),
+        );
+        console.groupEnd();
+        console.groupEnd();
+      }
 
       /** コントロール用のアニメーションを初期化 */
       const ctx = controlsAnimation({
@@ -223,7 +281,15 @@ const CustomCamera = React.memo(
       });
 
       return () => {
-        if (isPageUnMountedRef.current) ctx.revert();
+        /**
+         * 旧アニメーションの tween を即座に停止する。
+         * `kill(false)` は対象プロパティ（arcProgress / rotProgress / viewProgress）を
+         * 初期値に戻すレンダリングを行わないため、カメラ位置はそのまま維持される。
+         * 次の useLayoutEffect で startPos = 現在位置としてキャプチャされるため
+         * シームレスな遷移が実現される。
+         * （`revert()` は t=0 のレンダリングが走りカメラが始点にスナップするため使用しない）
+         */
+        ctx.kill(false);
       };
     }, [
       content.controls,
@@ -244,8 +310,7 @@ const CustomCamera = React.memo(
 
     /** ビュワーモードの活性状態に応じて Canvas の z-index を更新 */
     useEffect(() => {
-      const canvas: HTMLCanvasElement = gl.domElement;
-      canvas.style.zIndex = isViewerActive ? '200' : '20';
+      gl.domElement.style.zIndex = isViewerActive ? '200' : '20';
     }, [gl, isViewerActive]);
 
     return (

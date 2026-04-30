@@ -267,7 +267,7 @@ const getSectionAnimationParams = (
 };
 
 /**
- * 各セクション・アニメーションタイプごとの逆再生完了時の処理。
+ * 各セクション・アニメーションタイプごとの逆再生完了時の処理
  *
  * @param type - 逆再生処理の種別
  * @param element - 対象セクション要素
@@ -278,11 +278,19 @@ const getSectionAnimationParams = (
  * @param initialState - 逆再生前に保持したカメラ状態
  * @param setIsStartControls - controls の開始状態を更新する関数
  * @param setIsNavigationVisible - ナビゲーション表示状態を更新する関数
- * @returns {void} 戻り値は返さない
- 
  *
  * @example
- * handleReverseComplete(type, element, camera, startPosition, startRotation, startViewOffset, initialState, setIsStartControls, setIsNavigationVisible);
+ * handleReverseComplete(
+ *  type,
+ *  element,
+ *  camera,
+ *  startPosition,
+ *  startRotation,
+ *  startViewOffset,
+ *  initialState,
+ *  setIsStartControls,
+ *  setIsNavigationVisible
+ * );
  */
 const handleReverseComplete = (
   type: string,
@@ -767,11 +775,50 @@ export const controlsAnimation = ({
       return;
     }
 
+    /**
+     * アーク補間の始点位置。
+     * アニメーション開始前に一度だけキャプチャすることで、
+     * 毎フレーム現在値を始点にする指数的アプローチを防ぎ、真の Arc 補間を実現する。
+     */
+    const startPos = cameraRef.current!.position.clone();
+
     /** カメラ位置：弧状補間（Arc-Slerp） */
     const arcProgress = { value: 0 };
 
     /** カメラ回転：クォータニオン slerp（Euler 直接補間によるぎめり回転を防止） */
     const rotProgress = { value: 0 };
+
+    /** viewOffset 補間プログレス */
+    const viewProgress = { value: 0 };
+
+    /**
+     * slerp の始点クォータニオン。
+     * アニメーション開始前に一度だけキャプチャすることで、
+     * 毎フレーム現在値を始点にする指数的アプローチを防ぎ、真の slerp 補間を実現する。
+     */
+    const startQuat = cameraRef.current!.quaternion.clone();
+
+    /** slerp の終点クォータニオン */
+    const endQuat = new Quaternion().setFromEuler(
+      new Euler(
+        currentCameraConfig.rotation.x,
+        currentCameraConfig.rotation.y,
+        currentCameraConfig.rotation.z,
+      ),
+    );
+
+    /**
+     * viewOffset の始点値。
+     * アニメーション開始前に一度だけキャプチャし、from→to 補間を実現する。
+     * view が null（clearViewOffset 状態）の場合はフルビューポート相当の値を使用する。
+     */
+    const currentView = cameraRef.current!.view;
+    const fw = currentCameraConfig.viewOffset.fullWidth;
+    const fh = currentCameraConfig.viewOffset.fullHeight;
+    const fromViewX = currentView?.enabled ? (currentView.offsetX ?? 0) : 0;
+    const fromViewY = currentView?.enabled ? (currentView.offsetY ?? 0) : 0;
+    const fromViewW = currentView?.enabled ? (currentView.width ?? fw) : fw;
+    const fromViewH = currentView?.enabled ? (currentView.height ?? fh) : fh;
 
     /** カメラのアニメーション */
     gsap
@@ -783,7 +830,7 @@ export const controlsAnimation = ({
         delay: CONTROLS_ANIMATION_DELAY,
         onUpdate: () => {
           const pos = computeArcPosition(
-            cameraRef.current!.position.clone(),
+            startPos,
             new Vector3(
               currentCameraConfig.position.x,
               currentCameraConfig.position.y,
@@ -805,34 +852,45 @@ export const controlsAnimation = ({
           ...options,
           delay: 0,
           onUpdate: () => {
+            /** startQuat（固定始点）から endQuat（固定終点）へ真の slerp 補間 */
             cameraRef.current!.quaternion.slerpQuaternions(
-              cameraRef.current!.quaternion.clone(),
-              new Quaternion().setFromEuler(
-                new Euler(
-                  currentCameraConfig.rotation.x,
-                  currentCameraConfig.rotation.y,
-                  currentCameraConfig.rotation.z,
-                ),
-              ),
+              startQuat,
+              endQuat,
               rotProgress.value,
             );
           },
         },
         '<',
       )
-      /** カメラの viewOffset 補間 */
+      /** カメラの viewOffset 補間（始点→終点の線形補間） */
       .to(
-        { dummy: 0 },
+        viewProgress,
         {
-          dummy: 1,
+          value: 1,
           onUpdate: () => {
             cameraRef.current!.setViewOffset(
-              currentCameraConfig.viewOffset.fullWidth,
-              currentCameraConfig.viewOffset.fullHeight,
-              currentCameraConfig.viewOffset.x,
-              currentCameraConfig.viewOffset.y,
-              currentCameraConfig.viewOffset.width,
-              currentCameraConfig.viewOffset.height,
+              fw,
+              fh,
+              gsap.utils.interpolate(
+                fromViewX,
+                currentCameraConfig.viewOffset.x,
+                viewProgress.value,
+              ),
+              gsap.utils.interpolate(
+                fromViewY,
+                currentCameraConfig.viewOffset.y,
+                viewProgress.value,
+              ),
+              gsap.utils.interpolate(
+                fromViewW,
+                currentCameraConfig.viewOffset.width,
+                viewProgress.value,
+              ),
+              gsap.utils.interpolate(
+                fromViewH,
+                currentCameraConfig.viewOffset.height,
+                viewProgress.value,
+              ),
             );
             cameraRef.current!.updateProjectionMatrix();
           },
@@ -924,6 +982,9 @@ export const viewerToggleAnimation = ({
       /** 単一プログレス値で位置・lookAt ターゲットを同期補間 */
       const progress = { value: 0 };
 
+      /** ScrollTrigger による干渉をブロック */
+      cameraRef.current!.userData.isLocked = true;
+
       gsap.to(progress, {
         value: 1,
         duration: VIEWER_TOGGLE_END_DURATION,
@@ -943,11 +1004,14 @@ export const viewerToggleAnimation = ({
           );
           cameraRef.current!.lookAt(lookTarget);
         },
+        onComplete: () => {
+          /** スクロール制御の解除 */
+          html.style.overflow = 'auto';
+          body.style.overflow = 'auto';
+          /** カメラ更新ロックを解除 */
+          cameraRef.current!.userData.isLocked = false;
+        },
       });
-
-      /** スクロール停止を無効化 */
-      html.style.overflow = 'auto';
-      body.style.overflow = 'auto';
     });
   }, cameraRef);
 };

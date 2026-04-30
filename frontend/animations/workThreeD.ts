@@ -44,11 +44,11 @@ type PortalProps = {
 };
 
 type FingerPressProps = {
-  /** 画像の要素 */
-  image: HTMLImageElement;
+  /** 画像の要素 (ビュワーアクティブが無効な時は null) */
+  image: HTMLImageElement | null;
 
-  /** 説明文の要素 */
-  text: HTMLParagraphElement;
+  /** 説明文の要素 (ビュワーアクティブが有効な時は null) */
+  text: HTMLParagraphElement | null;
 
   /** 指アイコンの参照 Ref */
   ref: RefObject<HTMLDivElement | null>;
@@ -235,66 +235,70 @@ export const fingerPressAnimation = ({
     /** 不透明度の設定 */
     const opacities = { point1: 0, point2: 0.85, point3: 0.4 };
 
-    /** アイコン画像のアニメーション */
-    const imageAnimation = gsap
-      .timeline({ repeat: -1 })
-      .fromTo(
-        image,
-        { opacity: 0 },
-        { opacity: 0.85, scale: 1.2, duration: 0.3, ease: 'power1.out' },
-      )
-      .fromTo(
-        image,
-        { opacity: 0.85 },
-        { opacity: 0.4, scale: 1.0, duration: 0.3, ease: 'power1.out' },
-      )
-      .fromTo(
-        image,
-        { x: -currentWidth },
-        { x: currentWidth, duration: 1, ease: 'power2.out' },
-      )
-      .fromTo(
-        image,
-        { opacity: opacities.point3 },
-        { opacity: opacities.point1, duration: 0.5, ease: 'power1.out' },
-      );
+    /** 指アイコンアニメーション */
+    if (image) {
+      const imageAnimation = gsap
+        .timeline({ repeat: -1, paused: true })
+        .fromTo(
+          image,
+          { opacity: 0 },
+          { opacity: 0.85, scale: 1.2, duration: 0.3, ease: 'power1.out' },
+        )
+        .fromTo(
+          image,
+          { opacity: 0.85 },
+          { opacity: 0.4, scale: 1.0, duration: 0.3, ease: 'power1.out' },
+        )
+        .fromTo(
+          image,
+          { x: -currentWidth },
+          { x: currentWidth, duration: 1, ease: 'power2.out' },
+        )
+        .fromTo(
+          image,
+          { opacity: opacities.point3 },
+          { opacity: opacities.point1, duration: 0.5, ease: 'power1.out' },
+        );
 
-    /** アイコンが表示されている場合、アニメーションを再生 */
-    if (isFingerVisible) imageAnimation.play();
+      /** アイコンが表示されている場合、アニメーションを再生 */
+      if (isFingerVisible) imageAnimation.play();
+    }
 
-    /** テキストのアニメーション */
-    gsap
-      .timeline({})
-      .fromTo(
-        text,
-        { opacity: opacities.point1, y: 50 },
-        { opacity: opacities.point2, y: 0 },
-      )
-      .fromTo(
-        text,
-        { opacity: opacities.point2 - 0.15 },
+    /** スクロールガイドアニメーション */
+    if (text) {
+      gsap
+        .timeline({})
+        .fromTo(
+          text,
+          { opacity: opacities.point1, y: 50 },
+          { opacity: opacities.point2, y: 0 },
+        )
+        .fromTo(
+          text,
+          { opacity: opacities.point2 - 0.15 },
+          {
+            opacity: opacities.point3,
+            duration: 1.2,
+            repeat: -1,
+            yoyoEase: true,
+            ease: 'none',
+          },
+        );
+
+      /** 矢印アイコンのアニメーション */
+      gsap.timeline({ paused: true }).fromTo(
+        text.children[1],
+        { y: 0 },
         {
-          opacity: opacities.point3,
+          y: 20,
           duration: 1.2,
+          delay: 1.2,
+          yoyo: true,
           repeat: -1,
-          yoyoEase: true,
           ease: 'none',
         },
       );
-
-    /** 矢印アイコンのアニメーション */
-    gsap.timeline({ paused: true }).fromTo(
-      text.children[1],
-      { y: 0 },
-      {
-        y: 20,
-        duration: 1.2,
-        delay: 1.2,
-        yoyo: true,
-        repeat: -1,
-        ease: 'none',
-      },
-    );
+    }
   }, ref);
 };
 

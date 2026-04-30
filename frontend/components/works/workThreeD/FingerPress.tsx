@@ -49,7 +49,11 @@ const FingerPress = React.memo(
     }, [dispatch]);
 
     useEffect(() => {
-      if (!fingerPressRef.current || !imageRef.current || !textRef.current)
+      if (
+        !fingerPressRef.current ||
+        (isViewerActive && !imageRef.current) ||
+        (!isViewerActive && !textRef.current)
+      )
         return;
 
       /** モバイルかどうか */

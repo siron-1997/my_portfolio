@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useReducer, useRef } from 'react';
+import React, { useCallback, useReducer, useRef, useState } from 'react';
 import type { JSX } from 'react';
 import dynamic from 'next/dynamic';
 
 import { Loading, PageHeader } from '@/components/common';
 import { Controls, Introduction, Portal } from '@/components/works/workThreeD';
+import { type WorkControl } from '@/types/api';
 
 /** Canvas を含む WorkWorld は SSR 非対応のため dynamic import で無効化 */
 const World = dynamic(
@@ -107,6 +108,22 @@ const WorkThreeDClient = ({ content }: Props): JSX.Element => {
   /** work 個別ページの状態 (3D) */
   const [state, dispatch] = useReducer(workThreeDReducer, initialState);
 
+  /**
+   * GLB ソート済みの Controls データ。
+   * generateControlsCameraConfigs の初回呼び出し完了前は content.controls を使用する。
+   */
+  const [sortedControls, setSortedControls] = useState<WorkControl[]>(
+    content.controls,
+  );
+
+  /**
+   * CustomCamera からソート済み Controls データを受け取るコールバック。
+   * modelChildren が利用可能になったタイミングで一度だけ呼ばれる。
+   */
+  const handleControlsSorted = useCallback((controls: WorkControl[]): void => {
+    setSortedControls(controls);
+  }, []);
+
   return (
     <>
       <Loading isLoading={state.isLoading} />
@@ -123,6 +140,7 @@ const WorkThreeDClient = ({ content }: Props): JSX.Element => {
         introductionRef={introductionRef}
         controlsRef={controlsRef}
         toggleButtonRef={toggleButtonRef}
+        onControlsSorted={handleControlsSorted}
       />
 
       <PageHeader
@@ -149,6 +167,7 @@ const WorkThreeDClient = ({ content }: Props): JSX.Element => {
 
       <Controls
         content={content}
+        controls={sortedControls}
         controlsRef={controlsRef}
         currentIndex={state.currentIndex}
         isLoading={state.isLoading}

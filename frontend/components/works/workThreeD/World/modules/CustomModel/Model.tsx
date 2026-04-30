@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import type { Dispatch, JSX, SetStateAction } from 'react';
 
 import { useGLTF } from '@react-three/drei';
@@ -76,6 +76,51 @@ const Model = React.memo(
       actionsRef.current.update(delta);
     });
 
+    /** [DEBUG] GLB データ構造確認 */
+    useEffect(() => {
+      if (process.env.NODE_ENV !== 'development') return;
+
+      console.group(`[GLB DEBUG] key=${content.key}`);
+
+      console.group('▼ アニメーションクリップ一覧');
+      gltf.animations.forEach((clip: AnimationClip) => console.log(clip.name));
+      console.groupEnd();
+
+      console.group('▼ シーン内オブジェクト名一覧');
+      gltf.scene.traverse((child: Object3D) => {
+        if (child.name) console.log(`[${child.type}] ${child.name}`);
+      });
+      console.groupEnd();
+
+      console.group('▼ content.controls アイテム一覧');
+      content.controls.forEach((item, i) =>
+        console.log(`  [${i}] animation_name="${item.animation_name}"`, item),
+      );
+      console.groupEnd();
+
+      console.groupEnd();
+    }, [gltf, content.key, content.controls]);
+
+    /**
+     * GLB シーン内 Cam_BP_*_Sec3_<n>_<name> カメラ名を走査して
+     * 数値インデックス <n> 順にソートしたアニメーション名リストを生成する。
+     * このリストが currentIndex の正規順序になる。
+     */
+    const sortedAnimationNames = useMemo((): string[] => {
+      const regex = /^Cam_BP_[^_]+_Sec3_(\d+)_(.+)$/;
+      const found: { n: number; name: string }[] = [];
+      gltf.scene.traverse((child: Object3D) => {
+        const match = child.name.match(regex);
+        if (match) {
+          const n = parseInt(match[1], 10);
+          if (!found.some((f) => f.n === n)) {
+            found.push({ n, name: match[2] });
+          }
+        }
+      });
+      return found.sort((a, b) => a.n - b.n).map((f) => f.name);
+    }, [gltf]);
+
     /** 裏面を非表示 */
     useEffect(() => {
       gltf.scene.traverse((child: Object3D) => {
@@ -106,9 +151,13 @@ const Model = React.memo(
     useEffect(() => {
       if (!groupRef.current) return;
 
-      /** 現在のアニメーション名を取得 */
-      const currentAnimName =
-        content.controls[currentIndex]?.animation_name || '';
+      /** 現在のアニメーション名を GLB 数値順リストから取得 */
+      const currentAnimName = sortedAnimationNames[currentIndex] ?? '';
+
+      /** is_loop は content.controls から animation_name で逆引き */
+      const currentControl = content.controls.find(
+        (c) => c.animation_name === currentAnimName,
+      );
 
       /** 正規化されたアニメーション名を取得 */
       const normalizedAnimName = normalize(currentAnimName);
@@ -136,7 +185,7 @@ const Model = React.memo(
             normalizedPartName.includes(normalizedAnimName)
           ) {
             /** ループ設定が無効な場合はアニメーションを1回だけ再生 */
-            if (!content.controls[currentIndex].is_loop) {
+            if (!currentControl?.is_loop) {
               action.clampWhenFinished = true;
               action.setLoop(LoopOnce, 0);
             }
@@ -165,6 +214,7 @@ const Model = React.memo(
       isInitialControl,
       isStartControls,
       gltf,
+      sortedAnimationNames,
     ]);
 
     /** モデル子要素の更新 */

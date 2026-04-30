@@ -13,6 +13,7 @@ import { type WorkControl } from '@/types/api';
 import {
   type ControlCameraConfig,
   type ControlCameraConfigs,
+  type GenerateControlsResult,
   type ModelChildren,
   type ViewOffset,
   type WorkWorldSectionKey,
@@ -156,7 +157,7 @@ export const generateControlsCameraConfigs = (
   width: number,
   height: number,
   controlsItems: WorkControl[],
-): ControlCameraConfigs => {
+): GenerateControlsResult => {
   const configs: Record<string, ControlCameraConfig> = {};
   const regex = /^Cam_BP_(3XL|2XL|XL|LG|SM|XS)_(?:Offset_)?Sec3_(\d+)_?(.+)$/;
 
@@ -174,7 +175,7 @@ export const generateControlsCameraConfigs = (
     if (process.env.NODE_ENV === 'development') {
       console.warn('No matching breakpoint found for width:', width);
     }
-    return [];
+    return { configs: [], sortedControls: [] };
   }
 
   /** 該当するブレークポイントのカメラとオフセットを抽出 */
@@ -218,17 +219,18 @@ export const generateControlsCameraConfigs = (
     }
   });
 
-  let configsArray = Object.values(configs);
+  /** GLB 数値インデックス順にソート */
+  const sortedConfigsArray = Object.keys(configs)
+    .sort((a, b) => parseInt(a) - parseInt(b))
+    .map((key) => configs[key]);
 
-  /** controlsItems が渡された場合、animationName 順にソート */
-  if (controlsItems && Array.isArray(controlsItems)) {
-    configsArray = controlsItems
-      .map(
-        (item) =>
-          configsArray.find((cfg) => cfg.name === item.animation_name) || null,
-      )
-      .filter(Boolean) as ControlCameraConfigs;
-  }
+  /** cameraConfigs の name 順に controlsItems をソート */
+  const sortedControls = sortedConfigsArray
+    .map(
+      (cfg) =>
+        controlsItems.find((item) => item.animation_name === cfg.name) || null,
+    )
+    .filter((item): item is WorkControl => item !== null);
 
-  return configsArray;
+  return { configs: sortedConfigsArray, sortedControls };
 };

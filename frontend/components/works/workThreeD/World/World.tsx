@@ -12,6 +12,7 @@ import { IS_DEV } from '@/constants/common';
 import Experience from '@/components/works/workThreeD/World/Experience';
 import s from '@/styles/workThreeD.module.css';
 import { type WorkDetail } from '@/types/api';
+import { type WorkControl } from '@/types/api';
 import { type WorkThreeDAction, type WorkThreeDState } from '@/types/contexts';
 
 /** r3f-perf は内部で useLayoutEffect + createRoot を使用するため SSR を無効化 */
@@ -37,6 +38,9 @@ export type Props = Omit<WorkThreeDState, 'isFingerVisible'> & {
 
   /** toggleButton の参照 Ref */
   toggleButtonRef: RefObject<HTMLDivElement | null>;
+
+  /** GLB 数値順ソート済み Controls データを通知するコールバック */
+  onControlsSorted: (sortedControls: WorkControl[]) => void;
 };
 
 const World = React.memo(
@@ -52,6 +56,7 @@ const World = React.memo(
     introductionRef,
     controlsRef,
     toggleButtonRef,
+    onControlsSorted,
   }: Props): JSX.Element => {
     /** Canvas の作成完了時のコールバック */
     const handleCreated = useCallback((): void => {
@@ -112,6 +117,7 @@ const World = React.memo(
               introductionRef={introductionRef}
               controlsRef={controlsRef}
               toggleButtonRef={toggleButtonRef}
+              onControlsSorted={onControlsSorted}
             />
           </Canvas>
         </div>
