@@ -972,6 +972,14 @@ export const controlsAnimation = ({
     const fromViewW = currentView?.enabled ? (currentView.width ?? fw) : fw;
     const fromViewH = currentView?.enabled ? (currentView.height ?? fh) : fh;
 
+    /**
+     * 対蹠点補正のバイアス方向符号を自動判定するための中間前方ベクトル。
+     * startQuat と endQuat の中点クォータニオンからカメラの前方向を取得し、
+     * biasDir との XZ ドット積でシーンを向く側へ弧が曲がるよう符号を決める。
+     */
+    const midQuat = new Quaternion().slerpQuaternions(startQuat, endQuat, 0.5);
+    const midCameraForward = new Vector3(0, 0, -1).applyQuaternion(midQuat);
+
     /** カメラのアニメーション */
     gsap
       .timeline()
@@ -992,6 +1000,7 @@ export const controlsAnimation = ({
             arcProgress.value,
             bboxRadius,
             CAMERA_ARC_BIAS,
+            midCameraForward,
           );
           cameraRef.current!.position.copy(pos);
         },

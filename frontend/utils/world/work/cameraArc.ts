@@ -14,6 +14,9 @@ import { Vector3 } from 'three';
  * @param bboxRadius  バウンディングボックスの外接球半径。
  *   横バイアスの実ワールド変位をこの値以内に制限する（遠距離での過剰なスイングを防ぐ）。
  * @param arcBias     横バイアスの強度倍率。0=バイアスなし、1=デフォルト、2=2倍。
+ * @param midCameraForward t=0.5 時点のカメラ前方ベクトル。
+ *   対蹠点補正のバイアス方向（biasDir）がカメラ視線と同方向の場合、符号を反転して
+ *   カメラがシーンを向く側に弧を曲げる。null の場合は符号を変更しない。
  * @returns {Vector3} 補間後のカメラ位置
  
  *
@@ -27,6 +30,7 @@ export function computeArcPosition(
   t: number,
   bboxRadius: number = Infinity,
   arcBias: number = 1.0,
+  midCameraForward: Vector3 | null = null,
 ): Vector3 {
   const fromS = startPos.clone().sub(sceneCenter);
   const fromE = endPos.clone().sub(sceneCenter);
@@ -84,6 +88,17 @@ export function computeArcPosition(
       /** XZ で 90° 回転（右手系） */
       const biasDir = new Vector3(-ovXZ.z, 0, ovXZ.x);
 
+      /**
+       * midCameraForward が biasDir と同方向（XZ ドット積 > 0）の場合、
+       * バイアスがカメラの向いている側へ弧を押し出してしまうため符号を反転する。
+       * null の場合は従来通り +1 を使用する。
+       */
+      const biasSign =
+        midCameraForward !== null &&
+        midCameraForward.x * biasDir.x + midCameraForward.z * biasDir.z > 0
+          ? -1
+          : 1;
+
       /** dist が bboxRadius を超えるほど遠くにあるとき、横変位をバウンディングボックス半径に収める */
       const biasCap = isFinite(bboxRadius)
         ? Math.min(1.0, bboxRadius / Math.max(dist, 0.001))
@@ -91,7 +106,7 @@ export function computeArcPosition(
 
       dir.addScaledVector(
         biasDir,
-        antipodality * arcBias * biasCap * Math.sin(Math.PI * t),
+        biasSign * antipodality * arcBias * biasCap * Math.sin(Math.PI * t),
       );
     }
 
