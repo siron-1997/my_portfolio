@@ -358,7 +358,7 @@ export const CONTROLS_ANIMATION_DURATION = 2 as const;
 export const CONTROLS_ANIMATION_DELAY = 0.5 as const;
 
 /** ビュワーモード開始時のカメラアニメーション時間 (秒) */
-export const VIEWER_TOGGLE_START_DURATION = 0.6 as const;
+export const VIEWER_TOGGLE_START_DURATION = 1.2 as const;
 
 /** ビュワーモード終了時のカメラアニメーション時間 (秒) */
 export const VIEWER_TOGGLE_END_DURATION = 1.2 as const;

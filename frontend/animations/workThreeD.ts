@@ -10,6 +10,7 @@ import {
   POWER2_OUT_OPACITY_TOP_MOVE,
 } from '@/constants/common';
 import { getScrollTriggerOption } from '@/utils';
+import { type ViewerStatus } from '@/types/contexts';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -67,8 +68,8 @@ type ToggleButtonProps = {
   /** トグルボタンの参照 Ref */
   ref: RefObject<HTMLDivElement | null>;
 
-  /** ビュワーアクティブフラグ */
-  isViewerActive: boolean;
+  /** ビュワーモードの状態 */
+  viewerStatus: ViewerStatus;
 };
 
 /**
@@ -311,12 +312,12 @@ export const fingerPressAnimation = ({
 export const toggleButtonAnimation = ({
   bgButton,
   ref,
-  isViewerActive,
+  viewerStatus,
 }: ToggleButtonProps): gsap.Context => {
   return gsap.context(() => {
     let positionX = 0;
-    /** ビュワーアクティブフラグに応じてトグルボタンの位置を設定 */
-    if (isViewerActive) positionX = -130;
+    /** entering または active 時は End 側へスライド */
+    if (viewerStatus === 'entering' || viewerStatus === 'active') positionX = -130;
     gsap.to(bgButton, { x: positionX, duration: 0.2, ease: 'power1.out' });
   }, ref);
 };

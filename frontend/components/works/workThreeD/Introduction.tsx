@@ -12,7 +12,7 @@ import FingerPress from '@/components/works/workThreeD/FingerPress';
 import ToggleButton from '@/components/works/workThreeD/ToggleButton';
 import s from '@/styles/workThreeD.module.css';
 import { type WorkDetail } from '@/types/api';
-import { type WorkThreeDAction } from '@/types/contexts';
+import { type WorkThreeDAction, type ViewerStatus } from '@/types/contexts';
 
 type Props = {
   /** 表示する作品の詳細データ */
@@ -24,8 +24,8 @@ type Props = {
   /** 3Dモデルのロード中フラグ */
   isLoading: boolean;
 
-  /** ビュワーアクティブフラグ */
-  isViewerActive: boolean;
+  /** ビュワーモードの状態 */
+  viewerStatus: ViewerStatus;
 
   /** 指アイコン表示フラグ */
   isFingerVisible: boolean;
@@ -42,13 +42,13 @@ const Introduction = React.memo(
     content,
     introductionRef,
     isLoading,
-    isViewerActive,
+    viewerStatus,
     isFingerVisible,
     toggleButtonRef,
     dispatch,
   }: Props): JSX.Element => {
     const classNames = cn('root_container', s.introduction, {
-      [s.not_active]: !isViewerActive,
+      [s.not_active]: viewerStatus === 'passive',
     });
 
     useEffect(() => {
@@ -82,13 +82,13 @@ const Introduction = React.memo(
             {/** 操作ガイド */}
             <FingerPress
               isFingerVisible={isFingerVisible}
-              isViewerActive={isViewerActive}
+              viewerStatus={viewerStatus}
               dispatch={dispatch}
             />
 
             {/** トグルボタン */}
             <ToggleButton
-              isViewerActive={isViewerActive}
+              viewerStatus={viewerStatus}
               toggleButtonRef={toggleButtonRef}
               dispatch={dispatch}
             />

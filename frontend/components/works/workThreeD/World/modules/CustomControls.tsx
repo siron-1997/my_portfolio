@@ -8,15 +8,18 @@ import { MathUtils } from 'three';
 
 import { WORK_WORLD_ORBIT_CONTROLS } from '@/constants/workThreeD';
 
+import { type ViewerStatus } from '@/types/contexts';
+
 type Props = {
-  /** ビュワーアクティブフラグ */
-  isViewerActive: boolean;
+  /** ビュワーモードの状態 */
+  viewerStatus: ViewerStatus;
 };
 
-const CustomControls = React.memo(({ isViewerActive }: Props): JSX.Element => {
+const CustomControls = React.memo(({ viewerStatus }: Props): JSX.Element => {
   return (
     <OrbitControls
-      enabled={isViewerActive}
+      makeDefault
+      enabled={viewerStatus === 'active'}
       enablePan={false}
       enableZoom={false}
       enableDamping={true}

@@ -12,11 +12,11 @@ import {
   WORK_THREE_D_TOGGLE_START_LABEL,
 } from '@/constants/workThreeD';
 import s from '@/styles/common/button/Toggle.module.css';
-import { type WorkThreeDAction } from '@/types/contexts';
+import { type WorkThreeDAction, type ViewerStatus } from '@/types/contexts';
 
 type Props = {
-  /** ビュワーアクティブフラグ */
-  isViewerActive: boolean;
+  /** ビュワーモードの状態 */
+  viewerStatus: ViewerStatus;
 
   /** トグルボタンの参照 Ref */
   toggleButtonRef: RefObject<HTMLDivElement | null>;
@@ -26,7 +26,7 @@ type Props = {
 };
 
 export const ToggleButton = React.memo(
-  ({ isViewerActive, toggleButtonRef, dispatch }: Props): JSX.Element => {
+  ({ viewerStatus, toggleButtonRef, dispatch }: Props): JSX.Element => {
     /** トグルボタン背景の参照 Ref */
     const bgButtonRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,14 +44,9 @@ export const ToggleButton = React.memo(
       transition: 'all 0.25s',
     };
 
-    /** 開始ボタンクリック時のハンドラ */
-    const handleStartClick = useCallback((): void => {
-      dispatch({ type: 'TOGGLE_VIEWER', payload: true });
-    }, [dispatch]);
-
-    /** 終了ボタンクリック時のハンドラ */
+    /** 終了ボタンクリック時のハンドラ（即時 exiting に遷移してボタンを Start 側に戻す） */
     const handleEndClick = useCallback((): void => {
-      dispatch({ type: 'TOGGLE_VIEWER', payload: false });
+      dispatch({ type: 'SET_VIEWER_STATUS', payload: 'exiting' });
     }, [dispatch]);
 
     useEffect(() => {
@@ -61,20 +56,20 @@ export const ToggleButton = React.memo(
       const ctx = toggleButtonAnimation({
         bgButton: bgButtonRef.current,
         ref: toggleButtonRef,
-        isViewerActive,
+        viewerStatus,
       });
 
       return () => {
         ctx.revert();
       };
-    }, [isViewerActive]);
+    }, [viewerStatus]);
 
     return (
       <div
         ref={toggleButtonRef}
         className={s.toggle}
         id="toggle-button"
-        style={{ marginTop: isViewerActive ? 'auto' : '0' }}
+        style={{ marginTop: viewerStatus !== 'passive' ? 'auto' : '0' }}
       >
         {/* 背景 */}
         <div className={s.bg} ref={bgButtonRef} />
@@ -85,7 +80,6 @@ export const ToggleButton = React.memo(
             id="start"
             component="span"
             sx={textStyle}
-            onClick={handleStartClick}
           >
             {WORK_THREE_D_TOGGLE_START_LABEL}
           </Typography>
