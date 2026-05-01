@@ -16,7 +16,11 @@ const World = dynamic(
 
 import s from '@/styles/workThreeD.module.css';
 import { type WorkDetail } from '@/types/api';
-import { type WorkThreeDAction, type WorkThreeDState } from '@/types/contexts';
+import {
+  type ViewerStatus,
+  type WorkThreeDAction,
+  type WorkThreeDState,
+} from '@/types/contexts';
 
 type Props = {
   /** 表示する作品の詳細データ */
@@ -37,11 +41,14 @@ const initialState: WorkThreeDState = {
   /** 指アイコン表示フラグ */
   isFingerVisible: true,
 
-  /** ビュワーアクティブフラグ（ビュワーモード中は true） */
-  isViewerActive: false,
+  /** ビュワーモードの状態 */
+  viewerStatus: 'passive' as ViewerStatus,
 
   /** 現在選択中のコントロールインデックス */
   currentIndex: 0,
+
+  /** カメラアニメーション完了フラグ（false: アニメーション中 / true: 完了してアニメーション再生可） */
+  isCameraReady: false,
 };
 
 /**
@@ -56,6 +63,8 @@ const workThreeDReducer = (
   action: WorkThreeDAction,
 ): WorkThreeDState => {
   switch (action.type) {
+    case 'SET_CAMERA_READY':
+      return { ...state, isCameraReady: action.payload };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     case 'SET_INITIAL_CONTROL':
@@ -64,23 +73,22 @@ const workThreeDReducer = (
       return { ...state, isStartControls: action.payload };
     case 'SET_FINGER_VISIBLE':
       return { ...state, isFingerVisible: action.payload };
-    case 'SET_VIEWER_ACTIVE':
-      return { ...state, isViewerActive: action.payload };
     case 'SET_CURRENT_INDEX':
       return { ...state, currentIndex: action.payload };
-    case 'TOGGLE_VIEWER':
-      /** isFingerVisible と isViewerActive を同一 payload で同時更新する */
+    case 'SET_VIEWER_STATUS':
       return {
         ...state,
-        isFingerVisible: action.payload,
-        isViewerActive: action.payload,
+        viewerStatus: action.payload,
+        /** active 遷移時は指アイコンをリセットして表示する */
+        ...(action.payload === 'active' ? { isFingerVisible: true } : {}),
       };
     case 'NAVIGATE_TO':
-      /** isInitialControl を false にし、選択インデックスを更新する */
+      /** isInitialControl を false にし、選択インデックスを更新、カメラアニメーション完了フラグをリセット */
       return {
         ...state,
         isInitialControl: false,
         currentIndex: action.payload,
+        isCameraReady: false,
       };
     default:
       return state;
@@ -133,8 +141,9 @@ const WorkThreeDClient = ({ content }: Props): JSX.Element => {
         isLoading={state.isLoading}
         isInitialControl={state.isInitialControl}
         isStartControls={state.isStartControls}
-        isViewerActive={state.isViewerActive}
+        viewerStatus={state.viewerStatus}
         currentIndex={state.currentIndex}
+        isCameraReady={state.isCameraReady}
         dispatch={dispatch}
         portalRef={portalRef}
         introductionRef={introductionRef}
@@ -159,7 +168,7 @@ const WorkThreeDClient = ({ content }: Props): JSX.Element => {
         content={content}
         introductionRef={introductionRef}
         isLoading={state.isLoading}
-        isViewerActive={state.isViewerActive}
+        viewerStatus={state.viewerStatus}
         isFingerVisible={state.isFingerVisible}
         toggleButtonRef={toggleButtonRef}
         dispatch={dispatch}
