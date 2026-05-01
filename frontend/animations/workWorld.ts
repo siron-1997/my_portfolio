@@ -44,7 +44,7 @@ type GetSectionAnimationParamsReturn = {
  */
 /** CameraViewState の型定義 */
 type CameraViewState = {
-  /** enabled */
+  /**  */
   enabled?: boolean;
   /** fullWidth */
   fullWidth?: number;
@@ -138,6 +138,12 @@ type ViewerToggleAnimationProps = {
 
   /** オフセット */
   offset: number;
+
+  /** 開始アニメーション完了時に呼ぶコールバック */
+  onStartComplete: () => void;
+
+  /** 終了アニメーション完了時に呼ぶコールバック */
+  onEndComplete: () => void;
 };
 
 type controlsAnimationProps = {
@@ -173,6 +179,9 @@ type controlsAnimationProps = {
 
   /** シーンの包容球半径 */
   bboxRadius: number;
+
+  /** カメラアニメーション完了時に呼び出すコールバック */
+  onComplete?: () => void;
 };
 
 type NavigationVisibleAnimationProps = {
@@ -479,6 +488,144 @@ const handleReverseComplete = (
 };
 
 /**
+ * Portal → Introduction の2区間をカバーするカメラジャーニーアニメーション。
+ * 1つの ScrollTrigger + 1つのタイムラインで区間間の onUpdate 競合を根本的に解消する。
+ *
+ * @param portal - Portal セクション要素
+ * @param introduction - Introduction セクション要素
+ * @param cameraParams - 各セクションのカメラパラメータ
+ * @param camera - 操作対象のカメラ
+ * @returns {gsap.Context} 生成した GSAP コンテキスト
+ */
+const createJourneyAnimation = ({
+  portal,
+  introduction,
+  cameraParams,
+  camera,
+}: {
+  portal: HTMLElement;
+  introduction: HTMLElement;
+  cameraParams: WorkWorldSectionsCameraParams;
+  camera: PerspectiveCamera;
+}): gsap.Context => {
+  return gsap.context(() => {
+    /** ドキュメント絶対座標を取得するヘルパー */
+    const absTop = (el: HTMLElement): number =>
+      el.getBoundingClientRect().top + window.scrollY;
+
+    /** Portal アニメーション区間（px）: 'top top' → '85% top' */
+    const portalRange = portal.offsetHeight * 0.85;
+
+    /** Introduction アニメーション区間（px）: '0% top' → '90% top' */
+    const introRange = introduction.offsetHeight * 0.9;
+
+    /** Portal 終端から Introduction 先端までのギャップ（px） */
+    const gapRange = Math.max(
+      0,
+      absTop(introduction) - absTop(portal) - portalRange,
+    );
+
+    /** ジャーニー全体のスクロール距離（px） */
+    const totalRange = portalRange + gapRange + introRange;
+
+    if (totalRange <= 0) return;
+
+    /** タイムライン内での portal アニメーションの終端位置（正規化 0〜1） */
+    const portalTweenEnd = portalRange / totalRange;
+
+    /** タイムライン内での introduction アニメーションの開始位置（正規化 0〜1） */
+    const introTweenStart = (portalRange + gapRange) / totalRange;
+
+    const portalInterp = { value: 0 };
+    const introInterp = { value: 0 };
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: portal,
+          start: 'top top',
+          end: `+=${totalRange}`,
+          scrub: SECTION_ANIMATION_SCRUB,
+          id: 'Journey',
+          markers: IS_DEV
+            ? {
+                startColor: 'blue',
+                endColor: 'orange',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                indent: 20,
+              }
+            : false,
+        },
+      })
+      /** Portal 区間: portal_params → introduction_params */
+      .to(
+        portalInterp,
+        {
+          value: 1,
+          duration: portalTweenEnd,
+          ease: 'power4.out',
+          onUpdate: () => {
+            if (camera.userData.isLocked) return;
+            interpolateCameraState(
+              camera,
+              {
+                position: cameraParams.portal.position,
+                rotation: cameraParams.portal.rotation,
+                viewOffset: {
+                  x: cameraParams.portal.viewOffset.x,
+                  y: cameraParams.portal.viewOffset.y,
+                  width: cameraParams.portal.viewOffset.width,
+                  height: cameraParams.portal.viewOffset.height,
+                },
+              },
+              {
+                position: cameraParams.introduction.position,
+                rotation: cameraParams.introduction.rotation,
+                viewOffset: cameraParams.introduction.viewOffset,
+              },
+              portalInterp.value,
+            );
+          },
+        },
+        0,
+      )
+      /** Introduction 区間: introduction_params → controls_params */
+      .to(
+        introInterp,
+        {
+          value: 1,
+          duration: 1 - introTweenStart,
+          ease: 'power4.out',
+          onUpdate: () => {
+            if (camera.userData.isLocked) return;
+            interpolateCameraState(
+              camera,
+              {
+                position: cameraParams.introduction.position,
+                rotation: cameraParams.introduction.rotation,
+                viewOffset: {
+                  x: cameraParams.introduction.viewOffset.x,
+                  y: cameraParams.introduction.viewOffset.y,
+                  width: cameraParams.introduction.viewOffset.width,
+                  height: cameraParams.introduction.viewOffset.height,
+                },
+              },
+              {
+                position: cameraParams.controls.position,
+                rotation: cameraParams.controls.rotation,
+                viewOffset: cameraParams.controls.viewOffset,
+              },
+              introInterp.value,
+            );
+          },
+        },
+        introTweenStart,
+      );
+  }, portal);
+};
+
+/**
  * セクション用のアニメーションを作成する処理
  *
  * ページの一番下から開始した際に portal から introduction 間で空間に何も映らない課題への対応ロジックを含む。
@@ -518,6 +665,9 @@ const createSectionAnimation = ({
       viewOffset: camera.view ? { ...camera.view } : null,
     };
 
+    /** カメラ追跡 ticker のコールバック参照（多重登録・リーク防止用） */
+    let trackingTickerCb: (() => void) | null = null;
+
     /** 各セクション・アニメーションタイプの開始前の処理 */
     const handleStart = (): void => {
       /** Controls セクション以外はスキップ */
@@ -531,12 +681,14 @@ const createSectionAnimation = ({
       /** ナビゲーションの表示を有効化 */
       setIsNavigationVisible && setIsNavigationVisible(true);
 
-      /** カメラ位置の追跡を開始 */
-      gsap.ticker.add(() => {
+      /** 多重登録を防いでから追跡を開始 */
+      if (trackingTickerCb) gsap.ticker.remove(trackingTickerCb);
+      trackingTickerCb = () => {
         lastCameraState.position.copy(camera.position);
         lastCameraState.rotation.copy(camera.rotation);
         lastCameraState.viewOffset = camera.view ? { ...camera.view } : null;
-      });
+      };
+      gsap.ticker.add(trackingTickerCb);
     };
 
     /** セクションを逆方向に離脱した時の処理*/
@@ -546,6 +698,21 @@ const createSectionAnimation = ({
         return;
       }
 
+      /** 追跡を停止（スナップショット採取前に止めることで from 位置を安定させる） */
+      if (trackingTickerCb) {
+        gsap.ticker.remove(trackingTickerCb);
+        trackingTickerCb = null;
+      }
+
+      /** lastCameraState のスナップショットを渡す（参照渡しによる from 変動を防ぐ） */
+      const snapshot = {
+        position: lastCameraState.position.clone(),
+        rotation: lastCameraState.rotation.clone(),
+        viewOffset: lastCameraState.viewOffset
+          ? { ...lastCameraState.viewOffset }
+          : null,
+      };
+
       handleReverseComplete(
         'position',
         element,
@@ -553,7 +720,7 @@ const createSectionAnimation = ({
         startPosition,
         startRotation,
         startViewOffset,
-        lastCameraState,
+        snapshot,
         updateStartControls!,
         setIsNavigationVisible!,
       );
@@ -682,27 +849,11 @@ export const sectionsAnimation = ({
   /** カメラの投影行列を更新 */
   camera.updateProjectionMatrix();
 
-  /** portal セクションのアニメーションを作成 */
-  const portalCtx = createSectionAnimation({
-    element: portal,
-    startPosition: cameraParams.portal.position,
-    startRotation: cameraParams.portal.rotation,
-    startViewOffset: cameraParams.portal.viewOffset!,
-    targetPosition: cameraParams.introduction.position,
-    targetRotation: cameraParams.introduction.rotation,
-    targetViewOffset: cameraParams.introduction.viewOffset,
-    camera,
-  });
-
-  /** introduction セクションのアニメーションを作成 */
-  const introductionCtx = createSectionAnimation({
-    element: introduction,
-    startPosition: cameraParams.introduction.position,
-    startRotation: cameraParams.introduction.rotation,
-    startViewOffset: cameraParams.introduction.viewOffset!,
-    targetPosition: cameraParams.controls.position,
-    targetRotation: cameraParams.controls.rotation,
-    targetViewOffset: cameraParams.controls.viewOffset,
+  /** portal → introduction の2区間を1つの ScrollTrigger で処理（onUpdate 競合解消） */
+  const journeyCtx = createJourneyAnimation({
+    portal,
+    introduction,
+    cameraParams,
     camera,
   });
 
@@ -717,7 +868,7 @@ export const sectionsAnimation = ({
     camera,
   });
 
-  return [portalCtx, introductionCtx, controlsCtx];
+  return [journeyCtx, controlsCtx];
 };
 
 /**
@@ -751,6 +902,7 @@ export const controlsAnimation = ({
   height,
   sceneCenter,
   bboxRadius,
+  onComplete,
 }: controlsAnimationProps): gsap.Context => {
   /** アニメーションオプション */
   const options = {
@@ -765,8 +917,8 @@ export const controlsAnimation = ({
   cameraRef.current!.aspect = width / height;
 
   return gsap.context(() => {
-    /** Controls セクション未入場の初期状態では中断 */
-    if (isInitialControl && !isStartControls) {
+    /** Controls セクション未入場の状態では中断 */
+    if (!isStartControls) {
       return;
     }
 
@@ -894,6 +1046,7 @@ export const controlsAnimation = ({
             );
             cameraRef.current!.updateProjectionMatrix();
           },
+          onComplete,
           ...options,
           delay: 0,
         },
@@ -923,6 +1076,8 @@ export const viewerToggleAnimation = ({
   cameraParams,
   zoom,
   offset,
+  onStartComplete,
+  onEndComplete,
 }: ViewerToggleAnimationProps): gsap.Context => {
   return gsap.context((self) => {
     /** Introduction セクションのトップ位置を計算 */
@@ -935,20 +1090,25 @@ export const viewerToggleAnimation = ({
 
     /** 開始イベントを登録 */
     self.add('onStart', () => {
+      /** ScrollTrigger による干渉をブロック */
+      cameraRef.current!.userData.isLocked = true;
+
+      /** スクロールを停止 */
+      html.style.overflow = 'hidden';
+      body.style.overflow = 'hidden';
+
+      /** セクショントップに移動 */
+      window.scrollTo({ top: elementOffsetTop, behavior: 'instant' });
+
       /** カメラ位置を更新 */
       gsap.to(cameraRef.current!.position, {
         x: cameraParams.position.x,
         y: cameraParams.position.y - zoom,
         z: cameraParams.position.z - zoom,
         duration: VIEWER_TOGGLE_START_DURATION,
+        ease: 'power1.in',
+        onComplete: onStartComplete,
       });
-
-      /** セクショントップに移動 */
-      window.scrollTo({ top: elementOffsetTop, behavior: 'smooth' });
-
-      /** スクロールを停止 */
-      html.style.overflow = 'hidden';
-      body.style.overflow = 'hidden';
     });
 
     /** 終了イベントを登録 */
@@ -1010,6 +1170,8 @@ export const viewerToggleAnimation = ({
           body.style.overflow = 'auto';
           /** カメラ更新ロックを解除 */
           cameraRef.current!.userData.isLocked = false;
+          /** 終了アニメーション完了を通知 */
+          onEndComplete();
         },
       });
     });

@@ -7,8 +7,8 @@ import type { WorkControl } from '@/types/api';
 
 import { useFrame, useThree } from '@react-three/fiber';
 import { PerspectiveCamera as CustomPerspectiveCamera } from '@react-three/drei';
-import { Box3, Sphere } from 'three';
-import type { PerspectiveCamera, Vector3, Euler } from 'three';
+import { Box3, Sphere, Vector3 } from 'three';
+import type { PerspectiveCamera, Euler } from 'three';
 
 import {
   controlsAnimation,
@@ -54,7 +54,7 @@ const CustomCamera = React.memo(
     toggleButtonRef,
     isInitialControl,
     isStartControls,
-    isViewerActive,
+    viewerStatus,
     currentIndex,
     dispatch,
     onControlsSorted,
@@ -68,11 +68,17 @@ const CustomCamera = React.memo(
     /** ページアンマウント状態の参照 Ref */
     const isPageUnMountedRef = useRef<boolean>(false);
 
+    /** シーン中心座標の参照 Ref（OrbitControls target 同期用） */
+    const sceneCenterRef = useRef<Vector3>(new Vector3());
+
     /** ウィンドウサイズを取得 */
     const { width, height } = useWindowSize();
 
     /** WebGL コンテキストを取得 */
     const gl = useThree((state) => state.gl);
+
+    /** OrbitControls インスタンスを取得（makeDefault により登録される） */
+    const controls = useThree((state) => state.controls);
 
     /**
      * コントロール開始フラグを更新するコールバック
@@ -175,10 +181,19 @@ const CustomCamera = React.memo(
         cameraParams: viewerCameraParams,
         zoom,
         offset,
+        /** 開始アニメーション完了後に active へ遷移 */
+        onStartComplete: () =>
+          dispatch({ type: 'SET_VIEWER_STATUS', payload: 'active' }),
+        /** 終了アニメーション完了後に passive へ遷移 */
+        onEndComplete: () =>
+          dispatch({ type: 'SET_VIEWER_STATUS', payload: 'passive' }),
       });
 
-      /** アニメーションの開始時のイベントハンドラ */
-      const handleStart = () => viewerAnimationCtx.onStart();
+      /** アニメーションの開始時のイベントハンドラ（entering を即時 dispatch してボタンを切り替える） */
+      const handleStart = () => {
+        dispatch({ type: 'SET_VIEWER_STATUS', payload: 'entering' });
+        viewerAnimationCtx.onStart();
+      };
 
       /** アニメーションの終了時のイベントハンドラ */
       const handleEnd = () => viewerAnimationCtx.onEnd();
@@ -234,6 +249,9 @@ const CustomCamera = React.memo(
       /** シーンの中心座標 */
       const sceneCenter = sphere.center;
 
+      /** シーン中心を Ref に保存（active 遷移時の OrbitControls target 同期で使用） */
+      sceneCenterRef.current = sceneCenter.clone();
+
       /** シーンの包容球半径 */
       const bboxRadius = sphere.radius > 0 ? sphere.radius : 5;
 
@@ -278,6 +296,8 @@ const CustomCamera = React.memo(
         height,
         sceneCenter,
         bboxRadius,
+        /** カメラアニメーション完了後にモデルアニメーション再生を解禁する */
+        onComplete: () => dispatch({ type: 'SET_CAMERA_READY', payload: true }),
       });
 
       return () => {
@@ -310,8 +330,34 @@ const CustomCamera = React.memo(
 
     /** ビュワーモードの活性状態に応じて Canvas の z-index を更新 */
     useEffect(() => {
-      gl.domElement.style.zIndex = isViewerActive ? '200' : '20';
-    }, [gl, isViewerActive]);
+      gl.domElement.style.zIndex = viewerStatus === 'active' ? '200' : '20';
+    }, [gl, viewerStatus]);
+
+    /**
+     * active 遷移時に OrbitControls の target をカメラ現在向きに同期する。
+     *
+     * OrbitControls は enabled=true になった最初のフレームで
+     * camera.position → target(デフォルト 0,0,0) の方向へカメラをスナップさせる。
+     * これを防ぐため、target をカメラが実際に向いている方向のシーン中心距離分先に設定し、
+     * update() で内部状態を同期してからコントロールを渡す。
+     */
+    useEffect(() => {
+      if (viewerStatus !== 'active' || !cameraRef.current || !controls) return;
+
+      const cam = cameraRef.current;
+      const dir = new Vector3();
+      cam.getWorldDirection(dir);
+
+      /** カメラからシーン中心までの距離を軌道半径として使用 */
+      const dist = cam.position.distanceTo(sceneCenterRef.current);
+
+      const orbitControls = controls as unknown as {
+        target: Vector3;
+        update: () => void;
+      };
+      orbitControls.target.copy(cam.position).addScaledVector(dir, dist);
+      orbitControls.update();
+    }, [cameraRef, controls, viewerStatus]);
 
     return (
       <CustomPerspectiveCamera
