@@ -49,8 +49,9 @@ const World = React.memo(
     isLoading,
     isInitialControl,
     isStartControls,
-    isViewerActive,
+    viewerStatus,
     currentIndex,
+    isCameraReady,
     dispatch,
     portalRef,
     introductionRef,
@@ -110,8 +111,9 @@ const World = React.memo(
               isLoading={isLoading}
               isInitialControl={isInitialControl}
               isStartControls={isStartControls}
-              isViewerActive={isViewerActive}
+              viewerStatus={viewerStatus}
               currentIndex={currentIndex}
+              isCameraReady={isCameraReady}
               dispatch={dispatch}
               portalRef={portalRef}
               introductionRef={introductionRef}

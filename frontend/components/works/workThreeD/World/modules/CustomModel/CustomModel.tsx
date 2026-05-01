@@ -31,6 +31,9 @@ type Props = {
   /** 現在選択中のコントロールインデックス */
   currentIndex: number;
 
+  /** カメラアニメーション完了フラグ */
+  isCameraReady: boolean;
+
   /** 状態更新ディスパッチ関数 */
   dispatch: Dispatch<WorkThreeDAction>;
 };
@@ -44,6 +47,7 @@ const CustomModel = React.memo(
     isInitialControl,
     isStartControls,
     currentIndex,
+    isCameraReady,
     dispatch,
   }: Props): JSX.Element => {
     return (
@@ -62,6 +66,7 @@ const CustomModel = React.memo(
           isInitialControl={isInitialControl}
           isStartControls={isStartControls}
           currentIndex={currentIndex}
+          isCameraReady={isCameraReady}
         />
       </group>
     );

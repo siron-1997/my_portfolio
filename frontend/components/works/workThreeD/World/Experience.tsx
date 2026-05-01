@@ -54,9 +54,10 @@ const Experience = React.memo(
     content,
     isInitialControl,
     isStartControls,
-    isViewerActive,
+    viewerStatus,
     isLoading,
     currentIndex,
+    isCameraReady,
     dispatch,
     portalRef,
     introductionRef,
@@ -264,7 +265,7 @@ const Experience = React.memo(
           toggleButtonRef={toggleButtonRef}
           isInitialControl={isInitialControl}
           isStartControls={isStartControls}
-          isViewerActive={isViewerActive}
+          viewerStatus={viewerStatus}
           currentIndex={currentIndex}
           dispatch={dispatch}
           onControlsSorted={onControlsSorted}
@@ -327,6 +328,7 @@ const Experience = React.memo(
           isInitialControl={isInitialControl}
           isStartControls={isStartControls}
           currentIndex={currentIndex}
+          isCameraReady={isCameraReady}
           dispatch={dispatch}
         />
 
@@ -334,7 +336,7 @@ const Experience = React.memo(
         <Room />
 
         {/* カスタムコントロール */}
-        <CustomControls isViewerActive={isViewerActive} />
+        <CustomControls viewerStatus={viewerStatus} />
 
         <axesHelper args={[10]} visible={false} />
 

@@ -4,7 +4,13 @@ import type { Dispatch, JSX, SetStateAction } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { AnimationMixer, FrontSide, LoopOnce } from 'three';
-import type { AnimationClip, Group, Mesh, Object3D } from 'three';
+import type {
+  AnimationAction,
+  AnimationClip,
+  Group,
+  Mesh,
+  Object3D,
+} from 'three';
 
 import { DRACO_DECODER_PATH } from '@/constants/common';
 import {
@@ -30,6 +36,9 @@ type Props = {
 
   /** 現在選択中のコントロールインデックス */
   currentIndex: number;
+
+  /** カメラアニメーション完了フラグ（true: 完了済み → モデルアニメーション再生可） */
+  isCameraReady: boolean;
 };
 
 /** DRACO デコーダーパスを設定 */
@@ -57,9 +66,16 @@ const Model = React.memo(
     isInitialControl,
     isStartControls,
     currentIndex,
+    isCameraReady,
   }: Props): JSX.Element => {
     /** AnimationMixer の参照 Ref */
     const actionsRef = useRef<AnimationMixer | null>(null);
+
+    /** 現在再生中の _S_ AnimationAction の参照（クロスフェード用）*/
+    const activeActionRef = useRef<AnimationAction[]>([]);
+
+    /** Controls セクション在籍フラグの前回値（初回ロード時のリセット再生を防ぐ） */
+    const wasStartControlsRef = useRef<boolean>(false);
 
     /** Group オブジェクトの参照 Ref */
     const groupRef = useRef<Group | null>(null);
@@ -148,8 +164,63 @@ const Model = React.memo(
       });
     }, [gltf]);
 
+    /**
+     * gltf が変わるたびに AnimationMixer を1度だけ生成し、
+     * 全クリップアクションをプリウォームする。
+     * ナビゲーションやセクション遷移のたびにミキサーが作り直されなくなることで
+     * 離脱時リセット不能・クロスフェード不能の問題を根本解消する。
+     */
     useEffect(() => {
       if (!groupRef.current) return;
+
+      actionsRef.current?.stopAllAction();
+      actionsRef.current = new AnimationMixer(groupRef.current);
+      activeActionRef.current = [];
+      wasStartControlsRef.current = false;
+
+      /** 全クリップアクションをプリウォーム（再生はしない） */
+      gltf.animations.forEach((clip: AnimationClip) => {
+        actionsRef.current!.clipAction(clip);
+      });
+    }, [gltf]);
+
+    /**
+     * セクション離脱時（isStartControls: true → false）に
+     * 全 _E_（リセット）アニメーションを再生してモデルを初期ポーズに戻す。
+     * wasStartControlsRef により初回ロード時（まだ Controls に入っていない状態）はスキップする。
+     */
+    useEffect(() => {
+      if (isStartControls) {
+        wasStartControlsRef.current = true;
+        return;
+      }
+
+      /** 初回ロード時はまだ Controls に入っていないためスキップ */
+      if (!wasStartControlsRef.current) return;
+      wasStartControlsRef.current = false;
+
+      if (!actionsRef.current) return;
+
+      actionsRef.current.stopAllAction();
+      activeActionRef.current = [];
+
+      /** 全 _E_ アニメーションを再生してモデルを初期ポーズに戻す */
+      gltf.animations.forEach((clip: AnimationClip) => {
+        if (clip.name.includes('_E_')) {
+          actionsRef.current!.clipAction(clip).reset().play();
+        }
+      });
+    }, [isStartControls, gltf]);
+
+    /**
+     * currentIndex または isStartControls 変化時にモデルアニメーションを制御する。
+     *
+     * - 初回入場・再入場: 対象 _S_ を再生、非対象パーツの _E_ を再生
+     * - ナビゲーション切り替え: 旧 _S_ を fadeOut、新 _S_ を fadeIn でスムーズ遷移
+     * - 非選択パーツの _E_ は常に再生（リセット）
+     */
+    useEffect(() => {
+      if (!isStartControls || !isCameraReady || !actionsRef.current) return;
 
       /** 現在のアニメーション名を GLB 数値順リストから取得 */
       const currentAnimName = sortedAnimationNames[currentIndex] ?? '';
@@ -162,8 +233,14 @@ const Model = React.memo(
       /** 正規化されたアニメーション名を取得 */
       const normalizedAnimName = normalize(currentAnimName);
 
-      /** AnimationMixer を初期化 */
-      actionsRef.current = new AnimationMixer(groupRef.current);
+      /** クロスフェードの継続時間（秒） */
+      const CROSS_FADE_DURATION = 0.3;
+
+      /** フェードアウト対象: 前回の _S_ アクション群を保持 */
+      const previousActions = activeActionRef.current;
+
+      /** 今回再生する _S_ アクション群を収集 */
+      const nextActions: AnimationAction[] = [];
 
       gltf.animations.forEach((animation: AnimationClip) => {
         /** アニメーション名部分を抽出 */
@@ -175,44 +252,54 @@ const Model = React.memo(
         /** 正規化された部位名を取得 */
         const normalizedPartName = normalize(partName);
 
-        /** アニメーション名と部位名が一致するかを確認 */
+        /** 選択中のパーツと一致するかを確認 */
+        const isMatchingPart = normalizedPartName.includes(normalizedAnimName);
+
         const action = actionsRef.current!.clipAction(animation);
 
-        if (isStartControls && !isInitialControl) {
-          /** 一致する部位名かつ _S_（開始）アニメーションを再生 */
-          if (
-            animation.name.includes('_S_') &&
-            normalizedPartName.includes(normalizedAnimName)
-          ) {
-            /** ループ設定が無効な場合はアニメーションを1回だけ再生 */
-            if (!currentControl?.is_loop) {
-              action.clampWhenFinished = true;
-              action.setLoop(LoopOnce, 0);
-            }
-            /** アニメーションを開始位置から再生 */
-            action.startAt(1);
-            action.play();
+        if (animation.name.includes('_S_') && isMatchingPart) {
+          /** ループ設定 */
+          if (!currentControl?.is_loop) {
+            action.clampWhenFinished = true;
+            action.setLoop(LoopOnce, 0);
           }
 
-          /** 一致しない部位名の _E_（終了）アニメーションを再生 */
-          if (
-            animation.name.includes('_E_') &&
-            !normalizedPartName.includes(normalizedAnimName)
-          ) {
-            action.play();
-          } else {
-            /** Controls セクションから離れたとき全ての_E_アニメーションを再生 */
-            if (animation.name.includes('_E_')) {
-              action.reset().play();
-            }
+          if (previousActions.length > 0 && !previousActions.includes(action)) {
+            /** ナビゲーション切り替え: 新アクションをフェードイン */
+            action.reset().fadeIn(CROSS_FADE_DURATION).play();
+          } else if (!previousActions.includes(action)) {
+            /** 初回入場または再入場: そのまま再生 */
+            action.reset().play();
           }
+          /** 同一インデックスの再実行（isStartControls 変化など）はすでに再生中のためスキップ */
+
+          nextActions.push(action);
+        }
+
+        if (animation.name.includes('_E_') && !isMatchingPart) {
+          /** 非選択パーツ: _E_ アニメーションでリセット */
+          action.reset().play();
+        }
+
+        if (animation.name.includes('_E_') && isMatchingPart) {
+          /** 選択パーツ: _E_ は停止（_S_ が再生されるため） */
+          action.stop();
         }
       });
+
+      /** 前回の _S_ アクションのうち次の選択に含まれないものをフェードアウト */
+      previousActions.forEach((prev) => {
+        if (!nextActions.includes(prev)) {
+          prev.fadeOut(CROSS_FADE_DURATION);
+        }
+      });
+
+      activeActionRef.current = nextActions;
     }, [
       content.controls,
       currentIndex,
-      isInitialControl,
       isStartControls,
+      isCameraReady,
       gltf,
       sortedAnimationNames,
     ]);
