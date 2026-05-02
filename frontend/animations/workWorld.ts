@@ -15,7 +15,10 @@ import {
   VIEWER_TOGGLE_END_DURATION,
   VIEWER_TOGGLE_START_DURATION,
 } from '@/constants/workThreeD';
-import { computeArcPosition } from '@/utils/world/work/cameraArc';
+import {
+  computeArcPosition,
+  computeLookAtQuaternion,
+} from '@/utils/world/work/cameraArc';
 import {
   type CameraParams,
   type ControlCameraConfigs,
@@ -179,6 +182,12 @@ type controlsAnimationProps = {
 
   /** シーンの包容球半径 */
   bboxRadius: number;
+
+  /**
+   * true のとき、カメラ終端回転をバウンディングボックス中心への lookAt で決定する。
+   * false のとき、cameraConfigs の rotation（Euler 角）を使用する（デフォルト）。
+   */
+  useBBoxLookAt?: boolean;
 
   /** カメラアニメーション完了時に呼び出すコールバック */
   onComplete?: () => void;
@@ -902,6 +911,7 @@ export const controlsAnimation = ({
   height,
   sceneCenter,
   bboxRadius,
+  useBBoxLookAt = false,
   onComplete,
 }: controlsAnimationProps): gsap.Context => {
   /** アニメーションオプション */
@@ -943,21 +953,33 @@ export const controlsAnimation = ({
     /** viewOffset 補間プログレス */
     const viewProgress = { value: 0 };
 
-    /**
-     * slerp の始点クォータニオン。
+    /** slerp の始点クォータニオン。
      * アニメーション開始前に一度だけキャプチャすることで、
      * 毎フレーム現在値を始点にする指数的アプローチを防ぎ、真の slerp 補間を実現する。
      */
     const startQuat = cameraRef.current!.quaternion.clone();
 
-    /** slerp の終点クォータニオン */
-    const endQuat = new Quaternion().setFromEuler(
-      new Euler(
-        currentCameraConfig.rotation.x,
-        currentCameraConfig.rotation.y,
-        currentCameraConfig.rotation.z,
-      ),
+    /** カメラ終端位置（Arc 補間と lookAt 計算の両方で使用） */
+    const endPos = new Vector3(
+      currentCameraConfig.position.x,
+      currentCameraConfig.position.y,
+      currentCameraConfig.position.z,
     );
+
+    /**
+     * slerp の終点クォータニオン。
+     * `useBBoxLookAt` が true の場合はバウンディングボックス中心への lookAt から計算し、
+     * false の場合は cameraConfigs の Euler 角から生成する。
+     */
+    const endQuat = useBBoxLookAt
+      ? computeLookAtQuaternion(endPos, sceneCenter)
+      : new Quaternion().setFromEuler(
+          new Euler(
+            currentCameraConfig.rotation.x,
+            currentCameraConfig.rotation.y,
+            currentCameraConfig.rotation.z,
+          ),
+        );
 
     /**
      * viewOffset の始点値。
@@ -991,11 +1013,7 @@ export const controlsAnimation = ({
         onUpdate: () => {
           const pos = computeArcPosition(
             startPos,
-            new Vector3(
-              currentCameraConfig.position.x,
-              currentCameraConfig.position.y,
-              currentCameraConfig.position.z,
-            ),
+            endPos,
             sceneCenter,
             arcProgress.value,
             bboxRadius,
