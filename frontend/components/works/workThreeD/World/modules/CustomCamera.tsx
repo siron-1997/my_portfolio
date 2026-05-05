@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useCallback, useEffect, useLayoutEffect,useRef } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
 import { PerspectiveCamera as CustomPerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { Dispatch, JSX, RefObject, SetStateAction } from 'react';
-import type { Euler,PerspectiveCamera } from 'three';
+import type { Euler, PerspectiveCamera } from 'three';
 import { Box3, Sphere, Vector3 } from 'three';
 
 import {

@@ -12,7 +12,7 @@ import {
   WORK_THREE_D_TOGGLE_START_LABEL,
 } from '@/constants/workThreeD';
 import s from '@/styles/common/button/Toggle.module.css';
-import { type ViewerStatus,type WorkThreeDAction } from '@/types/contexts';
+import { type ViewerStatus, type WorkThreeDAction } from '@/types/contexts';
 
 type Props = {
   /** ビュワーモードの状態 */
@@ -77,11 +77,7 @@ export const ToggleButton = React.memo(
 
         {/* 開始ボタン */}
         <div className={startClassNames}>
-          <Typography
-            id="start"
-            component="span"
-            sx={textStyle}
-          >
+          <Typography id="start" component="span" sx={textStyle}>
             {WORK_THREE_D_TOGGLE_START_LABEL}
           </Typography>
         </div>
