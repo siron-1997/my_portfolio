@@ -1,30 +1,31 @@
 'use client';
 
-import React, { type JSX, useMemo } from 'react';
+import React, { type JSX, useEffect, useMemo } from 'react';
 
 import { useGLTF } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import {
   BackSide,
   type Group,
-  MathUtils,
-  type Mesh,
-  type MeshStandardMaterial,
+  Mesh,
+  MeshStandardMaterial,
+  PointLight,
+  PointLightHelper,
 } from 'three';
 
-import { WORLD_COLOR_PALETTE } from '@/constants/colors';
-import { DRACO_DECODER_PATH } from '@/constants/common';
+import { DRACO_DECODER_PATH, IS_DEV } from '@/constants/common';
 import {
   DEFAULT_WEATHER,
   ENV_MAP_MODEL_TYPE_MODEL,
+  HOME_WORLD_DEBUG_DOOR_LIGHT_HELPER_SIZE,
   HOME_WORLD_DOOR_MODEL_PATH,
+  HOME_WORLD_DOOR_PANEL_HINGE_OFFSET_X,
   HOME_WORLD_SCENE_NAME_DOOR,
   HOME_WORLD_SCENE_NAME_DOOR_CONTAINER,
-  HOME_WORLD_SCENE_NAME_DOOR_LIGHT,
+  HOME_WORLD_SCENE_NAME_ROOM,
   WEATHER_TYPES,
 } from '@/constants/home';
-import { type OpenWeatherCurrentData } from '@/types/api';
-import { type TimePoint } from '@/types/api';
+import { type OpenWeatherCurrentData, type TimePoint } from '@/types/api';
 import { getEnvMapIntensity } from '@/utils/world';
 
 type Props = {
@@ -36,29 +37,18 @@ type Props = {
 
   /** ドアグループへの Ref */
   ref: React.RefObject<Group | null>;
-
-  /** モデルの表示・非表示（デバッグ比較用、省略時は表示） */
-  visible?: boolean;
 };
 
 const Door = React.memo(
-  ({
-    currentWeatherData,
-    timePoint,
-    ref,
-    visible = true,
-  }: Props): JSX.Element => {
+  ({ currentWeatherData, timePoint, ref }: Props): JSX.Element => {
     /** ドアモデルのノードを取得 */
     const { nodes } = useGLTF(HOME_WORLD_DOOR_MODEL_PATH, true);
+
     /** 環境マップを取得 */
     const environment = useThree((state) => state.scene.environment);
 
-    /** グループのスケール */
-    const groupScale = 0.02;
-    /** メッシュのスケール */
-    const meshScale = 0.1;
-    /** メッシュの回転角度 */
-    const meshAngle = 90;
+    /** Three.js シーン（GLB PoingLight ヘルパー追加用） */
+    const threeScene = useThree((state) => state.scene);
 
     /** 天気情報リスト（API 成功時は取得値、未取得・失敗時はデフォルト値） */
     const weather = currentWeatherData?.weather ?? DEFAULT_WEATHER;
@@ -80,100 +70,101 @@ const Door = React.memo(
       [currentWeather, timePoint],
     );
 
+    /** GLB 内の PointLight にヘルパーを追加する（開発環境のみ） */
+    useEffect(() => {
+      if (!IS_DEV) return;
+
+      const helpers: PointLightHelper[] = [];
+
+      nodes.Lit_DoorLight?.traverse((obj) => {
+        if (obj instanceof PointLight) {
+          const helper = new PointLightHelper(
+            obj,
+            HOME_WORLD_DEBUG_DOOR_LIGHT_HELPER_SIZE,
+          );
+          threeScene.add(helper);
+          helpers.push(helper);
+        }
+      });
+
+      return () => {
+        helpers.forEach((h) => {
+          threeScene.remove(h);
+          h.dispose();
+        });
+      };
+    }, [nodes.Lit_DoorLight, threeScene]);
+
+    /** 扉パネルのマテリアルを設定し、影を有効にする */
+    useEffect(() => {
+      if (!nodes.SM_DoorPanel) return;
+
+      nodes.SM_DoorPanel.traverse((child) => {
+        if (
+          child instanceof Mesh &&
+          child.material instanceof MeshStandardMaterial
+        ) {
+          child.material.envMap = environment;
+          child.material.envMapIntensity = envMapIntensity;
+          child.material.needsUpdate = true;
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+    }, [nodes.SM_DoorPanel, environment, envMapIntensity]);
+
     return (
-      <group
-        ref={ref}
-        name={HOME_WORLD_SCENE_NAME_DOOR}
-        scale={[groupScale, groupScale, groupScale]}
-        rotation-y={MathUtils.degToRad(-90)}
-        visible={visible}
-        position={[-3.6, 0.002, 4.2]}
-      >
-        {/* 部屋 */}
+      <group ref={ref} name={HOME_WORLD_SCENE_NAME_DOOR}>
+        {/** 部屋 */}
         <mesh
-          name={nodes?.room?.name}
-          geometry={(nodes.room as Mesh).geometry}
-          rotation-x={MathUtils.degToRad(meshAngle)}
-          scale={meshScale}
+          name={HOME_WORLD_SCENE_NAME_ROOM}
+          geometry={(nodes.SM_Room as Mesh).geometry}
         >
+          {/* 立体間を無くすため、BasicMaterial に変換 */}
           <meshBasicMaterial
-            map={((nodes.room as Mesh).material as MeshStandardMaterial).map}
+            map={((nodes.SM_Room as Mesh).material as MeshStandardMaterial).map}
             side={BackSide}
-            transparent={true}
+            transparent
             opacity={0}
           />
         </mesh>
 
-        {/* 扉 */}
+        {/**
+         * 扉パネル（2プリミティブのため THREE.js が Group に変換 → primitive で描画）
+         *
+         * Geo_Door.glb の SM_DoorPanel はジオメトリ原点が扉中央（X: -0.3965〜+0.3965）のため
+         * そのまま回転すると中心軸になってしまう。
+         * ピボットトリックで door-container を X=+0.3965（正側ヒンジ端）に移動し、
+         * 子グループで -0.3965 オフセットして見た目の位置を維持する。
+         */}
         <group
           name={HOME_WORLD_SCENE_NAME_DOOR_CONTAINER}
-          position={[1.2, 0, 5.9]}
+          position={[-HOME_WORLD_DOOR_PANEL_HINGE_OFFSET_X, 0, 0]}
         >
-          {/* ドアノブ */}
-          <mesh
-            name={nodes.handle.name}
-            geometry={(nodes.handle as Mesh).geometry}
-            position={[-1.2, 0, -5.9]}
-            rotation-x={MathUtils.degToRad(meshAngle)}
-            scale={meshScale}
-            castShadow
-            receiveShadow
-          >
-            <meshStandardMaterial
-              color={
-                ((nodes.handle as Mesh).material as MeshStandardMaterial).color
-              }
-              envMap={environment}
-              envMapIntensity={envMapIntensity}
-            />
-          </mesh>
-
-          {/* パネル */}
-          <mesh
-            name={nodes.door.name}
-            geometry={(nodes.door as Mesh).geometry}
-            position={[-1.2, 0, -5.9]}
-            rotation-x={MathUtils.degToRad(meshAngle)}
-            scale={meshScale}
-            castShadow
-            receiveShadow
-          >
-            <meshStandardMaterial
-              color={
-                ((nodes.door as Mesh).material as MeshStandardMaterial).color
-              }
-              envMap={environment}
-              envMapIntensity={envMapIntensity}
-            />
-          </mesh>
+          <group position={[HOME_WORLD_DOOR_PANEL_HINGE_OFFSET_X, 0, 0]}>
+            <primitive object={nodes.SM_DoorPanel} />
+          </group>
         </group>
 
-        {/* 扉フレーム */}
+        {/** 扉フレーム */}
         <mesh
-          name={nodes?.frame?.name}
-          geometry={(nodes.frame as Mesh).geometry}
-          rotation-x={MathUtils.degToRad(meshAngle)}
-          scale={meshScale}
+          name={(nodes.SM_DoorFrame as Mesh).name}
+          geometry={(nodes.SM_DoorFrame as Mesh).geometry}
           castShadow
           receiveShadow
         >
           <meshStandardMaterial
             color={
-              ((nodes.frame as Mesh).material as MeshStandardMaterial).color
+              ((nodes.SM_DoorFrame as Mesh).material as MeshStandardMaterial)
+                .color
             }
             envMap={environment}
             envMapIntensity={envMapIntensity}
           />
         </mesh>
 
-        <pointLight
-          name={HOME_WORLD_SCENE_NAME_DOOR_LIGHT}
-          power={50}
-          color={WORLD_COLOR_PALETTE.doorLight}
-          distance={0.8}
-          decay={1}
-          position={[10, 31, 0]}
-        />
+        {/** GLB 内のポイントライト（KHR_lights_punctual → Three.js PointLight） */}
+        <primitive object={nodes.Lit_DoorLight} />
       </group>
     );
   },
