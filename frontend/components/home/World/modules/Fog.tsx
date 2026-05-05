@@ -6,16 +6,13 @@ import { buttonGroup, useControls, type useCreateStore } from 'leva';
 import { type Fog as ThreeFog } from 'three';
 
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';
-import { BREAK_POINTS, IS_DEV } from '@/constants/common';
+import { IS_DEV } from '@/constants/common';
 import {
   HOME_WORLD_DEBUG_FOG_COLOR_CONTROL,
   HOME_WORLD_DEBUG_FOG_CONTROLS,
-  HOME_WORLD_FOG_FAR_BASE_DESKTOP,
-  HOME_WORLD_FOG_FAR_BASE_MOBILE,
-  HOME_WORLD_FOG_NEAR_DESKTOP,
-  HOME_WORLD_FOG_NEAR_MOBILE,
+  HOME_WORLD_FOG_FAR_BASE,
+  HOME_WORLD_FOG_NEAR,
 } from '@/constants/home';
-import { useWindowSize } from '@/hooks';
 import { type OpenWeatherCurrentData, type TimePoint } from '@/types/api';
 
 type Props = {
@@ -30,12 +27,9 @@ type Props = {
 };
 
 const Fog = React.memo(
-  ({ currentWeatherData, timePoint, levaStore }: Props): JSX.Element => {
+  ({ currentWeatherData, timePoint, levaStore }: Props): JSX.Element | null => {
     /** 霧の参照 Ref */
     const ref = useRef<ThreeFog | null>(null);
-
-    /** ウィンドウ幅を取得 */
-    const { width } = useWindowSize();
 
     /** 湿度を取得 (0 - 100) */
     const humidity = currentWeatherData?.main?.humidity ?? 0;
@@ -43,8 +37,8 @@ const Fog = React.memo(
     /** 霧コントロールのデフォルト値 */
     const defaults = {
       color: TIME_POINT_ENV_COLORS[timePoint].fog,
-      near: HOME_WORLD_FOG_NEAR_DESKTOP,
-      far: HOME_WORLD_FOG_FAR_BASE_DESKTOP - humidity,
+      near: HOME_WORLD_FOG_NEAR,
+      far: HOME_WORLD_FOG_FAR_BASE - humidity * 10,
     };
 
     /** 霧コントロール（開発環境デバッグ用） */
@@ -81,18 +75,10 @@ const Fog = React.memo(
     const color = IS_DEV ? debugColor : TIME_POINT_ENV_COLORS[timePoint].fog;
 
     /** 霧の最少距離（デバッグ上書き値があればそちらを優先） */
-    const near = IS_DEV
-      ? debugNear
-      : width! > BREAK_POINTS.XS
-        ? HOME_WORLD_FOG_NEAR_DESKTOP
-        : HOME_WORLD_FOG_NEAR_MOBILE;
+    const near = IS_DEV ? debugNear : HOME_WORLD_FOG_NEAR;
 
     /** 霧の最大距離（デバッグ上書き値があればそちらを優先） */
-    const far = IS_DEV
-      ? debugFar
-      : width! > BREAK_POINTS.XS
-        ? HOME_WORLD_FOG_FAR_BASE_DESKTOP - humidity
-        : HOME_WORLD_FOG_FAR_BASE_MOBILE - humidity;
+    const far = IS_DEV ? debugFar : HOME_WORLD_FOG_FAR_BASE - humidity;
 
     /** 時間帯が変わったときに霧の色をリセットする (開発環境のみ) */
     useEffect(() => {

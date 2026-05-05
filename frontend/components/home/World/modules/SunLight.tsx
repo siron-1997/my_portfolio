@@ -9,8 +9,10 @@ import React, {
 } from 'react';
 
 import { useHelper } from '@react-three/drei';
-import { buttonGroup, useControls,type useCreateStore } from 'leva';
+import { useFrame, useThree } from '@react-three/fiber';
+import { buttonGroup, useControls, type useCreateStore } from 'leva';
 import {
+  CameraHelper,
   type DirectionalLight,
   DirectionalLightHelper,
   type Object3D,
@@ -22,6 +24,7 @@ import {
   HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS,
   HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
   HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS,
+  HOME_WORLD_SHADOW_BIAS,
   HOME_WORLD_SHADOW_CAMERA_FAR,
   HOME_WORLD_SHADOW_CAMERA_HALF_SIZE,
   HOME_WORLD_SHADOW_CAMERA_NEAR,
@@ -70,6 +73,15 @@ const SunLight = React.memo(
   }: Props): JSX.Element => {
     /** 太陽光の参照 Ref */
     const ref = useRef<DirectionalLight>(null);
+
+    /** Shadow Camera Helper の参照 Ref（開発環境のみ） */
+    const cameraHelperRef = useRef<CameraHelper | null>(null);
+
+    /** Three.js シーン */
+    const scene = useThree((state) => state.scene);
+
+    /** WebGL レンダラー（シャドウマップ再ベイク用） */
+    const gl = useThree((state) => state.gl);
 
     /** 太陽光の輝度を天気・時間帯から計算する */
     const defaultSunIntensity = useMemo<number>(() => {
@@ -120,7 +132,18 @@ const SunLight = React.memo(
     }, [weatherCategory, timePoint]);
 
     /** 太陽光コントロール（開発環境デバッグ用） */
-    const { debugColor, debugIntensity, helperVisible } = useControls(
+    const {
+      debugColor,
+      debugIntensity,
+      helperVisible,
+      debugShadowCameraLeft,
+      debugShadowCameraRight,
+      debugShadowCameraTop,
+      debugShadowCameraBottom,
+      debugShadowCameraFar,
+      debugShadowNormalBias,
+      debugShadowBias,
+    } = useControls(
       '太陽光',
       {
         /** 天気カテゴリ・時間帯から計算した色を初期値として設定する */
@@ -135,12 +158,39 @@ const SunLight = React.memo(
         },
         helperVisible:
           HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS.sunLightHelperVisible,
+        debugShadowCameraLeft:
+          HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraLeft,
+        debugShadowCameraRight:
+          HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraRight,
+        debugShadowCameraTop:
+          HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraTop,
+        debugShadowCameraBottom:
+          HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraBottom,
+        debugShadowCameraFar:
+          HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraFar,
+        debugShadowNormalBias:
+          HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowNormalBias,
+        debugShadowBias: HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowBias,
         _sunLightReset: buttonGroup({
           リセット: () =>
             levaStore.set(
               {
                 '太陽光.debugColor': defaultSunColor,
                 '太陽光.debugIntensity': defaultSunIntensity,
+                '太陽光.debugShadowCameraLeft':
+                  HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraLeft.value,
+                '太陽光.debugShadowCameraRight':
+                  HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraRight.value,
+                '太陽光.debugShadowCameraTop':
+                  HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraTop.value,
+                '太陽光.debugShadowCameraBottom':
+                  HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraBottom.value,
+                '太陽光.debugShadowCameraFar':
+                  HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowCameraFar.value,
+                '太陽光.debugShadowNormalBias':
+                  HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowNormalBias.value,
+                '太陽光.debugShadowBias':
+                  HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS.shadowBias.value,
               },
               false,
             ),
@@ -156,6 +206,62 @@ const SunLight = React.memo(
     /** 太陽光の輝度 */
     const intensity = IS_DEV ? debugIntensity : defaultSunIntensity;
 
+    /** Shadow Camera の左エッジ */
+    const shadowCameraLeft = IS_DEV
+      ? debugShadowCameraLeft
+      : -HOME_WORLD_SHADOW_CAMERA_HALF_SIZE;
+
+    /** Shadow Camera の右エッジ */
+    const shadowCameraRight = IS_DEV
+      ? debugShadowCameraRight
+      : HOME_WORLD_SHADOW_CAMERA_HALF_SIZE;
+
+    /** Shadow Camera の上エッジ */
+    const shadowCameraTop = IS_DEV
+      ? debugShadowCameraTop
+      : HOME_WORLD_SHADOW_CAMERA_HALF_SIZE;
+
+    /** Shadow Camera の下エッジ */
+    const shadowCameraBottom = IS_DEV
+      ? debugShadowCameraBottom
+      : -HOME_WORLD_SHADOW_CAMERA_HALF_SIZE;
+
+    /** Shadow Camera の遠クリップ */
+    const shadowCameraFar = IS_DEV
+      ? debugShadowCameraFar
+      : HOME_WORLD_SHADOW_CAMERA_FAR;
+
+    /** シャドウのノーマルバイアス */
+    const shadowNormalBias = IS_DEV
+      ? debugShadowNormalBias
+      : HOME_WORLD_SHADOW_NORMAL_BIAS;
+
+    /** シャドウのバイアス */
+    const shadowBias = IS_DEV ? debugShadowBias : HOME_WORLD_SHADOW_BIAS;
+
+    /** Shadow Camera Helper をシーンに追加（開発環境のみ） */
+    useEffect(() => {
+      if (!IS_DEV || !ref.current) return;
+
+      const helper = new CameraHelper(ref.current.shadow.camera);
+      cameraHelperRef.current = helper;
+      scene.add(helper);
+
+      return () => {
+        scene.remove(helper);
+        helper.dispose();
+        cameraHelperRef.current = null;
+      };
+    }, [scene]);
+
+    /** Shadow Camera Helper を毎フレーム更新する（開発環境のみ） */
+    useFrame(() => {
+      if (!IS_DEV || !cameraHelperRef.current) {
+        return;
+      }
+      cameraHelperRef.current.update();
+    });
+
     /** 太陽光ヘルパー（開発環境のみ） */
     const sunLightHelperRef = useHelper(
       IS_DEV ? (ref as RefObject<Object3D>) : null,
@@ -163,11 +269,47 @@ const SunLight = React.memo(
       HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE,
     );
 
-    /** ライトヘルパーの表示状態を leva コントロール値に同期する (開発環境のみ) */
+    /** ライトヘルパー・Shadow Camera Helper の表示状態を leva コントロール値に同期する (開発環境のみ) */
     useEffect(() => {
-      if (!IS_DEV || !sunLightHelperRef.current) return;
-      sunLightHelperRef.current.visible = helperVisible;
+      if (!IS_DEV) return;
+
+      if (sunLightHelperRef.current) {
+        sunLightHelperRef.current.visible = helperVisible;
+      }
+
+      if (cameraHelperRef.current) {
+        cameraHelperRef.current.visible = helperVisible;
+      }
     }, [sunLightHelperRef, helperVisible]);
+
+    /** Shadow Camera の矩形範囲とバイアスを直接設定し、投影行列を更新する (開発環境のみ) */
+    useEffect(() => {
+      if (!IS_DEV || !ref.current) return;
+      const shadow = ref.current.shadow;
+      const cam = shadow.camera;
+      cam.left = shadowCameraLeft;
+      cam.right = shadowCameraRight;
+      cam.top = shadowCameraTop;
+      cam.bottom = shadowCameraBottom;
+      cam.far = shadowCameraFar;
+      shadow.normalBias = shadowNormalBias;
+      shadow.bias = shadowBias;
+      cam.updateProjectionMatrix();
+      /** BakeShadows が shadowMap.autoUpdate = false にしているため、
+       * 個別 shadow.needsUpdate に加え gl.shadowMap.needsUpdate も true にして
+       * 次フレームで確実に再ベイクされるようにする。 */
+      shadow.needsUpdate = true;
+      gl.shadowMap.needsUpdate = true;
+    }, [
+      shadowCameraLeft,
+      shadowCameraRight,
+      shadowCameraTop,
+      shadowCameraBottom,
+      shadowCameraFar,
+      shadowNormalBias,
+      shadowBias,
+      gl,
+    ]);
 
     /** 時間帯・天気が変わったときに太陽光の色と輝度をリセットする (開発環境のみ) */
     useEffect(() => {
@@ -201,13 +343,14 @@ const SunLight = React.memo(
           HOME_WORLD_SHADOW_MAP_SIZE,
         ]}
         shadow-camera-near={HOME_WORLD_SHADOW_CAMERA_NEAR}
-        shadow-camera-far={HOME_WORLD_SHADOW_CAMERA_FAR}
-        shadow-camera-left={-HOME_WORLD_SHADOW_CAMERA_HALF_SIZE}
-        shadow-camera-right={HOME_WORLD_SHADOW_CAMERA_HALF_SIZE}
-        shadow-camera-top={HOME_WORLD_SHADOW_CAMERA_HALF_SIZE}
-        shadow-camera-bottom={-HOME_WORLD_SHADOW_CAMERA_HALF_SIZE}
+        shadow-camera-far={shadowCameraFar}
+        shadow-camera-left={shadowCameraLeft}
+        shadow-camera-right={shadowCameraRight}
+        shadow-camera-top={shadowCameraTop}
+        shadow-camera-bottom={shadowCameraBottom}
         shadow-radius={HOME_WORLD_SHADOW_RADIUS}
-        shadow-normalBias={HOME_WORLD_SHADOW_NORMAL_BIAS}
+        shadow-normalBias={shadowNormalBias}
+        shadow-bias={shadowBias}
       />
     );
   },

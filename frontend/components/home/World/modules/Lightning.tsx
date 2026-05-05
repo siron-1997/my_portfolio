@@ -19,11 +19,13 @@ import {
   HOME_WORLD_LIGHTNING_LIGHT_DEFAULT_POSITION,
   HOME_WORLD_LIGHTNING_LIGHT_DISTANCE,
   HOME_WORLD_LIGHTNING_LIGHT_INTENSITY,
+  HOME_WORLD_LIGHTNING_LIGHT_POWER_CAP,
   HOME_WORLD_LIGHTNING_POSITION_UPDATE_THRESHOLD,
   HOME_WORLD_LIGHTNING_POSITION_X_RANGE,
   HOME_WORLD_LIGHTNING_POSITION_Y,
   HOME_WORLD_LIGHTNING_POSITION_Z_RANGE,
   HOME_WORLD_LIGHTNING_POWER_CONTINUATION_THRESHOLD,
+  HOME_WORLD_LIGHTNING_POWER_SCALE,
   HOME_WORLD_SCENE_NAME_LIGHTNING,
   THUNDERSTORM_TYPE_HEAVY,
   THUNDERSTORM_TYPE_LIGHT,
@@ -48,8 +50,9 @@ type Props = {
 /** 雷雨（弱）の発光パラメータ */
 const LIGHTNING_STATE_LIGHT: LightningState = {
   visible: true,
-  /** 輝度の上限を 5000 に制限し、ランダムに発光強度を返す */
-  power: (v) => Math.min(Math.random() * 1000 * v, 5000),
+  /** 輝度上限を HOME_WORLD_LIGHTNING_LIGHT_POWER_CAP に制限し、ランダムに発光強度を返す */
+  power: (v) =>
+    Math.min(Math.random() * 1000 * v, HOME_WORLD_LIGHTNING_LIGHT_POWER_CAP),
   /** 係数 3 で最も広い散らばり範囲 [-v/2, 2.5v] を確保する（弱い雷は遠方に分散して出現） */
   positionX: (v) => Math.random() * (v * 3) - v / 2,
   positionZ: (v) => Math.random() * (v * 3) - v / 2,
@@ -98,6 +101,12 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
       HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.thunderstormType.value,
     occurrenceProbability:
       HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.occurrenceProbability.value,
+    positionXRange: HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.positionXRange.value,
+    positionZRange: HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.positionZRange.value,
+    positionY: HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.positionY.value,
+    powerScale: HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.powerScale.value,
+    distance: HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.distance.value,
+    decay: HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.decay.value,
   };
 
   /** 雷コントロール（開発環境デバッグ用） */
@@ -106,6 +115,12 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
     helperVisible,
     debugThunderstormType,
     debugOccurrenceProbability,
+    debugPositionXRange,
+    debugPositionZRange,
+    debugPositionY,
+    debugPowerScale,
+    debugDistance,
+    debugDecay,
   } = useControls(
     '雷',
     {
@@ -121,6 +136,30 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
         ...HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.occurrenceProbability,
         value: defaults.occurrenceProbability,
       },
+      debugPositionXRange: {
+        ...HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.positionXRange,
+        value: defaults.positionXRange,
+      },
+      debugPositionZRange: {
+        ...HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.positionZRange,
+        value: defaults.positionZRange,
+      },
+      debugPositionY: {
+        ...HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.positionY,
+        value: defaults.positionY,
+      },
+      debugPowerScale: {
+        ...HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.powerScale,
+        value: defaults.powerScale,
+      },
+      debugDistance: {
+        ...HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.distance,
+        value: defaults.distance,
+      },
+      debugDecay: {
+        ...HOME_WORLD_DEBUG_LIGHTNING_CONTROLS.decay,
+        value: defaults.decay,
+      },
       helperVisible:
         HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS.lightningHelperVisible,
       _lightningReset: buttonGroup({
@@ -130,6 +169,12 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
               '雷.debugVisible': defaults.visible,
               '雷.debugThunderstormType': defaults.thunderstormType,
               '雷.debugOccurrenceProbability': defaults.occurrenceProbability,
+              '雷.debugPositionXRange': defaults.positionXRange,
+              '雷.debugPositionZRange': defaults.positionZRange,
+              '雷.debugPositionY': defaults.positionY,
+              '雷.debugPowerScale': defaults.powerScale,
+              '雷.debugDistance': defaults.distance,
+              '雷.debugDecay': defaults.decay,
             },
             false,
           ),
@@ -225,33 +270,39 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
       Math.random() > occurrenceProbabilityThreshold ||
       ref.current.power > HOME_WORLD_LIGHTNING_POWER_CONTINUATION_THRESHOLD
     ) {
-      /**
-       * 発光が十分に弱まった段階で次の落雷位置を決定する。
-       * X 軸（引数 350）: 弱 [-175, 875] / 通常 [-175, 525] / 強 [-175, 175]
-       * Z 軸（引数  25）: 弱 [-12.5, 62.5] / 通常 [-12.5, 37.5] / 強 [-12.5, 12.5]
-       */
+      /** 発光が十分に弱まった段階で次の落雷位置を決定する */
       if (ref.current.power < HOME_WORLD_LIGHTNING_POSITION_UPDATE_THRESHOLD) {
+        /** X 軸: 弱 [-v/2, 2.5v] / 通常 [-v/2, 1.5v] / 強 [-v/2, 0.5v] */
+        const xRange = IS_DEV
+          ? debugPositionXRange
+          : HOME_WORLD_LIGHTNING_POSITION_X_RANGE;
+
+        /** Z 軸: 同スケール */
+        const zRange = IS_DEV
+          ? debugPositionZRange
+          : HOME_WORLD_LIGHTNING_POSITION_Z_RANGE;
+
+        /** Y 軸: 同スケール */
+        const posY = IS_DEV ? debugPositionY : HOME_WORLD_LIGHTNING_POSITION_Y;
+
         ref.current.position.set(
-          occurrenceProbability.positionX(
-            HOME_WORLD_LIGHTNING_POSITION_X_RANGE,
-          ),
-          HOME_WORLD_LIGHTNING_POSITION_Y,
-          occurrenceProbability.positionZ(
-            HOME_WORLD_LIGHTNING_POSITION_Z_RANGE,
-          ),
+          occurrenceProbability.positionX(xRange),
+          posY,
+          occurrenceProbability.positionZ(zRange),
         );
       }
+
+      /** 発光輝度のスケールを設定 */
+      const powerScale = IS_DEV
+        ? debugPowerScale
+        : HOME_WORLD_LIGHTNING_POWER_SCALE;
+
       /** 発光輝度をランダムに設定する（大きい値は次フレームで収束処理が継続する） */
-      ref.current.power = occurrenceProbability.power(8);
+      ref.current.power = occurrenceProbability.power(powerScale);
     }
   });
 
-  /**
-   * 雷ライトヘルパー（開発環境のみ生成）。
-   * IS_DEV が false のとき null を渡すことでヘルパーの生成を抑制する。
-   * update() と scene への追加/削除は useHelper が内部で自動管理する。
-   * React 19 で useRef<T>(null) の current が T | null 型になるため、drei の旧型定義との不一致を型アサーションで解消する。
-   */
+  /** 雷ライトヘルパー（開発環境のみ生成） */
   const lightningHelperRef = useHelper(
     IS_DEV ? (ref as RefObject<Object3D>) : null,
     PointLightHelper,
@@ -269,13 +320,14 @@ const Lightning = React.memo(({ currentWeatherData, levaStore }: Props) => {
     if (!IS_DEV) return;
     levaStore.set({ '雷.debugVisible': defaults.visible }, false);
   }, [currentWeather?.description, levaStore, defaults.visible]);
+
   return (
     <pointLight
       name={HOME_WORLD_SCENE_NAME_LIGHTNING}
       color={WORLD_COLOR_PALETTE.lightning}
       intensity={HOME_WORLD_LIGHTNING_LIGHT_INTENSITY}
-      distance={HOME_WORLD_LIGHTNING_LIGHT_DISTANCE}
-      decay={HOME_WORLD_LIGHTNING_LIGHT_DECAY}
+      distance={IS_DEV ? debugDistance : HOME_WORLD_LIGHTNING_LIGHT_DISTANCE}
+      decay={IS_DEV ? debugDecay : HOME_WORLD_LIGHTNING_LIGHT_DECAY}
       position={HOME_WORLD_LIGHTNING_LIGHT_DEFAULT_POSITION}
       castShadow
       ref={ref}
