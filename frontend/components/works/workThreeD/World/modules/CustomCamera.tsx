@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useLayoutEffect } from 'react';
-import type { Dispatch, JSX, RefObject, SetStateAction } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
-import { useFrame, useThree } from '@react-three/fiber';
 import { PerspectiveCamera as CustomPerspectiveCamera } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
+import type { Dispatch, JSX, RefObject, SetStateAction } from 'react';
+import type { Euler, PerspectiveCamera, Vector3 } from 'three';
 import { Box3, Sphere } from 'three';
-import type { PerspectiveCamera, Vector3, Euler } from 'three';
 
 import {
   controlsAnimation,
@@ -125,6 +125,7 @@ const CustomCamera = React.memo(
       return () => {
         sectionsAnimationCtx.forEach((ctx) => ctx.revert());
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- cameraRef/controlsRef/introductionRef/portalRef は安定参照、updateStartControls はアニメーション再初期化防止のため除外
     }, [height, modelChildren, setIsNavigationVisible, width]);
 
     /** ビュワーモードのアニメーションを管理 */
@@ -175,6 +176,7 @@ const CustomCamera = React.memo(
         startButton.removeEventListener('click', handleStart);
         endButton.removeEventListener('click', handleEnd);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- cameraRef/introductionRef/toggleButtonRef は安定参照のため除外
     }, [height, modelChildren, width]);
 
     useLayoutEffect(() => {
@@ -225,6 +227,7 @@ const CustomCamera = React.memo(
       return () => {
         if (isPageUnMountedRef.current) ctx.revert();
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- cameraRef は安定参照のため除外
     }, [
       content.controls,
       currentIndex,

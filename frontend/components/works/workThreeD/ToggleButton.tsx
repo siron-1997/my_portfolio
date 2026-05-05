@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef } from 'react';
-import type { JSX, Dispatch, RefObject } from 'react';
 
 import { Typography } from '@mui/material';
 import cn from 'classnames';
+import type { Dispatch, JSX, RefObject } from 'react';
 
 import { toggleButtonAnimation } from '@/animations/workThreeD';
 import {
@@ -67,6 +67,7 @@ export const ToggleButton = React.memo(
       return () => {
         ctx.revert();
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- toggleButtonRef は Props から渡される安定参照のため除外
     }, [isViewerActive]);
 
     return (

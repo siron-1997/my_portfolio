@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import type { JSX, Dispatch, RefObject } from 'react';
 
 import { Typography } from '@mui/material';
 import cn from 'classnames';
+import type { Dispatch, JSX, RefObject } from 'react';
 
 import { introductionAnimation } from '@/animations/workThreeD';
 import { Container } from '@/components/common';

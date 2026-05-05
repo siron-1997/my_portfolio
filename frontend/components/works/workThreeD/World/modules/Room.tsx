@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import type { JSX } from 'react';
 
 import { useGLTF } from '@react-three/drei';
+import type { JSX } from 'react';
 
 import { DRACO_DECODER_PATH } from '@/constants/common';
 import { WORK_WORLD_ROOM_MODEL_PATH } from '@/constants/workThreeD';

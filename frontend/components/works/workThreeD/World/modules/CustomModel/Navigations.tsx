@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
-import type { Dispatch, JSX } from 'react';
 
 import { Html } from '@react-three/drei';
+import type { Dispatch, JSX } from 'react';
 import { type Object3D } from 'three';
 
 import { NumberedCircled } from '@/components/common';

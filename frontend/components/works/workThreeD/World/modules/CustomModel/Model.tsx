@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import type { Dispatch, JSX, SetStateAction } from 'react';
 
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { AnimationMixer, FrontSide, LoopOnce } from 'three';
+import type { Dispatch, JSX, SetStateAction } from 'react';
 import type { AnimationClip, Group, Mesh, Object3D } from 'three';
+import { AnimationMixer, FrontSide, LoopOnce } from 'three';
 
 import { DRACO_DECODER_PATH } from '@/constants/common';
 import {

@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import type { CSSProperties, JSX } from 'react';
 
 import { ListItem, Typography } from '@mui/material';
+import type { CSSProperties, JSX } from 'react';
 
 import { WORK_THREE_D_UI_COLORS } from '@/constants/colors';
 

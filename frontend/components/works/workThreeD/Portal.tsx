@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+
 import type { JSX, RefObject } from 'react';
 
 import { portalAnimation } from '@/animations/workThreeD';

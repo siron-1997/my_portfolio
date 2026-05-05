@@ -1,11 +1,11 @@
 'use client';
 
-import Image from 'next/image';
 import React, { useCallback, useEffect, useRef } from 'react';
-import type { JSX, Dispatch } from 'react';
+import Image from 'next/image';
 
 import { KeyboardArrowDown } from '@mui/icons-material';
 import { Typography } from '@mui/material';
+import type { Dispatch,JSX } from 'react';
 
 import { fingerPressAnimation } from '@/animations/workThreeD';
 import { BREAK_POINTS } from '@/constants/common';

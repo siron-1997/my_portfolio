@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import type { JSX } from 'react';
 
 import { OrbitControls } from '@react-three/drei';
+import type { JSX } from 'react';
 import { MathUtils } from 'three';
 
 import { WORK_WORLD_ORBIT_CONTROLS } from '@/constants/workThreeD';
