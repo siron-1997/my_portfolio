@@ -36,6 +36,9 @@ type RigCameraAnimationProps = {
   /** アニメーション開始カメラ座標 */
   startPosition: Vector3;
 
+  /** アニメーション中間カメラ座標 */
+  midPosition: Vector3;
+
   /** アニメーション終了カメラ座標 */
   endPosition: Vector3;
 
@@ -125,6 +128,7 @@ export const worksAnimation = ({
  */
 export const rigCameraAnimation = ({
   startPosition,
+  midPosition,
   endPosition,
   portal,
   door,
@@ -181,21 +185,23 @@ export const rigCameraAnimation = ({
     };
 
     /** カメラ位置アニメーション */
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: portal,
-          start: 'top',
-          markers: IS_DEV,
-          scrub: 0.7,
-          toggleActions: 'play pause resume pause',
-        },
-        defaults: {
-          duration: 0.7,
-          ease: 'power2.out',
-        },
-      })
-      .fromTo(camera.position, { ...startPosition }, { ...endPosition });
+    const cameraTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: portal,
+        start: 'top',
+        markers: IS_DEV,
+        scrub: 0.7,
+        toggleActions: 'play pause resume pause',
+      },
+      defaults: {
+        duration: 0.7,
+        ease: 'power2.out',
+      },
+    });
+
+    cameraTl
+      .fromTo(camera.position, { ...startPosition }, { ...midPosition })
+      .to(camera.position, { ...endPosition });
 
     /** ドア開閉アニメーション */
     gsap
