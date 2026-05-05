@@ -7,7 +7,6 @@ import type { JSX } from 'react';
 import { MathUtils } from 'three';
 
 import { WORK_WORLD_ORBIT_CONTROLS } from '@/constants/workThreeD';
-
 import { type ViewerStatus } from '@/types/contexts';
 
 type Props = {

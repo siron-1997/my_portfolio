@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import type { Dispatch, JSX, SetStateAction } from 'react';
 
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { AnimationMixer, FrontSide, LoopOnce } from 'three';
+import type { Dispatch, JSX, SetStateAction } from 'react';
 import type {
   AnimationAction,
   AnimationClip,
@@ -11,6 +10,7 @@ import type {
   Mesh,
   Object3D,
 } from 'three';
+import { AnimationMixer, FrontSide, LoopOnce } from 'three';
 
 import { DRACO_DECODER_PATH } from '@/constants/common';
 import {
@@ -63,7 +63,7 @@ const Model = React.memo(
   ({
     content,
     setModelChildren,
-    isInitialControl,
+    isInitialControl: _isInitialControl,
     isStartControls,
     currentIndex,
     isCameraReady,
@@ -91,31 +91,6 @@ const Model = React.memo(
       if (!actionsRef.current) return;
       actionsRef.current.update(delta);
     });
-
-    /** [DEBUG] GLB データ構造確認 */
-    useEffect(() => {
-      if (process.env.NODE_ENV !== 'development') return;
-
-      console.group(`[GLB DEBUG] key=${content.key}`);
-
-      console.group('▼ アニメーションクリップ一覧');
-      gltf.animations.forEach((clip: AnimationClip) => console.log(clip.name));
-      console.groupEnd();
-
-      console.group('▼ シーン内オブジェクト名一覧');
-      gltf.scene.traverse((child: Object3D) => {
-        if (child.name) console.log(`[${child.type}] ${child.name}`);
-      });
-      console.groupEnd();
-
-      console.group('▼ content.controls アイテム一覧');
-      content.controls.forEach((item, i) =>
-        console.log(`  [${i}] animation_name="${item.animation_name}"`, item),
-      );
-      console.groupEnd();
-
-      console.groupEnd();
-    }, [gltf, content.key, content.controls]);
 
     /**
      * GLB シーン内 Cam_BP_*_Sec3_<n>_<name> カメラ名を走査して

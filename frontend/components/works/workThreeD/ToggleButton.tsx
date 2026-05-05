@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef } from 'react';
-import type { JSX, Dispatch, RefObject } from 'react';
 
 import { Typography } from '@mui/material';
 import cn from 'classnames';
+import type { Dispatch, JSX, RefObject } from 'react';
 
 import { toggleButtonAnimation } from '@/animations/workThreeD';
 import {
@@ -12,7 +12,7 @@ import {
   WORK_THREE_D_TOGGLE_START_LABEL,
 } from '@/constants/workThreeD';
 import s from '@/styles/common/button/Toggle.module.css';
-import { type WorkThreeDAction, type ViewerStatus } from '@/types/contexts';
+import { type ViewerStatus,type WorkThreeDAction } from '@/types/contexts';
 
 type Props = {
   /** ビュワーモードの状態 */
@@ -62,6 +62,7 @@ export const ToggleButton = React.memo(
       return () => {
         ctx.revert();
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- toggleButtonRef は Props から渡される安定参照のため除外
     }, [viewerStatus]);
 
     return (

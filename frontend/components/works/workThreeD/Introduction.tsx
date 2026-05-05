@@ -12,7 +12,7 @@ import FingerPress from '@/components/works/workThreeD/FingerPress';
 import ToggleButton from '@/components/works/workThreeD/ToggleButton';
 import s from '@/styles/workThreeD.module.css';
 import { type WorkDetail } from '@/types/api';
-import { type WorkThreeDAction, type ViewerStatus } from '@/types/contexts';
+import { type ViewerStatus,type WorkThreeDAction } from '@/types/contexts';
 
 type Props = {
   /** 表示する作品の詳細データ */

@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useLayoutEffect } from 'react';
-import type { Dispatch, JSX, RefObject, SetStateAction } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect,useRef } from 'react';
 
-import type { WorkControl } from '@/types/api';
-
-import { useFrame, useThree } from '@react-three/fiber';
 import { PerspectiveCamera as CustomPerspectiveCamera } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
+import type { Dispatch, JSX, RefObject, SetStateAction } from 'react';
+import type { Euler,PerspectiveCamera } from 'three';
 import { Box3, Sphere, Vector3 } from 'three';
-import type { PerspectiveCamera, Euler } from 'three';
 
 import {
   controlsAnimation,
@@ -18,6 +16,7 @@ import {
 import type { WorldProps } from '@/components/works/workThreeD/World';
 import { BREAK_POINTS } from '@/constants/common';
 import { useWindowSize } from '@/hooks';
+import type { WorkControl } from '@/types/api';
 import { type ModelChildren } from '@/types/world';
 import {
   generateControlsCameraConfigs,
@@ -25,7 +24,7 @@ import {
   getViwerToggleCameraParams,
 } from '@/utils/world/work/getCameraParams';
 
-type Props = Omit<WorldProps, 'isLoading'> & {
+type Props = Omit<WorldProps, 'isLoading' | 'isCameraReady'> & {
   /** カメラの参照 Ref */
   cameraRef: RefObject<PerspectiveCamera | null>;
 
@@ -126,22 +125,6 @@ const CustomCamera = React.memo(
         height,
       );
 
-      /** [DEBUG] sectionsCameraParams の内容確認 */
-      if (process.env.NODE_ENV === 'development') {
-        console.group('[Camera DEBUG] sectionsAnimation 起動');
-        console.group('▼ sectionsCameraParams');
-        Object.entries(sectionsCameraParams).forEach(([key, val]) =>
-          console.log(`  [${key}]`, val),
-        );
-        console.groupEnd();
-        console.group('▼ modelChildren 名前一覧');
-        modelChildren.forEach((child) =>
-          console.log(`  [${child.type}] ${child.name}`),
-        );
-        console.groupEnd();
-        console.groupEnd();
-      }
-
       /** 各セクションのカメラアニメーションを初期化 */
       const sectionsAnimationCtx = sectionsAnimation({
         portal: portalRef.current,
@@ -156,6 +139,7 @@ const CustomCamera = React.memo(
       return () => {
         sectionsAnimationCtx.forEach((ctx) => ctx.revert());
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- cameraRef/controlsRef/introductionRef/portalRef は安定参照、updateStartControls はアニメーション再初期化防止のため除外
     }, [height, modelChildren, setIsNavigationVisible, width]);
 
     /** ビュワーモードのアニメーションを管理 */
@@ -215,6 +199,7 @@ const CustomCamera = React.memo(
         startButton.removeEventListener('click', handleStart);
         endButton.removeEventListener('click', handleEnd);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- cameraRef/introductionRef/toggleButtonRef は安定参照、dispatch は useReducer の安定参照のため除外
     }, [height, modelChildren, width]);
 
     /** コントロール用のカメラアニメーションを管理 */
@@ -255,34 +240,6 @@ const CustomCamera = React.memo(
       /** シーンの包容球半径 */
       const bboxRadius = sphere.radius > 0 ? sphere.radius : 5;
 
-      /** [DEBUG] cameraConfigs の内容確認 */
-      if (process.env.NODE_ENV === 'development') {
-        console.group('[Camera DEBUG] controlsAnimation 起動');
-        console.log(
-          'isInitialControl:',
-          isInitialControl,
-          '/ isStartControls:',
-          isStartControls,
-          '/ currentIndex:',
-          currentIndex,
-        );
-        console.group('▼ cameraConfigs (GLB 数値順)');
-        cameraConfigs.forEach((cfg, i) =>
-          console.log(
-            `  [${i}] name="${cfg.name}"`,
-            cfg.position,
-            cfg.rotation,
-          ),
-        );
-        console.groupEnd();
-        console.group('▼ sortedControls (GLB 数値順)');
-        sortedControls.forEach((c, i) =>
-          console.log(`  [${i}] animation_name="${c.animation_name}"`, c),
-        );
-        console.groupEnd();
-        console.groupEnd();
-      }
-
       /** コントロール用のアニメーションを初期化 */
       const ctx = controlsAnimation({
         previousPosition: previousPositionRef.current,
@@ -311,6 +268,7 @@ const CustomCamera = React.memo(
          */
         ctx.kill(false);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- cameraRef は安定参照、dispatch/onControlsSorted は安定参照または意図的除外
     }, [
       content.controls,
       currentIndex,

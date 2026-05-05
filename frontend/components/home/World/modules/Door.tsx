@@ -7,7 +7,6 @@ import { useThree } from '@react-three/fiber';
 import {
   BackSide,
   type Group,
-  MathUtils,
   Mesh,
   MeshStandardMaterial,
   PointLight,

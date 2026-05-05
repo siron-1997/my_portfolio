@@ -16,7 +16,7 @@ import {
 } from '@/constants/workThreeD';
 import { useWindowSize } from '@/hooks';
 import s from '@/styles/workThreeD.module.css';
-import { type WorkThreeDAction, type ViewerStatus } from '@/types/contexts';
+import { type ViewerStatus,type WorkThreeDAction } from '@/types/contexts';
 
 type Props = {
   /** 指アイコン表示フラグ */

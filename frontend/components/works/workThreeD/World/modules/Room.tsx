@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import type { JSX } from 'react';
 
 import { useGLTF } from '@react-three/drei';
-import { FrontSide } from 'three';
+import type { JSX } from 'react';
 import type { Mesh, Object3D } from 'three';
+import { FrontSide } from 'three';
 
 import { DRACO_DECODER_PATH } from '@/constants/common';
 import { WORK_WORLD_ROOM_MODEL_PATH } from '@/constants/workThreeD';
