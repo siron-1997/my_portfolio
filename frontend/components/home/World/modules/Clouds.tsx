@@ -4,10 +4,10 @@ import React, { type JSX, useEffect, useMemo } from 'react';
 
 import { useTexture } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { buttonGroup, useControls,type useCreateStore } from 'leva';
-import { FrontSide, MathUtils, RepeatWrapping, type Vector3 } from 'three';
+import { buttonGroup, useControls, type useCreateStore } from 'leva';
+import { FrontSide, MathUtils, RepeatWrapping } from 'three';
 
-import { BREAK_POINTS, IS_DEV } from '@/constants/common';
+import { IS_DEV } from '@/constants/common';
 import {
   DEFAULT_WEATHER,
   ENV_MAP_MODEL_TYPE_CLOUD,
@@ -16,38 +16,25 @@ import {
   HOME_WORLD_SCENE_NAME_THICK_CLOUD,
   HOME_WORLD_SCENE_NAME_THIN_CLOUD,
   HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP,
-  HOME_WORLD_THICK_CLOUD_CONFIG_MOBILE,
   HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE,
   HOME_WORLD_THICK_CLOUD_OPACITY_DIVISOR,
   HOME_WORLD_THICK_CLOUD_TEXTURE,
   HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP,
-  HOME_WORLD_THIN_CLOUD_CONFIG_MOBILE,
-  HOME_WORLD_THIN_CLOUD_ENV_INTENSITY_MOBILE_OFFSET,
-  HOME_WORLD_THIN_CLOUD_GEOMETRY_SIZE,
+  HOME_WORLD_THIN_CLOUD_GEOMETRY_HEIGHT,
+  HOME_WORLD_THIN_CLOUD_GEOMETRY_WIDTH,
   HOME_WORLD_THIN_CLOUD_OPACITY_DIVISOR,
   HOME_WORLD_THIN_CLOUD_TEXTURE,
   WEATHER_CATEGORY_THICK_CLOUD,
   WEATHER_CATEGORY_THIN_CLOUD,
   WEATHER_TYPES,
 } from '@/constants/home';
-import { useIsIos, useWindowSize } from '@/hooks';
+import { useIsIos } from '@/hooks';
 import { type OpenWeatherCurrentData, type TimePoint } from '@/types/api';
 import {
   getEnvMapIntensity,
   getWeatherCategory,
   type WeatherCategory,
 } from '@/utils/world';
-
-type CloudConfig = {
-  /** デバイスに応じたスケール */
-  scale: number;
-
-  /** デバイスに応じた位置 */
-  position: Vector3 | [number, number, number];
-
-  /** デバイスに応じた角度（ラジアン） */
-  rotation: [number, number, number];
-};
 
 type Props = {
   /** Open Weather API から返される現在の天候データのレスポンス全体 */
@@ -64,9 +51,6 @@ const Clouds = React.memo(
   ({ currentWeatherData, timePoint, levaStore }: Props): JSX.Element => {
     /** iOS 判定 */
     const isIos = useIsIos();
-
-    /** ウィンドウ幅を取得 */
-    const { width } = useWindowSize();
 
     /** 環境マップを取得 */
     const environment = useThree((state) => state.scene.environment);
@@ -106,6 +90,26 @@ const Clouds = React.memo(
       debugThinCloudOpacity,
       debugThickCloudVisible,
       debugThickCloudOpacity,
+      debugThinCloudPosX,
+      debugThinCloudPosY,
+      debugThinCloudPosZ,
+      debugThinCloudRotX,
+      debugThinCloudRotY,
+      debugThinCloudRotZ,
+      debugThickCloudPosX,
+      debugThickCloudPosY,
+      debugThickCloudPosZ,
+      debugThickCloudRotX,
+      debugThickCloudRotY,
+      debugThickCloudRotZ,
+      debugThinCloudWidth,
+      debugThinCloudHeight,
+      debugThickCloudWidth,
+      debugThickCloudHeight,
+      debugThinCloudRepeatX,
+      debugThinCloudRepeatY,
+      debugThickCloudRepeatX,
+      debugThickCloudRepeatY,
     } = useControls(
       '雲',
       {
@@ -123,6 +127,28 @@ const Clouds = React.memo(
         debugThickCloudOpacity: {
           ...HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudOpacity,
         },
+        debugThinCloudPosX: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudPosX,
+        debugThinCloudPosY: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudPosY,
+        debugThinCloudPosZ: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudPosZ,
+        debugThinCloudRotX: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRotX,
+        debugThinCloudRotY: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRotY,
+        debugThinCloudRotZ: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRotZ,
+        debugThickCloudPosX: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudPosX,
+        debugThickCloudPosY: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudPosY,
+        debugThickCloudPosZ: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudPosZ,
+        debugThickCloudRotX: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRotX,
+        debugThickCloudRotY: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRotY,
+        debugThickCloudRotZ: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRotZ,
+        debugThinCloudWidth: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudWidth,
+        debugThinCloudHeight: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudHeight,
+        debugThickCloudWidth: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudWidth,
+        debugThickCloudHeight: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudHeight,
+        debugThinCloudRepeatX: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRepeatX,
+        debugThinCloudRepeatY: HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRepeatY,
+        debugThickCloudRepeatX:
+          HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRepeatX,
+        debugThickCloudRepeatY:
+          HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRepeatY,
         _cloudReset: buttonGroup({
           リセット: () =>
             levaStore.set(
@@ -133,6 +159,46 @@ const Clouds = React.memo(
                 '雲.debugThickCloudVisible': defaults.thickCloudVisible,
                 '雲.debugThickCloudOpacity':
                   HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudOpacity.value,
+                '雲.debugThinCloudPosX':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudPosX.value,
+                '雲.debugThinCloudPosY':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudPosY.value,
+                '雲.debugThinCloudPosZ':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudPosZ.value,
+                '雲.debugThinCloudRotX':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRotX.value,
+                '雲.debugThinCloudRotY':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRotY.value,
+                '雲.debugThinCloudRotZ':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRotZ.value,
+                '雲.debugThickCloudPosX':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudPosX.value,
+                '雲.debugThickCloudPosY':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudPosY.value,
+                '雲.debugThickCloudPosZ':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudPosZ.value,
+                '雲.debugThickCloudRotX':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRotX.value,
+                '雲.debugThickCloudRotY':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRotY.value,
+                '雲.debugThickCloudRotZ':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRotZ.value,
+                '雲.debugThinCloudWidth':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudWidth.value,
+                '雲.debugThinCloudHeight':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudHeight.value,
+                '雲.debugThickCloudWidth':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudWidth.value,
+                '雲.debugThickCloudHeight':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudHeight.value,
+                '雲.debugThinCloudRepeatX':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRepeatX.value,
+                '雲.debugThinCloudRepeatY':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRepeatY.value,
+                '雲.debugThickCloudRepeatX':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRepeatX.value,
+                '雲.debugThickCloudRepeatY':
+                  HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRepeatY.value,
               },
               false,
             ),
@@ -162,6 +228,111 @@ const Clouds = React.memo(
       ? debugThickCloudOpacity
       : defaults.thickCloudOpacity;
 
+    /** 薄雲の設定 */
+    const thinCloudConfig = {
+      scale: HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.scale,
+      position: HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.position,
+      rotation: HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.rotationDeg.map(
+        MathUtils.degToRad,
+      ) as [number, number, number],
+    };
+
+    const thickCloudConfig = {
+      scale: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.scale,
+      position: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.position,
+      rotation: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.rotationDeg.map(
+        MathUtils.degToRad,
+      ) as [number, number, number],
+    };
+
+    /**
+     * 薄雲の実効位置。
+     * 開発環境では Leva スライダー値を優先し、本番ではデバイスに応じた設定値を使用する。
+     */
+    const thinCloudPosition = IS_DEV
+      ? ([debugThinCloudPosX, debugThinCloudPosY, debugThinCloudPosZ] as [
+          number,
+          number,
+          number,
+        ])
+      : thinCloudConfig.position;
+
+    /**
+     * 薄雲の実効回転（ラジアン）。
+     * 開発環境では Leva スライダー値（°）をラジアンに変換して使用する。
+     */
+    const thinCloudRotation = IS_DEV
+      ? ([
+          MathUtils.degToRad(debugThinCloudRotX),
+          MathUtils.degToRad(debugThinCloudRotY),
+          MathUtils.degToRad(debugThinCloudRotZ),
+        ] as [number, number, number])
+      : thinCloudConfig.rotation;
+
+    /**
+     * 厚雲の実効位置。
+     * 開発環境では Leva スライダー値を優先し、本番ではデバイスに応じた設定値を使用する。
+     */
+    const thickCloudPosition = IS_DEV
+      ? ([debugThickCloudPosX, debugThickCloudPosY, debugThickCloudPosZ] as [
+          number,
+          number,
+          number,
+        ])
+      : thickCloudConfig.position;
+
+    /**
+     * 厚雲の実効回転（ラジアン）。
+     * 開発環境では Leva スライダー値（°）をラジアンに変換して使用する。
+     */
+    const thickCloudRotation = IS_DEV
+      ? ([
+          MathUtils.degToRad(debugThickCloudRotX),
+          MathUtils.degToRad(debugThickCloudRotY),
+          MathUtils.degToRad(debugThickCloudRotZ),
+        ] as [number, number, number])
+      : thickCloudConfig.rotation;
+
+    /** 薄雲の実効幅。開発環境では Leva 値、本番では定数値を使用する。 */
+    const thinCloudWidth = IS_DEV
+      ? debugThinCloudWidth
+      : HOME_WORLD_THIN_CLOUD_GEOMETRY_WIDTH;
+
+    /** 薄雲の実効高さ。開発環境では Leva 値、本番では定数値を使用する。 */
+    const thinCloudHeight = IS_DEV
+      ? debugThinCloudHeight
+      : HOME_WORLD_THIN_CLOUD_GEOMETRY_HEIGHT;
+
+    /** 厚雲の実効幅。開発環境では Leva 値、本番では定数値を使用する。 */
+    const thickCloudWidth = IS_DEV
+      ? debugThickCloudWidth
+      : HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE;
+
+    /** 厚雲の実効高さ。開発環境では Leva 値、本番では定数値を使用する。 */
+    const thickCloudHeight = IS_DEV
+      ? debugThickCloudHeight
+      : HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE;
+
+    /** 薄雲の実効 RepeatX。開発環境では Leva 値、本番では定数値を使用する。 */
+    const thinCloudRepeatX = IS_DEV
+      ? debugThinCloudRepeatX
+      : HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRepeatX.value;
+
+    /** 薄雲の実効 RepeatY。開発環境では Leva 値、本番では定数値を使用する。 */
+    const thinCloudRepeatY = IS_DEV
+      ? debugThinCloudRepeatY
+      : HOME_WORLD_DEBUG_CLOUD_CONTROLS.thinCloudRepeatY.value;
+
+    /** 厚雲の実効 RepeatX。開発環境では Leva 値、本番では定数値を使用する。 */
+    const thickCloudRepeatX = IS_DEV
+      ? debugThickCloudRepeatX
+      : HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRepeatX.value;
+
+    /** 厚雲の実効 RepeatY。開発環境では Leva 値、本番では定数値を使用する。 */
+    const thickCloudRepeatY = IS_DEV
+      ? debugThickCloudRepeatY
+      : HOME_WORLD_DEBUG_CLOUD_CONTROLS.thickCloudRepeatY.value;
+
     /** 環境光の輝度を取得 */
     const envMapIntensity = useMemo<number>(
       () =>
@@ -173,50 +344,30 @@ const Clouds = React.memo(
       [currentWeather, timePoint],
     );
 
-    /** 薄雲の設定 */
-    const thinCloudConfig = useMemo<CloudConfig>(
-      () => ({
-        scale:
-          width > BREAK_POINTS.XS
-            ? HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.scale
-            : HOME_WORLD_THIN_CLOUD_CONFIG_MOBILE.scale,
-        position:
-          width > BREAK_POINTS.XS
-            ? HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.position
-            : HOME_WORLD_THIN_CLOUD_CONFIG_MOBILE.position,
-        rotation: (width > BREAK_POINTS.XS
-          ? HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.rotationDeg.map(
-              MathUtils.degToRad,
-            )
-          : HOME_WORLD_THIN_CLOUD_CONFIG_MOBILE.rotationDeg.map(
-              MathUtils.degToRad,
-            )) as CloudConfig['rotation'],
-      }),
-      [width],
-    );
-
-    /** 厚雲の設定 */
-    const thickCloudConfig = useMemo<CloudConfig>(
-      () => ({
-        scale:
-          width > BREAK_POINTS.XS
-            ? HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.scale
-            : HOME_WORLD_THICK_CLOUD_CONFIG_MOBILE.scale,
-        position: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.position,
-        rotation: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.rotationDeg.map(
-          MathUtils.degToRad,
-        ) as CloudConfig['rotation'],
-      }),
-      [width],
-    );
-
-    /** テクスチャーの wrapS と wrapT を RepeatWrapping に設定 */
+    /**
+     * テクスチャーの wrapS と wrapT を RepeatWrapping に設定し、
+     * ジオメトリサイズに比例して repeat を更新する。
+     * 幅・高さが変わるたびに再計算することで、テクスチャーが引き伸ばされるのを防ぐ。
+     */
     useEffect(() => {
       thinTexture.wrapS = thinTexture.wrapT = RepeatWrapping;
-      thinTexture.repeat.set(1, 1);
+      thinTexture.repeat.set(thinCloudRepeatX, thinCloudRepeatY);
       thickTexture.wrapS = thickTexture.wrapT = RepeatWrapping;
-      thickTexture.repeat.set(7, 7);
-    }, [thinTexture, thickTexture]);
+      thickTexture.repeat.set(thickCloudRepeatX, thickCloudRepeatY);
+      thinTexture.needsUpdate = true;
+      thickTexture.needsUpdate = true;
+    }, [
+      thinTexture,
+      thickTexture,
+      thinCloudWidth,
+      thinCloudHeight,
+      thickCloudWidth,
+      thickCloudHeight,
+      thinCloudRepeatX,
+      thinCloudRepeatY,
+      thickCloudRepeatX,
+      thickCloudRepeatY,
+    ]);
 
     /** 天気カテゴリ・雲量が変わったときに雲の表示状態と透明度をリセットする（開発環境のみ） */
     useEffect(() => {
@@ -247,14 +398,11 @@ const Clouds = React.memo(
           name={HOME_WORLD_SCENE_NAME_THIN_CLOUD}
           visible={thinCloudVisible}
           scale={thinCloudConfig.scale}
-          position={thinCloudConfig.position}
-          rotation={thinCloudConfig.rotation}
+          position={thinCloudPosition}
+          rotation={thinCloudRotation}
         >
           <planeGeometry
-            args={[
-              HOME_WORLD_THIN_CLOUD_GEOMETRY_SIZE,
-              HOME_WORLD_THIN_CLOUD_GEOMETRY_SIZE,
-            ]}
+            args={[thinCloudWidth as number, thinCloudHeight as number]}
           />
 
           <meshStandardMaterial
@@ -263,12 +411,7 @@ const Clouds = React.memo(
             transparent
             opacity={thinCloudOpacity}
             envMap={environment}
-            envMapIntensity={
-              width > BREAK_POINTS.XS
-                ? envMapIntensity
-                : envMapIntensity +
-                  HOME_WORLD_THIN_CLOUD_ENV_INTENSITY_MOBILE_OFFSET
-            }
+            envMapIntensity={envMapIntensity}
             depthTest
             depthWrite
           />
@@ -279,15 +422,10 @@ const Clouds = React.memo(
           name={HOME_WORLD_SCENE_NAME_THICK_CLOUD}
           visible={thickCloudVisible}
           scale={thickCloudConfig.scale}
-          position={thickCloudConfig.position}
-          rotation={thickCloudConfig.rotation}
+          position={thickCloudPosition}
+          rotation={thickCloudRotation}
         >
-          <planeGeometry
-            args={[
-              HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE,
-              HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE,
-            ]}
-          />
+          <planeGeometry args={[thickCloudWidth, thickCloudHeight]} />
 
           <meshStandardMaterial
             map={thickTexture}

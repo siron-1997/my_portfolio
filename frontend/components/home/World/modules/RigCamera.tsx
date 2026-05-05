@@ -11,20 +11,47 @@ import React, {
 
 import { CameraShake } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { buttonGroup, useControls,type useCreateStore } from 'leva';
+import { buttonGroup, useControls, type useCreateStore } from 'leva';
 import { Group, MathUtils, Mesh, Vector3 } from 'three';
 
 import { rigCameraAnimation } from '@/animations/home';
 import { BREAK_POINTS, IS_DEV } from '@/constants/common';
 import {
+  HOME_WORLD_CAMERA_SHAKE_MAX_PITCH,
+  HOME_WORLD_CAMERA_SHAKE_MAX_ROLL,
+  HOME_WORLD_CAMERA_SHAKE_MAX_YAW,
+  HOME_WORLD_CAMERA_SHAKE_PITCH_FREQUENCY,
+  HOME_WORLD_CAMERA_SHAKE_YAW_FREQUENCY,
   HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS,
+  HOME_WORLD_DOOR_ANIM_END_DEFAULT,
+  HOME_WORLD_DOOR_ANIM_END_XS,
+  HOME_WORLD_DOOR_ANIM_START_DEFAULT,
+  HOME_WORLD_DOOR_ANIM_START_XS,
+  HOME_WORLD_MODELS_OFFSET_Y_2XL,
+  HOME_WORLD_MODELS_OFFSET_Y_DEFAULT,
+  HOME_WORLD_MODELS_OFFSET_Y_LG,
+  HOME_WORLD_MODELS_OFFSET_Y_SM,
+  HOME_WORLD_MODELS_OFFSET_Y_XL,
+  HOME_WORLD_MODELS_OFFSET_Y_XS_SIDE,
+  HOME_WORLD_MODELS_OFFSET_Y_XS_WRAP,
   HOME_WORLD_RIG_CAMERA_POSITIONS,
+  HOME_WORLD_RIG_CAMERA_START,
   HOME_WORLD_SCENE_NAME_CAMERA_CONTAINER,
   HOME_WORLD_SCENE_NAME_DOOR_CONTAINER,
   HOME_WORLD_SCENE_NAME_MODELS,
   HOME_WORLD_SCENE_NAME_ROOM,
 } from '@/constants/home';
 import { useWindowSize } from '@/hooks';
+
+/**
+ * RigCameraConfig から { start, end, mid } の Vector3 セットを生成するヘルパー。
+ * 共通開始点 HOME_WORLD_RIG_CAMERA_START を使い、終点は endY から構築する。
+ */
+const toVectorPath = (config: { endY: number; mid: Vector3 }) => ({
+  start: HOME_WORLD_RIG_CAMERA_START.clone(),
+  end: new Vector3(0, config.endY, -0.5),
+  mid: config.mid.clone(),
+});
 
 type Props = {
   /** portal セクション要素の参照 Ref */
@@ -64,58 +91,66 @@ const RigCamera = React.memo(
      * ウィンドウサイズ変化のたびに再計算する。
      */
     const currentBpConfig = useMemo(() => {
-      /** ウィンドウ幅に応じてドアアニメーションの開始・終了位置を決定する */
-      const doorStart = width > BREAK_POINTS.XS ? 50 : 54;
-      const doorEnd = width > BREAK_POINTS.XS ? 100 : 124;
+      /** ウィンドウ幅に応じてドアアニメーションの開始位置を決定 */
+      const doorStart =
+        width > BREAK_POINTS.XS
+          ? HOME_WORLD_DOOR_ANIM_START_DEFAULT
+          : HOME_WORLD_DOOR_ANIM_START_XS;
+
+      /** ウィンドウ幅に応じてドアアニメーションの終了位置を決定 */
+      const doorEnd =
+        width > BREAK_POINTS.XS
+          ? HOME_WORLD_DOOR_ANIM_END_DEFAULT
+          : HOME_WORLD_DOOR_ANIM_END_XS;
 
       switch (true) {
         case width >= BREAK_POINTS['2XL']:
           return {
-            ...HOME_WORLD_RIG_CAMERA_POSITIONS.xxl,
-            modelsOffsetY: -0.85,
+            ...toVectorPath(HOME_WORLD_RIG_CAMERA_POSITIONS.xxl),
+            modelsOffsetY: HOME_WORLD_MODELS_OFFSET_Y_2XL,
             doorStart,
             doorEnd,
           };
         case width >= BREAK_POINTS.XL:
           return {
-            ...HOME_WORLD_RIG_CAMERA_POSITIONS.xl,
-            modelsOffsetY: -0.6,
+            ...toVectorPath(HOME_WORLD_RIG_CAMERA_POSITIONS.xl),
+            modelsOffsetY: HOME_WORLD_MODELS_OFFSET_Y_XL,
             doorStart,
             doorEnd,
           };
         case width >= BREAK_POINTS.LG:
           return {
-            ...HOME_WORLD_RIG_CAMERA_POSITIONS.lg,
-            modelsOffsetY: -0.4,
+            ...toVectorPath(HOME_WORLD_RIG_CAMERA_POSITIONS.lg),
+            modelsOffsetY: HOME_WORLD_MODELS_OFFSET_Y_LG,
             doorStart,
             doorEnd,
           };
         case width >= BREAK_POINTS.SM:
           return {
-            ...HOME_WORLD_RIG_CAMERA_POSITIONS.tb,
-            modelsOffsetY: -1.4,
+            ...toVectorPath(HOME_WORLD_RIG_CAMERA_POSITIONS.tb),
+            modelsOffsetY: HOME_WORLD_MODELS_OFFSET_Y_SM,
             doorStart,
             doorEnd,
           };
         case width >= BREAK_POINTS.XS:
           if (width < height) {
             return {
-              ...HOME_WORLD_RIG_CAMERA_POSITIONS.sm.wrap,
-              modelsOffsetY: -3.2,
+              ...toVectorPath(HOME_WORLD_RIG_CAMERA_POSITIONS.sm.wrap),
+              modelsOffsetY: HOME_WORLD_MODELS_OFFSET_Y_XS_WRAP,
               doorStart,
               doorEnd,
             };
           }
           return {
-            ...HOME_WORLD_RIG_CAMERA_POSITIONS.sm.side,
-            modelsOffsetY: -1.2,
+            ...toVectorPath(HOME_WORLD_RIG_CAMERA_POSITIONS.sm.side),
+            modelsOffsetY: HOME_WORLD_MODELS_OFFSET_Y_XS_SIDE,
             doorStart,
             doorEnd,
           };
         default:
           return {
-            ...HOME_WORLD_RIG_CAMERA_POSITIONS.xs,
-            modelsOffsetY: -0.5,
+            ...toVectorPath(HOME_WORLD_RIG_CAMERA_POSITIONS.xs),
+            modelsOffsetY: HOME_WORLD_MODELS_OFFSET_Y_DEFAULT,
             doorStart,
             doorEnd,
           };
@@ -130,6 +165,9 @@ const RigCamera = React.memo(
       debugEndX,
       debugEndY,
       debugEndZ,
+      debugMidX,
+      debugMidY,
+      debugMidZ,
       debugModelsOffsetY,
       debugDoorStart,
       debugDoorEnd,
@@ -161,6 +199,18 @@ const RigCamera = React.memo(
           ...HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS.endZ,
           value: currentBpConfig.end.z,
         },
+        debugMidX: {
+          ...HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS.midX,
+          value: currentBpConfig.mid.x,
+        },
+        debugMidY: {
+          ...HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS.midY,
+          value: currentBpConfig.mid.y,
+        },
+        debugMidZ: {
+          ...HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS.midZ,
+          value: currentBpConfig.mid.z,
+        },
         debugModelsOffsetY: {
           ...HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS.modelsOffsetY,
           value: currentBpConfig.modelsOffsetY,
@@ -186,6 +236,9 @@ const RigCamera = React.memo(
                 'カメラ.debugEndX': currentBpConfig.end.x,
                 'カメラ.debugEndY': currentBpConfig.end.y,
                 'カメラ.debugEndZ': currentBpConfig.end.z,
+                'カメラ.debugMidX': currentBpConfig.mid.x,
+                'カメラ.debugMidY': currentBpConfig.mid.y,
+                'カメラ.debugMidZ': currentBpConfig.mid.z,
                 'カメラ.debugModelsOffsetY': currentBpConfig.modelsOffsetY,
                 'カメラ.debugDoorStart': currentBpConfig.doorStart,
                 'カメラ.debugDoorEnd': currentBpConfig.doorEnd,
@@ -238,6 +291,9 @@ const RigCamera = React.memo(
           'カメラ.debugEndX': currentBpConfig.end.x,
           'カメラ.debugEndY': currentBpConfig.end.y,
           'カメラ.debugEndZ': currentBpConfig.end.z,
+          'カメラ.debugMidX': currentBpConfig.mid.x,
+          'カメラ.debugMidY': currentBpConfig.mid.y,
+          'カメラ.debugMidZ': currentBpConfig.mid.z,
           'カメラ.debugModelsOffsetY': currentBpConfig.modelsOffsetY,
           'カメラ.debugDoorStart': currentBpConfig.doorStart,
           'カメラ.debugDoorEnd': currentBpConfig.doorEnd,
@@ -245,6 +301,46 @@ const RigCamera = React.memo(
         false,
       );
     }, [currentBpConfig, levaStore]);
+
+    /**
+     * アニメーションに使用する実効設定値。
+     * 開発環境では Leva スライダーの値を優先し、本番環境ではブレークポイント設定値を使用する。
+     */
+    const animConfig = useMemo(
+      () => ({
+        startPos: IS_DEV
+          ? new Vector3(debugStartX, debugStartY, debugStartZ)
+          : currentBpConfig.start.clone(),
+        endPos: IS_DEV
+          ? new Vector3(debugEndX, debugEndY, debugEndZ)
+          : currentBpConfig.end.clone(),
+        midPos: IS_DEV
+          ? new Vector3(debugMidX, debugMidY, debugMidZ)
+          : currentBpConfig.mid,
+        modelsY: IS_DEV ? debugModelsOffsetY : currentBpConfig.modelsOffsetY,
+        doorStart: IS_DEV ? debugDoorStart : currentBpConfig.doorStart,
+        doorEnd: IS_DEV ? debugDoorEnd : currentBpConfig.doorEnd,
+        rainThreshold: IS_DEV
+          ? debugRainHideThreshold
+          : HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS.rainHideThreshold.value,
+      }),
+      [
+        currentBpConfig,
+        debugStartX,
+        debugStartY,
+        debugStartZ,
+        debugEndX,
+        debugEndY,
+        debugEndZ,
+        debugMidX,
+        debugMidY,
+        debugMidZ,
+        debugModelsOffsetY,
+        debugDoorStart,
+        debugDoorEnd,
+        debugRainHideThreshold,
+      ],
+    );
 
     useLayoutEffect(() => {
       if (!width || !height || !portalRef.current || !doorRef.current) return;
@@ -269,52 +365,28 @@ const RigCamera = React.memo(
         !(models instanceof Group) ||
         !(door instanceof Group) ||
         !(room instanceof Mesh)
-      )
+      ) {
         return;
-
-      /** カメラの開始位置を取得 */
-      const startPos = IS_DEV
-        ? new Vector3(debugStartX, debugStartY, debugStartZ)
-        : currentBpConfig.start.clone();
-
-      /** カメラの終了位置を取得 */
-      const endPos = IS_DEV
-        ? new Vector3(debugEndX, debugEndY, debugEndZ)
-        : currentBpConfig.end.clone();
-
-      /** モデルのY座標を取得 */
-      const modelsY = IS_DEV
-        ? debugModelsOffsetY
-        : currentBpConfig.modelsOffsetY;
-
-      /** ドアの開始位置を取得 */
-      const doorStart = IS_DEV ? debugDoorStart : currentBpConfig.doorStart;
-
-      /** ドアの終了位置を取得 */
-      const doorEnd = IS_DEV ? debugDoorEnd : currentBpConfig.doorEnd;
-
-      /** 雨表示の閾値を取得 */
-      const rainThreshold = IS_DEV
-        ? debugRainHideThreshold
-        : HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS.rainHideThreshold.value;
+      }
 
       /** カメラの位置を設定 */
-      camera.position.copy(startPos);
-      models.position.y = modelsY;
+      camera.position.copy(animConfig.startPos);
+      models.position.y = animConfig.modelsY;
 
       /** カメラリグ格納グループのアニメーションを初期化 */
       const ctx = rigCameraAnimation({
-        startPosition: startPos,
-        endPosition: endPos,
+        startPosition: animConfig.startPos,
+        endPosition: animConfig.endPos,
+        midPosition: animConfig.midPos,
         portal: portalRef.current!,
         door,
         room,
         ref,
         camera,
-        doorAnimStart: doorStart,
-        doorAnimEnd: doorEnd,
+        doorAnimStart: animConfig.doorStart,
+        doorAnimEnd: animConfig.doorEnd,
         onInsideRoomChange,
-        doorHideRainThresholdDeg: rainThreshold,
+        doorHideRainThresholdDeg: animConfig.rainThreshold,
       });
 
       return () => {
@@ -327,28 +399,18 @@ const RigCamera = React.memo(
       camera,
       portalRef,
       doorRef,
-      currentBpConfig,
-      debugStartX,
-      debugStartY,
-      debugStartZ,
-      debugEndX,
-      debugEndY,
-      debugEndZ,
-      debugModelsOffsetY,
-      debugDoorStart,
-      debugDoorEnd,
-      debugRainHideThreshold,
+      animConfig,
       onInsideRoomChange,
     ]);
 
     return (
       <group name={HOME_WORLD_SCENE_NAME_CAMERA_CONTAINER} ref={ref}>
         <CameraShake
-          maxYaw={0.01}
-          maxPitch={0.01}
-          maxRoll={0.01}
-          yawFrequency={0.2}
-          pitchFrequency={0.2}
+          maxYaw={HOME_WORLD_CAMERA_SHAKE_MAX_YAW}
+          maxPitch={HOME_WORLD_CAMERA_SHAKE_MAX_PITCH}
+          maxRoll={HOME_WORLD_CAMERA_SHAKE_MAX_ROLL}
+          yawFrequency={HOME_WORLD_CAMERA_SHAKE_YAW_FREQUENCY}
+          pitchFrequency={HOME_WORLD_CAMERA_SHAKE_PITCH_FREQUENCY}
         />
       </group>
     );

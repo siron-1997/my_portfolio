@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 
 import { BakeShadows } from '@react-three/drei';
-import { useControls,type useCreateStore } from 'leva';
+import { useControls, type useCreateStore } from 'leva';
 import { type Group } from 'three';
 
 import {
@@ -17,11 +17,10 @@ import {
   Door,
   Fog,
   Lightning,
-  Model,
-  Ocean,
   RigCamera,
   Star,
   SunLight,
+  Terrain,
   WeatherEnvironment,
 } from '@/components/home/World/modules';
 import { IS_DEV } from '@/constants/common';
@@ -201,7 +200,7 @@ const Experience = React.memo(
       return getWeatherCategory(effectiveCurrentWeather.description);
     }, [effectiveCurrentWeather]);
 
-    /** effectiveCurrentWeatherData の変化を World 側に通知する */
+    /** 天気説明のデバッグ上書きの変化を World 側に通知する */
     useEffect(() => {
       onEffectiveWeatherDataChange(effectiveCurrentWeatherData);
     }, [effectiveCurrentWeatherData, onEffectiveWeatherDataChange]);
@@ -215,9 +214,7 @@ const Experience = React.memo(
     /** 天気説明変更時に雲量・湿度スライダーを代表値にリセットする (開発環境のみ) */
     useEffect(() => {
       if (!IS_DEV) return;
-
       const config = HOME_WORLD_DEBUG_WEATHER_CONFIGS[debugWeatherDescription];
-
       levaStore.set(
         {
           'タイムポイント.debugCloudsAll': config.cloudsAll,
@@ -249,9 +246,10 @@ const Experience = React.memo(
         {/** メイン */}
         <group name={HOME_WORLD_SCENE_NAME_MODELS}>
           {/** 地形 */}
-          <Model
+          <Terrain
             currentWeatherData={effectiveCurrentWeatherData}
             timePoint={timePoint}
+            levaStore={levaStore}
           />
 
           {/** ドア */}
@@ -259,12 +257,6 @@ const Experience = React.memo(
             currentWeatherData={effectiveCurrentWeatherData}
             timePoint={timePoint}
             ref={doorRef}
-          />
-
-          {/** 雨の時、シーンに追加 */}
-          <Ocean
-            currentWeatherData={effectiveCurrentWeatherData}
-            levaStore={levaStore}
           />
         </group>
 

@@ -41,9 +41,9 @@ export const WORLD_COLOR_PALETTE = {
   thickCloudLunch: 'rgb(176, 175, 148)',
   doorLight: '#dda862',
   lightning: '#55A5EB',
-  oceanSun: '#98BFC7',
-  oceanWater: '#01DFD7',
+  riverWater: '#01DFD7',
   rain: '174, 194, 224',
+  star: '#ffffff',
   backgroundEvening:
     'linear-gradient(180deg, rgba(99,72,198,1) 0%, rgba(110,46,166,1) 7%, rgba(227,73,121,1) 32%, rgba(241,145,66,1) 50%)',
   backgroundNight:
@@ -112,6 +112,44 @@ export const TIME_POINT_ENV_COLORS: TimePointColorSet = {
     environment: WORLD_COLOR_PALETTE.environmentLunch,
   },
 };
+
+/**
+ * 地形モデルの幹カラーパレット。
+ * 旧 mountain.glb の Tree_1 / Tree_2 マテリアル（linear sRGB → standard sRGB 変換済み）
+ * の値を元に定義。
+ */
+export const TERRAIN_TRUNK_COLORS = [
+  /** Tree_1: ダークブラウン */
+  '#683917',
+
+  /** Tree_2: テラコッタブラウン */
+  '#b55533',
+] as const;
+
+/**
+ * 地形モデルの葉カラーパレット。
+ * 旧 mountain.glb の Leaves_1〜6 マテリアル（linear sRGB → standard sRGB 変換済み）
+ * の値を元に定義。
+ */
+export const TERRAIN_LEAVES_COLORS = [
+  /** Leaves_1: 鮮やかグリーン */
+  '#1ba700',
+
+  /** Leaves_2: ミドルグリーン */
+  '#178f00',
+
+  /** Leaves_3: ダークグリーン */
+  '#084200',
+
+  /** Leaves_4: イエローグリーン */
+  '#95b756',
+
+  /** Leaves_5: フォレストグリーン */
+  '#308b2d',
+
+  /** Leaves_6: ライトグリーン */
+  '#75b34b',
+] as const;
 
 /** workThreeD UI コンポーネント専用のカラー定義 */
 export const WORK_THREE_D_UI_COLORS = {

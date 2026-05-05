@@ -24,6 +24,13 @@ import Experience from '@/components/home/World/Experience';
 import { Rain } from '@/components/home/World/modules';
 import { TIME_POINT_ENV_COLORS } from '@/constants/colors';
 import { DEFAULT_COORDINATES, IS_DEV } from '@/constants/common';
+import {
+  HOME_WORLD_CAMERA_FAR,
+  HOME_WORLD_CAMERA_FOV,
+  HOME_WORLD_CAMERA_NEAR,
+  HOME_WORLD_CANVAS_DPR,
+  HOME_WORLD_WEATHER_FETCH_INTERVAL_MS,
+} from '@/constants/home';
 import { useGeolocation } from '@/hooks';
 import s from '@/styles/home.module.css';
 import { type OpenWeatherCurrentData } from '@/types/api';
@@ -112,8 +119,11 @@ const World = React.memo(
       if (!isPermissionHandled) return;
       fetchCurrentWeatherData();
 
-      /** 1時間ごとに天気情報を再取得する */
-      const intervalId = setInterval(fetchCurrentWeatherData, 60 * 60 * 1000);
+      /** 天気情報の再取得間隔 */
+      const intervalId = setInterval(
+        fetchCurrentWeatherData,
+        HOME_WORLD_WEATHER_FETCH_INTERVAL_MS,
+      );
 
       return () => clearInterval(intervalId);
     }, [isPermissionHandled, fetchCurrentWeatherData]);
@@ -145,9 +155,17 @@ const World = React.memo(
         <div className={s.home_world}>
           <Canvas
             shadows={{ type: PCFShadowMap }}
-            dpr={[1, 2]}
-            gl={{ antialias: true, toneMapping: ReinhardToneMapping }}
-            camera={{ fov: 45, near: 0.01, far: 200 }}
+            dpr={HOME_WORLD_CANVAS_DPR}
+            gl={{
+              antialias: true,
+              toneMapping: ReinhardToneMapping,
+              logarithmicDepthBuffer: true,
+            }}
+            camera={{
+              fov: HOME_WORLD_CAMERA_FOV,
+              near: HOME_WORLD_CAMERA_NEAR,
+              far: HOME_WORLD_CAMERA_FAR,
+            }}
             className={s.canvas}
             style={{
               /** 時間帯に応じて背景色を設定 */

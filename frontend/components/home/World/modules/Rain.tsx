@@ -9,6 +9,13 @@ import { BREAK_POINTS, IS_DEV } from '@/constants/common';
 import {
   DEFAULT_WEATHER,
   HOME_WORLD_DEBUG_RAIN_CONTROLS,
+  HOME_WORLD_RAIN_CANVAS_OVERFLOW_OFFSET,
+  HOME_WORLD_RAIN_FALL_MULTIPLIER_BASE,
+  HOME_WORLD_RAIN_FALL_MULTIPLIER_XS,
+  HOME_WORLD_RAIN_SPEED_X_BASE,
+  HOME_WORLD_RAIN_SPEED_X_XS,
+  HOME_WORLD_RAIN_SPEED_Y_BASE,
+  HOME_WORLD_RAIN_SPEED_Y_XS,
   WEATHER_DESCRIPTION_LIGHT_RAIN,
   WEATHER_DESCRIPTIONS_RAIN_HEAVY,
   WEATHER_DESCRIPTIONS_RAIN_LIGHT,
@@ -48,7 +55,10 @@ const Rain = React.memo(
      * API の 1 時間降雨量（mm）にウィンドウ幅に応じた係数を乗じて算出する。
      */
     const rainFall = currentWeatherData?.rain
-      ? currentWeatherData.rain['1h'] * (width < BREAK_POINTS.XS ? 180 : 250)
+      ? currentWeatherData.rain['1h'] *
+        (width < BREAK_POINTS.XS
+          ? HOME_WORLD_RAIN_FALL_MULTIPLIER_XS
+          : HOME_WORLD_RAIN_FALL_MULTIPLIER_BASE)
       : 0;
 
     /** 雨コントロールのデフォルト値 */
@@ -170,9 +180,11 @@ const Rain = React.memo(
 
       if (!currentWeather) return;
 
-      /** Canvas のサイズを設定 */
-      canvas.width = window.outerWidth;
-      canvas.height = window.outerHeight;
+      /** Canvas のサイズを設定（回転時の角切れ防止のためオフセット分拡張） */
+      canvas.width =
+        window.outerWidth + HOME_WORLD_RAIN_CANVAS_OVERFLOW_OFFSET * 2;
+      canvas.height =
+        window.outerHeight + HOME_WORLD_RAIN_CANVAS_OVERFLOW_OFFSET * 2;
 
       /** Canvas サイズを保存 */
       const w = canvas.width;
@@ -182,8 +194,16 @@ const Rain = React.memo(
       const { color, lineWidth, xSpeed, ySpeed } = _getRainState({
         currentWeather,
         lineWidth: IS_DEV ? debugLineWidth : 2.5,
-        xSpeed: IS_DEV ? debugXSpeed : width < BREAK_POINTS.XS ? 1.5 : 2,
-        ySpeed: IS_DEV ? debugYSpeed : width < BREAK_POINTS.XS ? 15 : 20,
+        xSpeed: IS_DEV
+          ? debugXSpeed
+          : width < BREAK_POINTS.XS
+            ? HOME_WORLD_RAIN_SPEED_X_XS
+            : HOME_WORLD_RAIN_SPEED_X_BASE,
+        ySpeed: IS_DEV
+          ? debugYSpeed
+          : width < BREAK_POINTS.XS
+            ? HOME_WORLD_RAIN_SPEED_Y_XS
+            : HOME_WORLD_RAIN_SPEED_Y_BASE,
       });
 
       /** 描画スタイルを設定 */
@@ -277,8 +297,12 @@ const Rain = React.memo(
           ref={ref}
           className={s.rain_canvas}
           style={{
-            /** 風速に応じて回転角度を設定（雨粒を傾ける） */
+            /** 風面に応じて回転角度を設定（雨粒を傾ける） */
             transform: `rotateZ(${currentWeatherData?.wind?.speed || 0}deg)`,
+            /** 拡張した Canvas をコンテナ中心に配置する（角切れ防止） */
+            position: 'absolute',
+            top: `-${HOME_WORLD_RAIN_CANVAS_OVERFLOW_OFFSET}px`,
+            left: `-${HOME_WORLD_RAIN_CANVAS_OVERFLOW_OFFSET}px`,
           }}
         />
       </div>

@@ -2,14 +2,18 @@
 
 import React, { type JSX, useEffect, useMemo } from 'react';
 
-import { buttonGroup, useControls,type useCreateStore } from 'leva';
+import { buttonGroup, useControls, type useCreateStore } from 'leva';
 import { MathUtils } from 'three';
 
+import { WORLD_COLOR_PALETTE } from '@/constants/colors';
 import { IS_DEV } from '@/constants/common';
 import {
   HOME_WORLD_DEBUG_STAR_CONTROLS,
-  HOME_WORLD_DEFAULT_STAR_COLOR,
+  HOME_WORLD_DEFAULT_SPREAD_X,
+  HOME_WORLD_DEFAULT_SPREAD_Y,
   HOME_WORLD_DEFAULT_STAR_COUNT,
+  HOME_WORLD_DEFAULT_Z_MAX,
+  HOME_WORLD_DEFAULT_Z_MIN,
   HOME_WORLD_SCENE_NAME_STAR,
   HOME_WORLD_SCENE_NAME_STAR_CONTAINER,
 } from '@/constants/home';
@@ -38,7 +42,7 @@ const Star = React.memo(
     /** 星のデフォルトパラメータを天気・時間帯から計算する */
     const defaultParams = useMemo(() => {
       /** 星のサイズを設定 */
-      const size = timePoint === 'lunch' ? 0 : 0.35;
+      const size = timePoint === 'lunch' ? 0 : 1.5;
 
       /**
        * IOS の場合
@@ -65,54 +69,71 @@ const Star = React.memo(
     /** 星コントロールのデフォルト値 */
     const defaults = {
       visible: timePoint !== 'lunch',
-      color: HOME_WORLD_DEFAULT_STAR_COLOR,
+      color: WORLD_COLOR_PALETTE.star,
       opacity: defaultParams.opacity,
       size: defaultParams.size,
       count: HOME_WORLD_DEFAULT_STAR_COUNT,
     };
 
     /** 星コントロール（開発環境デバッグ用） */
-    const { debugVisible, debugColor, debugOpacity, debugSize, debugCount } =
-      useControls(
-        '星',
-        {
-          debugVisible: {
-            ...HOME_WORLD_DEBUG_STAR_CONTROLS.visible,
-            value: defaults.visible,
-          },
-          debugColor: {
-            ...HOME_WORLD_DEBUG_STAR_CONTROLS.color,
-            value: defaults.color,
-          },
-          debugOpacity: {
-            ...HOME_WORLD_DEBUG_STAR_CONTROLS.opacity,
-            value: defaults.opacity,
-          },
-          debugSize: {
-            ...HOME_WORLD_DEBUG_STAR_CONTROLS.size,
-            value: defaults.size,
-          },
-          debugCount: {
-            ...HOME_WORLD_DEBUG_STAR_CONTROLS.count,
-            value: defaults.count,
-          },
-          _starReset: buttonGroup({
-            リセット: () =>
-              levaStore.set(
-                {
-                  '星.debugVisible': defaults.visible,
-                  '星.debugColor': defaults.color,
-                  '星.debugOpacity': defaults.opacity,
-                  '星.debugSize': defaults.size,
-                  '星.debugCount': defaults.count,
-                },
-                false,
-              ),
-          }),
+    const {
+      debugVisible,
+      debugColor,
+      debugOpacity,
+      debugSize,
+      debugCount,
+      debugSpreadX,
+      debugSpreadY,
+      debugZMin,
+      debugZMax,
+    } = useControls(
+      '星',
+      {
+        debugVisible: {
+          ...HOME_WORLD_DEBUG_STAR_CONTROLS.visible,
+          value: defaults.visible,
         },
-        { collapsed: true },
-        { store: levaStore },
-      );
+        debugColor: {
+          ...HOME_WORLD_DEBUG_STAR_CONTROLS.color,
+          value: defaults.color,
+        },
+        debugOpacity: {
+          ...HOME_WORLD_DEBUG_STAR_CONTROLS.opacity,
+          value: defaults.opacity,
+        },
+        debugSize: {
+          ...HOME_WORLD_DEBUG_STAR_CONTROLS.size,
+          value: defaults.size,
+        },
+        debugCount: {
+          ...HOME_WORLD_DEBUG_STAR_CONTROLS.count,
+          value: defaults.count,
+        },
+        debugSpreadX: HOME_WORLD_DEBUG_STAR_CONTROLS.spreadX,
+        debugSpreadY: HOME_WORLD_DEBUG_STAR_CONTROLS.spreadY,
+        debugZMin: HOME_WORLD_DEBUG_STAR_CONTROLS.zMin,
+        debugZMax: HOME_WORLD_DEBUG_STAR_CONTROLS.zMax,
+        _starReset: buttonGroup({
+          リセット: () =>
+            levaStore.set(
+              {
+                '星.debugVisible': defaults.visible,
+                '星.debugColor': defaults.color,
+                '星.debugOpacity': defaults.opacity,
+                '星.debugSize': defaults.size,
+                '星.debugCount': defaults.count,
+                '星.debugSpreadX': HOME_WORLD_DEFAULT_SPREAD_X,
+                '星.debugSpreadY': HOME_WORLD_DEFAULT_SPREAD_Y,
+                '星.debugZMin': HOME_WORLD_DEFAULT_Z_MIN,
+                '星.debugZMax': HOME_WORLD_DEFAULT_Z_MAX,
+              },
+              false,
+            ),
+        }),
+      },
+      { collapsed: true },
+      { store: levaStore },
+    );
 
     /** 表示状態 */
     const visible = IS_DEV ? debugVisible : defaults.visible;
@@ -129,22 +150,34 @@ const Star = React.memo(
     /** 星の数 */
     const count = IS_DEV ? debugCount : HOME_WORLD_DEFAULT_STAR_COUNT;
 
+    /** 星の生成範囲 X（全幅） */
+    const spreadX = IS_DEV ? debugSpreadX : HOME_WORLD_DEFAULT_SPREAD_X;
+
+    /** 星の生成範囲 Y（全高） */
+    const spreadY = IS_DEV ? debugSpreadY : HOME_WORLD_DEFAULT_SPREAD_Y;
+
+    /** 星の生成範囲 Z 最小値 */
+    const zMin = IS_DEV ? debugZMin : HOME_WORLD_DEFAULT_Z_MIN;
+
+    /** 星の生成範囲 Z 最大値 */
+    const zMax = IS_DEV ? debugZMax : HOME_WORLD_DEFAULT_Z_MAX;
+
     /** 星の位置を格納する配列 */
     const positions = useMemo<Float32Array>(() => {
       const arr = new Float32Array(count * 3);
 
       /** 星の位置をランダムに設定 */
       for (let i = 0; i < count * 3; i += 3) {
-        /** X座標 (-200 から 200 の範囲) */
-        arr[i] = MathUtils.randFloatSpread(400);
-        /** Y座標 (-250 から 250 の範囲) */
-        arr[i + 1] = MathUtils.randFloatSpread(500);
-        /** Z座標 (-100 から -50 の範囲) */
-        arr[i + 2] = Math.random() * 50 - 100;
+        /** X座標 */
+        arr[i] = MathUtils.randFloatSpread(spreadX);
+        /** Y座標 */
+        arr[i + 1] = MathUtils.randFloatSpread(spreadY);
+        /** Z座標（zMin から zMax の範囲） */
+        arr[i + 2] = zMin + Math.random() * (zMax - zMin);
       }
 
       return arr;
-    }, [count]);
+    }, [count, spreadX, spreadY, zMin, zMax]);
 
     /** 時間帯・雲量が変わったときに星のデフォルト値をリセットする（開発環境のみ） */
     useEffect(() => {
