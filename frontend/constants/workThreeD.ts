@@ -290,13 +290,12 @@ export const WORK_WORLD_FOG_FAR = { SM: 12, default: 11 } as const;
 
 /** 被写界深度のパラメータ */
 export const WORK_WORLD_DOF_PARAMS = {
-  /** 正規化フォーカス距離（0〜1）。0 = カメラ位置、1 = far クリップ面。
-   *  near=0.1 / far=200 の場合、シーン中心（約 5u）≈ 0.025 */
-  focusDistance: 0.025,
-  /** 正規化焦点距離（0〜1）。小さいほどボケ範囲が狭くシネマティックになる */
-  focalLength: 0.02,
-  /** ボケの強さ。0 = なし、8 = 強烈。2〜3 が自然なシネマティック表現 */
-  bokehScale: 3,
+  /** 空間でのフォーカス距離 (カメラから何ユニット先にピントを合わせるかを指定) */
+  worldFocusDistance: 2,
+  /** 空間でのフォーカス範囲 (フォーカス距離を中心に前後何ユニットをシャープに保つかを指定) */
+  worldFocusRange: 5,
+  /** ぼかしの強さ (0 = なし、8 = 強烈、2〜3 = 自然なシネマティック) */
+  bokehScale: 2,
   height: 1080,
 } as const;
 
@@ -359,7 +358,7 @@ export const CONTROLS_ANIMATION_DURATION = 2 as const;
 export const CONTROLS_ANIMATION_DELAY = 0.5 as const;
 
 /** ビュワーモード開始時のカメラアニメーション時間 (秒) */
-export const VIEWER_TOGGLE_START_DURATION = 0.6 as const;
+export const VIEWER_TOGGLE_START_DURATION = 1.2 as const;
 
 /** ビュワーモード終了時のカメラアニメーション時間 (秒) */
 export const VIEWER_TOGGLE_END_DURATION = 1.2 as const;

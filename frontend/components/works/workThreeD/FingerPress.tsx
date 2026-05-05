@@ -16,21 +16,21 @@ import {
 } from '@/constants/workThreeD';
 import { useWindowSize } from '@/hooks';
 import s from '@/styles/workThreeD.module.css';
-import { type WorkThreeDAction } from '@/types/contexts';
+import { type WorkThreeDAction, type ViewerStatus } from '@/types/contexts';
 
 type Props = {
   /** 指アイコン表示フラグ */
   isFingerVisible: boolean;
 
-  /** ビュワーアクティブフラグ */
-  isViewerActive: boolean;
+  /** ビュワーモードの状態 */
+  viewerStatus: ViewerStatus;
 
   /** work 個別ページの状態 (3D) を更新する関数 */
   dispatch: Dispatch<WorkThreeDAction>;
 };
 
 const FingerPress = React.memo(
-  ({ isFingerVisible, isViewerActive, dispatch }: Props): JSX.Element => {
+  ({ isFingerVisible, viewerStatus, dispatch }: Props): JSX.Element => {
     /** 指アイコンの参照 Ref */
     const fingerPressRef = useRef<HTMLDivElement | null>(null);
 
@@ -49,7 +49,11 @@ const FingerPress = React.memo(
     }, [dispatch]);
 
     useEffect(() => {
-      if (!fingerPressRef.current || !imageRef.current || !textRef.current)
+      if (
+        !fingerPressRef.current ||
+        (viewerStatus === 'active' && !imageRef.current) ||
+        (viewerStatus !== 'active' && !textRef.current)
+      )
         return;
 
       /** モバイルかどうか */
@@ -70,11 +74,11 @@ const FingerPress = React.memo(
       return () => {
         ctx.revert();
       };
-    }, [width, isFingerVisible, isViewerActive]);
+    }, [width, isFingerVisible, viewerStatus]);
 
     return (
       <div className={s.finger_press} id="finger-press" ref={fingerPressRef}>
-        {isViewerActive ? (
+        {viewerStatus === 'active' ? (
           <Image
             ref={imageRef}
             src={WORK_THREE_D_FINGER_PRESS_ICON_PATH}
@@ -87,13 +91,13 @@ const FingerPress = React.memo(
             style={{ display: !isFingerVisible ? 'none' : 'block' }}
             className={s.icon}
           />
-        ) : (
+        ) : viewerStatus === 'passive' ? (
           <Typography component="p" sx={{ fontWeight: 600 }} ref={textRef}>
             {WORK_THREE_D_FINGER_PRESS_TEXT}
             <br />
             <KeyboardArrowDown sx={{ width: 45, height: 45 }} />
           </Typography>
-        )}
+        ) : null}
       </div>
     );
   },

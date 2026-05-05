@@ -149,6 +149,18 @@ export type ControlCameraConfig = {
 /** `ControlCameraConfig` の配列型。Controls セクションのカメラ設定リスト。 */
 export type ControlCameraConfigs = ControlCameraConfig[];
 
+/**
+ * `generateControlsCameraConfigs` の戻り値型。
+ * GLB の数値インデックス順にソートされたカメラ設定と、
+ * 対応する Strapi Controls データを保持する。
+ */
+export type GenerateControlsResult = {
+  /** GLB 数値インデックス順のカメラ設定リスト */
+  configs: ControlCameraConfigs;
+  /** configs と同順にソートされた Controls データリスト */
+  sortedControls: import('@/types/api').WorkControl[];
+};
+
 /** Debug Types */
 /**
  * デバッグ用アンビエントライトのパラメータ。

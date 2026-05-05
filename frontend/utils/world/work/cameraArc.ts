@@ -1,4 +1,4 @@
-import { Vector3 } from 'three';
+import { Box3, Matrix4, type Object3D, Quaternion, Vector3 } from 'three';
 
 /**
  * シーン中心を軸にした球面線形補間（slerp）でカメラ位置を補間する。
@@ -14,6 +14,9 @@ import { Vector3 } from 'three';
  * @param bboxRadius  バウンディングボックスの外接球半径。
  *   横バイアスの実ワールド変位をこの値以内に制限する（遠距離での過剰なスイングを防ぐ）。
  * @param arcBias     横バイアスの強度倍率。0=バイアスなし、1=デフォルト、2=2倍。
+ * @param midCameraForward t=0.5 時点のカメラ前方ベクトル。
+ *   対蹠点補正のバイアス方向（biasDir）がカメラ視線と同方向の場合、符号を反転して
+ *   カメラがシーンを向く側に弧を曲げる。null の場合は符号を変更しない。
  * @returns {Vector3} 補間後のカメラ位置
  
  *
@@ -27,6 +30,7 @@ export function computeArcPosition(
   t: number,
   bboxRadius: number = Infinity,
   arcBias: number = 1.0,
+  midCameraForward: Vector3 | null = null,
 ): Vector3 {
   const fromS = startPos.clone().sub(sceneCenter);
   const fromE = endPos.clone().sub(sceneCenter);
@@ -84,6 +88,17 @@ export function computeArcPosition(
       /** XZ で 90° 回転（右手系） */
       const biasDir = new Vector3(-ovXZ.z, 0, ovXZ.x);
 
+      /**
+       * midCameraForward が biasDir と同方向（XZ ドット積 > 0）の場合、
+       * バイアスがカメラの向いている側へ弧を押し出してしまうため符号を反転する。
+       * null の場合は従来通り +1 を使用する。
+       */
+      const biasSign =
+        midCameraForward !== null &&
+        midCameraForward.x * biasDir.x + midCameraForward.z * biasDir.z > 0
+          ? -1
+          : 1;
+
       /** dist が bboxRadius を超えるほど遠くにあるとき、横変位をバウンディングボックス半径に収める */
       const biasCap = isFinite(bboxRadius)
         ? Math.min(1.0, bboxRadius / Math.max(dist, 0.001))
@@ -91,7 +106,7 @@ export function computeArcPosition(
 
       dir.addScaledVector(
         biasDir,
-        antipodality * arcBias * biasCap * Math.sin(Math.PI * t),
+        biasSign * antipodality * arcBias * biasCap * Math.sin(Math.PI * t),
       );
     }
 
@@ -101,4 +116,51 @@ export function computeArcPosition(
   }
 
   return sceneCenter.clone().addScaledVector(dir, dist);
+}
+
+/**
+ * Object3D の配列からバウンディングボックス中心を計算する。
+ *
+ * 複数の Object3D を包含する最小直方体（AABB）を算出し、その中心座標を返す。
+ * GLB モデルの `modelChildren` を渡すことでシーン全体の中心を得られる。
+ *
+ * @param {Object3D[]} objects - バウンディングボックスを計算する対象の Object3D 配列
+ * @returns {Vector3} バウンディングボックスの中心座標。配列が空またはオブジェクトが空の場合は原点を返す。
+ *
+ * @example
+ * const center = computeBBoxCenter(modelChildren);
+ */
+export function computeBBoxCenter(objects: Object3D[]): Vector3 {
+  const bbox = new Box3();
+  objects.forEach((obj) => bbox.expandByObject(obj));
+
+  /** バウンディングボックスが空（オブジェクトなし）の場合は原点を返す */
+  if (bbox.isEmpty()) return new Vector3();
+
+  return bbox.getCenter(new Vector3());
+}
+
+/**
+ * カメラ位置とターゲット座標からカメラが向くべきクォータニオンを計算する。
+ *
+ * Three.js の lookAt 行列（カメラ→ワールド変換）を使用してクォータニオンを算出する。
+ * `camera.lookAt(target)` と等価な回転を数値として取得したい場合に使用する。
+ * バウンディングボックス中心をターゲットに指定することで、モデル全体を捉えた
+ * カメラ向きを事前計算できる。
+ *
+ * @param {Vector3} cameraPos - カメラの現在位置
+ * @param {Vector3} target - カメラが向くべきターゲット座標（バウンディングボックス中心など）
+ * @param {Vector3} [up] - カメラの上方向ベクトル。省略時は Y 軸正方向
+ * @returns {Quaternion} ターゲットに向いたカメラのクォータニオン
+ *
+ * @example
+ * const quat = computeLookAtQuaternion(endPos, bboxCenter);
+ */
+export function computeLookAtQuaternion(
+  cameraPos: Vector3,
+  target: Vector3,
+  up: Vector3 = new Vector3(0, 1, 0),
+): Quaternion {
+  const m = new Matrix4().lookAt(cameraPos, target, up);
+  return new Quaternion().setFromRotationMatrix(m);
 }

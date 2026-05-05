@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useEffect, useRef,useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import type { JSX } from 'react';
 
+import type { WorkControl } from '@/types/api';
+
+import { DepthOfField, EffectComposer } from '@react-three/postprocessing';
 import { useCubeTexture } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { DepthOfField, EffectComposer } from '@react-three/postprocessing';
 import { folder, useControls } from 'leva';
-import type { JSX } from 'react';
 import {
   type AmbientLight,
   type DirectionalLight,
@@ -15,9 +17,9 @@ import {
 
 import type { WorldProps } from '@/components/works/workThreeD/World';
 import {
+  CustomModel,
   CustomCamera,
   CustomControls,
-  CustomModel,
   Room,
 } from '@/components/works/workThreeD/World/modules';
 import { WORK_WORLD_ENV_COLORS } from '@/constants/colors';
@@ -42,21 +44,26 @@ import {
 import { useWindowSize } from '@/hooks';
 import { type ModelChildren } from '@/types/world';
 
-type Props = WorldProps;
+type Props = WorldProps & {
+  /** GLB 数値順ソート済み Controls データを通知するコールバック */
+  onControlsSorted: (sortedControls: WorkControl[]) => void;
+};
 
 const Experience = React.memo(
   ({
     content,
     isInitialControl,
     isStartControls,
-    isViewerActive,
+    viewerStatus,
     isLoading,
     currentIndex,
+    isCameraReady,
     dispatch,
     portalRef,
     introductionRef,
     controlsRef,
     toggleButtonRef,
+    onControlsSorted,
   }: Props): JSX.Element => {
     /** 環境光の参照 Ref */
     const ambientLightRef = useRef<AmbientLight | null>(null);
@@ -187,22 +194,21 @@ const Experience = React.memo(
     );
 
     /** 被写界深度パラメータ（開発環境デバッグ用 leva コントロール） */
-    const { dofFocusDistance, dofFocalLength, dofBokehScale } = useControls(
-      '被写界深度 (DepthOfField)',
-      {
-        dofFocusDistance: {
-          value: WORK_WORLD_DOF_PARAMS.focusDistance,
+    const { dofWorldFocusDistance, dofWorldFocusRange, dofBokehScale } =
+      useControls('被写界深度 (DepthOfField)', {
+        dofWorldFocusDistance: {
+          value: WORK_WORLD_DOF_PARAMS.worldFocusDistance,
           min: 0,
-          max: 1,
-          step: 0.001,
-          label: 'focusDistance',
+          max: 50,
+          step: 0.1,
+          label: 'worldFocusDistance (フォーカス距離)',
         },
-        dofFocalLength: {
-          value: WORK_WORLD_DOF_PARAMS.focalLength,
+        dofWorldFocusRange: {
+          value: WORK_WORLD_DOF_PARAMS.worldFocusRange,
           min: 0,
-          max: 1,
-          step: 0.001,
-          label: 'focalLength',
+          max: 30,
+          step: 0.1,
+          label: 'worldFocusRange (フォーカス範囲)',
         },
         dofBokehScale: {
           value: WORK_WORLD_DOF_PARAMS.bokehScale,
@@ -211,8 +217,7 @@ const Experience = React.memo(
           step: 0.1,
           label: 'bokehScale',
         },
-      },
-    );
+      });
 
     /** Three.js のシーンオブジェクトへ環境マップを適用する */
     useEffect(() => {
@@ -260,9 +265,10 @@ const Experience = React.memo(
           toggleButtonRef={toggleButtonRef}
           isInitialControl={isInitialControl}
           isStartControls={isStartControls}
-          isViewerActive={isViewerActive}
+          viewerStatus={viewerStatus}
           currentIndex={currentIndex}
           dispatch={dispatch}
+          onControlsSorted={onControlsSorted}
         />
 
         {/* 環境光 */}
@@ -322,6 +328,7 @@ const Experience = React.memo(
           isInitialControl={isInitialControl}
           isStartControls={isStartControls}
           currentIndex={currentIndex}
+          isCameraReady={isCameraReady}
           dispatch={dispatch}
         />
 
@@ -329,7 +336,7 @@ const Experience = React.memo(
         <Room />
 
         {/* カスタムコントロール */}
-        <CustomControls isViewerActive={isViewerActive} />
+        <CustomControls viewerStatus={viewerStatus} />
 
         <axesHelper args={[10]} visible={false} />
 
@@ -339,9 +346,19 @@ const Experience = React.memo(
           <EffectComposer>
             {/** 被写界深度の設定 */}
             <DepthOfField
-              focusDistance={IS_DEV ? dofFocusDistance : WORK_WORLD_DOF_PARAMS.focusDistance}
-              focalLength={IS_DEV ? dofFocalLength : WORK_WORLD_DOF_PARAMS.focalLength}
-              bokehScale={IS_DEV ? dofBokehScale : WORK_WORLD_DOF_PARAMS.bokehScale}
+              worldFocusDistance={
+                IS_DEV
+                  ? dofWorldFocusDistance
+                  : WORK_WORLD_DOF_PARAMS.worldFocusDistance
+              }
+              worldFocusRange={
+                IS_DEV
+                  ? dofWorldFocusRange
+                  : WORK_WORLD_DOF_PARAMS.worldFocusRange
+              }
+              bokehScale={
+                IS_DEV ? dofBokehScale : WORK_WORLD_DOF_PARAMS.bokehScale
+              }
               height={WORK_WORLD_DOF_PARAMS.height}
             />
           </EffectComposer>

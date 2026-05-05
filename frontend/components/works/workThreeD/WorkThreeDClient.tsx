@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useReducer, useRef } from 'react';
-import dynamic from 'next/dynamic';
-
+import React, { useCallback, useReducer, useRef, useState } from 'react';
 import type { JSX } from 'react';
+import dynamic from 'next/dynamic';
 
 import { Loading, PageHeader } from '@/components/common';
 import { Controls, Introduction, Portal } from '@/components/works/workThreeD';
+import { type WorkControl } from '@/types/api';
 
 /** Canvas を含む WorkWorld は SSR 非対応のため dynamic import で無効化 */
 const World = dynamic(
@@ -16,7 +16,11 @@ const World = dynamic(
 
 import s from '@/styles/workThreeD.module.css';
 import { type WorkDetail } from '@/types/api';
-import { type WorkThreeDAction, type WorkThreeDState } from '@/types/contexts';
+import {
+  type ViewerStatus,
+  type WorkThreeDAction,
+  type WorkThreeDState,
+} from '@/types/contexts';
 
 type Props = {
   /** 表示する作品の詳細データ */
@@ -37,11 +41,14 @@ const initialState: WorkThreeDState = {
   /** 指アイコン表示フラグ */
   isFingerVisible: true,
 
-  /** ビュワーアクティブフラグ（ビュワーモード中は true） */
-  isViewerActive: false,
+  /** ビュワーモードの状態 */
+  viewerStatus: 'passive' as ViewerStatus,
 
   /** 現在選択中のコントロールインデックス */
   currentIndex: 0,
+
+  /** カメラアニメーション完了フラグ（false: アニメーション中 / true: 完了してアニメーション再生可） */
+  isCameraReady: false,
 };
 
 /**
@@ -56,6 +63,8 @@ const workThreeDReducer = (
   action: WorkThreeDAction,
 ): WorkThreeDState => {
   switch (action.type) {
+    case 'SET_CAMERA_READY':
+      return { ...state, isCameraReady: action.payload };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     case 'SET_INITIAL_CONTROL':
@@ -64,23 +73,22 @@ const workThreeDReducer = (
       return { ...state, isStartControls: action.payload };
     case 'SET_FINGER_VISIBLE':
       return { ...state, isFingerVisible: action.payload };
-    case 'SET_VIEWER_ACTIVE':
-      return { ...state, isViewerActive: action.payload };
     case 'SET_CURRENT_INDEX':
       return { ...state, currentIndex: action.payload };
-    case 'TOGGLE_VIEWER':
-      /** isFingerVisible と isViewerActive を同一 payload で同時更新する */
+    case 'SET_VIEWER_STATUS':
       return {
         ...state,
-        isFingerVisible: action.payload,
-        isViewerActive: action.payload,
+        viewerStatus: action.payload,
+        /** active 遷移時は指アイコンをリセットして表示する */
+        ...(action.payload === 'active' ? { isFingerVisible: true } : {}),
       };
     case 'NAVIGATE_TO':
-      /** isInitialControl を false にし、選択インデックスを更新する */
+      /** isInitialControl を false にし、選択インデックスを更新、カメラアニメーション完了フラグをリセット */
       return {
         ...state,
         isInitialControl: false,
         currentIndex: action.payload,
+        isCameraReady: false,
       };
     default:
       return state;
@@ -108,6 +116,22 @@ const WorkThreeDClient = ({ content }: Props): JSX.Element => {
   /** work 個別ページの状態 (3D) */
   const [state, dispatch] = useReducer(workThreeDReducer, initialState);
 
+  /**
+   * GLB ソート済みの Controls データ。
+   * generateControlsCameraConfigs の初回呼び出し完了前は content.controls を使用する。
+   */
+  const [sortedControls, setSortedControls] = useState<WorkControl[]>(
+    content.controls,
+  );
+
+  /**
+   * CustomCamera からソート済み Controls データを受け取るコールバック。
+   * modelChildren が利用可能になったタイミングで一度だけ呼ばれる。
+   */
+  const handleControlsSorted = useCallback((controls: WorkControl[]): void => {
+    setSortedControls(controls);
+  }, []);
+
   return (
     <>
       <Loading isLoading={state.isLoading} />
@@ -117,13 +141,15 @@ const WorkThreeDClient = ({ content }: Props): JSX.Element => {
         isLoading={state.isLoading}
         isInitialControl={state.isInitialControl}
         isStartControls={state.isStartControls}
-        isViewerActive={state.isViewerActive}
+        viewerStatus={state.viewerStatus}
         currentIndex={state.currentIndex}
+        isCameraReady={state.isCameraReady}
         dispatch={dispatch}
         portalRef={portalRef}
         introductionRef={introductionRef}
         controlsRef={controlsRef}
         toggleButtonRef={toggleButtonRef}
+        onControlsSorted={handleControlsSorted}
       />
 
       <PageHeader
@@ -142,7 +168,7 @@ const WorkThreeDClient = ({ content }: Props): JSX.Element => {
         content={content}
         introductionRef={introductionRef}
         isLoading={state.isLoading}
-        isViewerActive={state.isViewerActive}
+        viewerStatus={state.viewerStatus}
         isFingerVisible={state.isFingerVisible}
         toggleButtonRef={toggleButtonRef}
         dispatch={dispatch}
@@ -150,6 +176,7 @@ const WorkThreeDClient = ({ content }: Props): JSX.Element => {
 
       <Controls
         content={content}
+        controls={sortedControls}
         controlsRef={controlsRef}
         currentIndex={state.currentIndex}
         isLoading={state.isLoading}

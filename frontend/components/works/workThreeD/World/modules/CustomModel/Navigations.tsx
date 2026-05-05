@@ -47,6 +47,12 @@ const Navigations = React.memo(
           .filter((child: Object3D) =>
             WORK_WORLD_NAVIGATION_SECTION_REGEX.test(child.name),
           )
+          /** GLB 数値インデックス（IS_Sec3_<n>_*） 順にソート */
+          .sort((a: Object3D, b: Object3D) => {
+            const nA = parseInt(a.name.match(/^IS_Sec3_(\d+)/)?.[1] ?? '0', 10);
+            const nB = parseInt(b.name.match(/^IS_Sec3_(\d+)/)?.[1] ?? '0', 10);
+            return nA - nB;
+          })
           .map((child: Object3D, i: number) => (
             <Html
               key={i}

@@ -20,6 +20,9 @@ type Props = {
   /** 表示する作品の詳細データ */
   content: WorkDetail;
 
+  /** GLB 数値順にソート済みの Controls データリスト */
+  controls: WorkControl[];
+
   /** Controls セクションのルート要素の ref */
   controlsRef: RefObject<HTMLDivElement | null>;
 
@@ -36,6 +39,7 @@ type Props = {
 const Controls = React.memo(
   ({
     content,
+    controls,
     controlsRef,
     currentIndex,
     isLoading,
@@ -104,7 +108,7 @@ const Controls = React.memo(
                         : 0,
                 }}
               >
-                {content.controls.map((item: WorkControl, i: number) => (
+                {controls.map((item: WorkControl, i: number) => (
                   <ControlItems
                     key={i}
                     index={i}
@@ -127,7 +131,7 @@ const Controls = React.memo(
                 sx={{ width: width! > BREAK_POINTS.LG ? 350 : 300 }}
                 id="controls-mb-text"
               >
-                {content.controls.map((item: WorkControl, i: number) => (
+                {controls.map((item: WorkControl, i: number) => (
                   <ControlItems
                     key={i}
                     index={i}
@@ -150,7 +154,7 @@ const Controls = React.memo(
                 }}
                 id="controls-mb-carousel"
               >
-                {content.controls.map((_, i: number) => (
+                {controls.map((_, i: number) => (
                   <Typography
                     key={i}
                     component="span"
