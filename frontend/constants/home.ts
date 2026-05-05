@@ -1,4 +1,4 @@
-import { MeshStandardMaterial, Vector3 } from 'three';
+import { Vector3 } from 'three';
 
 import { type TimePoint, type WeatherItem } from '@/types/api';
 import { type HomeWorldRigCameraPositions } from '@/types/home';
@@ -20,26 +20,18 @@ export const HOME_WORKS_LEARN_MORE = 'Learn More >';
  *  アセットパス
  * ============================================ */
 
-/** 山モデルのファイルパス */
-export const HOME_WORLD_MOUNTAIN_MODEL_PATH = '/models/gltf/mountain.glb';
+/** 地形モデルのファイルパス */
+export const HOME_WORLD_TERRAIN_MODEL_PATH = '/models/gltf/Geo_Terrain.glb';
 
 /** ドアモデルのファイルパス */
-export const HOME_WORLD_DOOR_MODEL_PATH = '/models/gltf/door.glb';
+export const HOME_WORLD_DOOR_MODEL_PATH = '/models/gltf/Geo_Door.glb';
 
-/** 地形モデル（新）のファイルパス。旧 mountain.glb との比較デバッグ用 */
-export const HOME_WORLD_TERRAIN_MODEL_PATH = '/models/gltf/SM_Terrain.glb';
-
-export const HOME_WORLD_GEO_TERRAIN_MODEL_PATH = '/models/gltf/Geo_Terrain.glb';
-
-/** ドアモデル（新）のファイルパス。旧 door.glb との比較デバッグ用 */
-export const HOME_WORLD_SM_DOOR_MODEL_PATH = '/models/gltf/SM_Door.glb';
-
-/** 地形モデル（新）のファイルパス。旧 Geo_Door.glb との比較デバッグ用 */
-export const HOME_WORLD_GEO_DOOR_MODEL_PATH = '/models/gltf/Geo_Door.glb';
-
-/** 水面の法線マップテクスチャファイルパス */
-export const HOME_WORLD_WATER_NORMALS_TEXTURE =
+/** 川水面の法線マップテクスチャファイルパス */
+export const HOME_WORLD_RIVER_NORMALS_TEXTURE =
   'images/textures/waternormals.jpg';
+
+/** 川水面の法線マップテクスチャサイズ（px） */
+export const HOME_WORLD_RIVER_TEXTURE_SIZE = 512;
 
 /** 薄雲テクスチャのファイルパス */
 export const HOME_WORLD_THIN_CLOUD_TEXTURE = '/images/textures/thin_cloud.png';
@@ -320,87 +312,25 @@ export const WEATHER_DESCRIPTIONS_CLEAR_SKY = [
 ] as const;
 
 /** ============================================
- *  山モデル
- * ============================================ */
-
-/** Home World の山のマテリアルの粗さ */
-export const MOUNTAIN_ROUGHNESS = 0.45;
-
-/**
- * Home World の山のマテリアル。
- * @deprecated Blender 側への roughness ベイク対応後に削除予定。
- */
-export const HOME_WORLD_MOUNTAIN_MATERIALS = {
-  treeMat_1: new MeshStandardMaterial({
-    roughness: MOUNTAIN_ROUGHNESS,
-    name: 'Tree_1',
-  }),
-  treeMat_2: new MeshStandardMaterial({
-    roughness: MOUNTAIN_ROUGHNESS,
-    name: 'Tree_2',
-  }),
-  leavesMat_1: new MeshStandardMaterial({
-    roughness: MOUNTAIN_ROUGHNESS,
-    name: 'Leaves_1',
-  }),
-  leavesMat_2: new MeshStandardMaterial({
-    roughness: MOUNTAIN_ROUGHNESS,
-    name: 'Leaves_2',
-  }),
-  leavesMat_3: new MeshStandardMaterial({
-    roughness: MOUNTAIN_ROUGHNESS,
-    name: 'Leaves_3',
-  }),
-  leavesMat_4: new MeshStandardMaterial({
-    roughness: MOUNTAIN_ROUGHNESS,
-    name: 'Leaves_4',
-  }),
-  leavesMat_5: new MeshStandardMaterial({
-    roughness: MOUNTAIN_ROUGHNESS,
-    name: 'Leaves_5',
-  }),
-  leavesMat_6: new MeshStandardMaterial({
-    roughness: MOUNTAIN_ROUGHNESS,
-    name: 'Leaves_6',
-  }),
-};
-
-/** ============================================
  *  カメラ
  * ============================================ */
 
+/** カメラリグの共通開始点（全ブレークポイントで共通） */
+export const HOME_WORLD_RIG_CAMERA_START = new Vector3(0, 45, 125);
+
 /** Home World のリグカメラの位置 */
 export const HOME_WORLD_RIG_CAMERA_POSITIONS: HomeWorldRigCameraPositions = {
-  xs: {
-    start: new Vector3(-3, 5.2, 31),
-    end: new Vector3(-3.61, -0.22, 4.2),
-  },
+  xs: { endY: 0.8, mid: new Vector3(0, 0.8, 2) },
   sm: {
-    wrap: {
-      start: new Vector3(-3, 1.2, 22),
-      end: new Vector3(-3.61, -2.89, 4.2),
-    },
-    side: {
-      start: new Vector3(-3, 2.2, 22),
-      end: new Vector3(-3.61, -0.9, 4.1),
-    },
+    /** 縦持ちを想定 */
+    wrap: { endY: -2, mid: new Vector3(0, -2, 2) },
+    /** 横向きを想定 */
+    side: { endY: 0, mid: new Vector3(0, 0, 2) },
   },
-  tb: {
-    start: new Vector3(-2.7, 2.4, 20),
-    end: new Vector3(-3.6, -1.04, 4.18),
-  },
-  lg: {
-    start: new Vector3(-2.7, 3.0, 20),
-    end: new Vector3(-3.61, -0.05, 4.12),
-  },
-  xl: {
-    start: new Vector3(-2.5, 2.4, 19),
-    end: new Vector3(-3.62, -0.25, 4.12),
-  },
-  xxl: {
-    start: new Vector3(-2.5, 2.4, 19),
-    end: new Vector3(-3.6, -0.52, 4.12),
-  },
+  tb: { endY: -0.1, mid: new Vector3(0, -0.1, 2) },
+  lg: { endY: 0.8, mid: new Vector3(0, 1.0, 2) },
+  xl: { endY: 0.6, mid: new Vector3(0, 0.8, 2) },
+  xxl: { endY: 0.6, mid: new Vector3(0, 0.6, 2) },
 };
 
 /** ============================================
@@ -408,22 +338,25 @@ export const HOME_WORLD_RIG_CAMERA_POSITIONS: HomeWorldRigCameraPositions = {
  * ============================================ */
 
 /** 影のテクスチャサイズ */
-export const HOME_WORLD_SHADOW_MAP_SIZE = 512;
+export const HOME_WORLD_SHADOW_MAP_SIZE = 2048;
 
 /** 影のカメラ範囲（正方形の半サイズ） */
-export const HOME_WORLD_SHADOW_CAMERA_HALF_SIZE = 20;
+export const HOME_WORLD_SHADOW_CAMERA_HALF_SIZE = 500;
 
 /** シャドウカメラのニアクリップ距離 */
 export const HOME_WORLD_SHADOW_CAMERA_NEAR = 1;
 
 /** シャドウカメラのファークリップ距離 */
-export const HOME_WORLD_SHADOW_CAMERA_FAR = 100;
+export const HOME_WORLD_SHADOW_CAMERA_FAR = 1000;
 
 /** シャドウのぼかし半径 */
-export const HOME_WORLD_SHADOW_RADIUS = 10;
+export const HOME_WORLD_SHADOW_RADIUS = 1;
 
-/** シャドウのノーマルバイアス（セルフシャドウのアクネ抑制） */
-export const HOME_WORLD_SHADOW_NORMAL_BIAS = 0.11;
+/** シャドウのノーマルバイアス */
+export const HOME_WORLD_SHADOW_NORMAL_BIAS = 2.05;
+
+/** シャドウのバイアス */
+export const HOME_WORLD_SHADOW_BIAS = 0.0025;
 
 /** 太陽光の位置 */
 export const HOME_WORLD_SUN_LIGHT_POSITION = [50, 50, 50] as const;
@@ -458,10 +391,10 @@ export const HOME_WORLD_SUN_LIGHT_INTENSITY_OFFSET_LUNCH = 0.8;
  * ============================================ */
 
 /** 雷ポイントライトの輝度 */
-export const HOME_WORLD_LIGHTNING_LIGHT_INTENSITY = 800000;
+export const HOME_WORLD_LIGHTNING_LIGHT_INTENSITY = 8000000;
 
 /** 雷ポイントライトの有効距離 */
-export const HOME_WORLD_LIGHTNING_LIGHT_DISTANCE = 80;
+export const HOME_WORLD_LIGHTNING_LIGHT_DISTANCE = 800;
 
 /** 雷ポイントライトの減衰係数 */
 export const HOME_WORLD_LIGHTNING_LIGHT_DECAY = 2;
@@ -478,7 +411,18 @@ export const HOME_WORLD_LIGHTNING_POSITION_X_RANGE = 350;
 export const HOME_WORLD_LIGHTNING_POSITION_Z_RANGE = 25;
 
 /** 雷落下位置の Y 座標 */
-export const HOME_WORLD_LIGHTNING_POSITION_Y = 5;
+export const HOME_WORLD_LIGHTNING_POSITION_Y = 75;
+
+/** 雷の power（輝度）計算に使う係数（`occurrenceProbability.power(v)` の引数 v） */
+export const HOME_WORLD_LIGHTNING_POWER_SCALE = 800;
+
+/**
+ * 雷雨（弱）の発光輝度上限。
+ * NORMAL/HEAVY より低い輝度に抑え、弱い雷としての視覚差を維持する。
+ * LIGHTNING_POSITION_UPDATE_THRESHOLD と同値にすることで、
+ * LIGHT の発光後に即座に次の落雷位置が更新されることを保証する。
+ */
+export const HOME_WORLD_LIGHTNING_LIGHT_POWER_CAP = 500000;
 
 /** 厚雲の最大不透明度を約 91% に抑えるための除数（iOS 以外で使用） */
 export const HOME_WORLD_THICK_CLOUD_OPACITY_DIVISOR = 110;
@@ -486,34 +430,15 @@ export const HOME_WORLD_THICK_CLOUD_OPACITY_DIVISOR = 110;
 /** 薄雲の不透明度計算の除数（雲量 / 100） */
 export const HOME_WORLD_THIN_CLOUD_OPACITY_DIVISOR = 100;
 
-/** モバイル表示時の薄雲 envMapIntensity 補正値 */
-export const HOME_WORLD_THIN_CLOUD_ENV_INTENSITY_MOBILE_OFFSET = 20;
-
 /** ============================================
  *  霧パラメータ
  * ============================================ */
 
-/** 霧の開始距離（デスクトップ） */
-export const HOME_WORLD_FOG_NEAR_DESKTOP = 4;
+/** 霧の開始距離 */
+export const HOME_WORLD_FOG_NEAR = 4;
 
-/** 霧の開始距離（モバイル） */
-export const HOME_WORLD_FOG_NEAR_MOBILE = 5;
-
-/** 霧の終端距離ベース値（デスクトップ）。湿度を減算して実効値を算出する */
-export const HOME_WORLD_FOG_FAR_BASE_DESKTOP = 140;
-
-/** 霧の終端距離ベース値（モバイル）。湿度を減算して実効値を算出する */
-export const HOME_WORLD_FOG_FAR_BASE_MOBILE = 160;
-
-/** ============================================
- *  水面パラメータ
- * ============================================ */
-
-/** 水面の法線マップテクスチャサイズ（px） */
-export const HOME_WORLD_OCEAN_TEXTURE_SIZE = 512;
-
-/** 水面メッシュの一辺のサイズ */
-export const HOME_WORLD_OCEAN_GEOMETRY_SIZE = 15;
+/** 霧の終端距離ベース値。湿度を減算して実効値を算出する */
+export const HOME_WORLD_FOG_FAR_BASE = 1500;
 
 /** ============================================
  *  雲レイアウト
@@ -522,46 +447,50 @@ export const HOME_WORLD_OCEAN_GEOMETRY_SIZE = 15;
 /** 薄雲のデスクトップ設定 */
 export const HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP = {
   scale: 1,
-  position: [0, -0.5, -41] as [number, number, number],
+  position: [0, 165, -40] as [number, number, number],
   rotationDeg: [75, 0, 0] as [number, number, number],
-} as const;
-
-/** 薄雲のモバイル設定 */
-export const HOME_WORLD_THIN_CLOUD_CONFIG_MOBILE = {
-  scale: 0.9,
-  position: [-5, 18, 10] as [number, number, number],
-  rotationDeg: [55, 0, 180] as [number, number, number],
 } as const;
 
 /** 厚雲のデスクトップ設定 */
 export const HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP = {
   scale: 1.3,
-  position: [0, 5.3, -10] as [number, number, number],
+  position: [0, 200, -10] as [number, number, number],
   rotationDeg: [75, 0, -90] as [number, number, number],
 } as const;
 
-/** 厚雲のモバイル設定 */
-export const HOME_WORLD_THICK_CLOUD_CONFIG_MOBILE = {
-  scale: 2,
-  position: [0, 5.3, -10] as [number, number, number],
-  rotationDeg: [75, 0, -90] as [number, number, number],
-} as const;
+/** 薄雲メッシュの幅 */
+export const HOME_WORLD_THIN_CLOUD_GEOMETRY_WIDTH = 835;
 
-/** 薄雲メッシュの一辺のサイズ */
-export const HOME_WORLD_THIN_CLOUD_GEOMETRY_SIZE = 85;
+/** 薄雲メッシュの高さ */
+export const HOME_WORLD_THIN_CLOUD_GEOMETRY_HEIGHT = 1400;
 
 /** 厚雲メッシュの一辺のサイズ */
-export const HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE = 100;
+export const HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE = 1400;
 
 /** ============================================
  *  星のデフォルト値
  * ============================================ */
 
 /** 星のデフォルト数 */
-export const HOME_WORLD_DEFAULT_STAR_COUNT = 9500;
+export const HOME_WORLD_DEFAULT_STAR_COUNT = 3500;
 
-/** 星のデフォルト色 */
-export const HOME_WORLD_DEFAULT_STAR_COLOR = '#ffffff';
+/** 星のデフォルト生成範囲 X（全幅） */
+export const HOME_WORLD_DEFAULT_SPREAD_X = 950;
+
+/** 星のデフォルト生成範囲 Y（全高） */
+export const HOME_WORLD_DEFAULT_SPREAD_Y = 700;
+
+/** 星のデフォルト生成範囲 Z 最小値 */
+export const HOME_WORLD_DEFAULT_Z_MIN = -370;
+
+/** 星のデフォルト生成範囲 Z 最大値 */
+export const HOME_WORLD_DEFAULT_Z_MAX = -500;
+
+/** 星のデフォルト透明度 */
+export const HOME_WORLD_DEFAULT_STAR_OPACITY = 0.8;
+
+/** 星のデフォルトサイズ */
+export const HOME_WORLD_DEFAULT_STAR_SIZE = 1.5;
 
 /** ============================================
  *  雷パラメータ
@@ -577,14 +506,17 @@ export const HOME_WORLD_LIGHTNING_DEFAULT_THRESHOLD = 0.93;
 /**
  * 発光が「大きな落雷」とみなす輝度のボーダー値。
  * この値を超えたフレームでは発光演出を毎フレーム継続し、自然な収束を表現する。
+ * POWER_SCALE × 1000 に合わせて調整する（800 × 1000 = 800000）。
  */
-export const HOME_WORLD_LIGHTNING_POWER_CONTINUATION_THRESHOLD = 8000;
+export const HOME_WORLD_LIGHTNING_POWER_CONTINUATION_THRESHOLD = 800000;
 
 /**
  * 落雷位置を更新する輝度のボーダー値。
  * 発光輝度がこの値を下回るフレームで次の落雷位置をランダムに更新する。
+ * LIGHT の上限（LIGHTNING_LIGHT_POWER_CAP）と同値にすることで、
+ * LIGHT 発光後に即座に次の位置更新が走ることを保証する。
  */
-export const HOME_WORLD_LIGHTNING_POSITION_UPDATE_THRESHOLD = 5000;
+export const HOME_WORLD_LIGHTNING_POSITION_UPDATE_THRESHOLD = 500000;
 
 /** ============================================
  *  デバッグコントロール（Leva）
@@ -680,8 +612,8 @@ export const HOME_WORLD_DEBUG_WEATHER_CONFIGS: Record<
 
 /** Home World デバッグ用：霧コントロール */
 export const HOME_WORLD_DEBUG_FOG_CONTROLS = {
-  near: { value: 4, min: 0, max: 10, label: '霧の最少距離' },
-  far: { value: 100, min: 0, max: 200, label: '霧の最大距離' },
+  near: { value: 4, min: 0, max: 1000, step: 0.1, label: '霧の最少距離' },
+  far: { value: 100, min: 0, max: 2000, step: 0.1, label: '霧の最大距離' },
 };
 
 /** Home World デバッグ用：霧の色コントロール */
@@ -707,6 +639,146 @@ export const HOME_WORLD_DEBUG_CLOUD_CONTROLS = {
     step: 0.01,
     label: '厚雲透明度',
   },
+  thinCloudPosX: {
+    value: HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.position[0],
+    min: -200,
+    max: 200,
+    step: 0.1,
+    label: '薄雲 X',
+  },
+  thinCloudPosY: {
+    value: HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.position[1],
+    min: -200,
+    max: 200,
+    step: 0.1,
+    label: '薄雲 Y',
+  },
+  thinCloudPosZ: {
+    value: HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.position[2],
+    min: -200,
+    max: 200,
+    step: 0.1,
+    label: '薄雲 Z',
+  },
+  thinCloudRotX: {
+    value: HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.rotationDeg[0],
+    min: -360,
+    max: 360,
+    step: 1,
+    label: '薄雲 RotX°',
+  },
+  thinCloudRotY: {
+    value: HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.rotationDeg[1],
+    min: -360,
+    max: 360,
+    step: 1,
+    label: '薄雲 RotY°',
+  },
+  thinCloudRotZ: {
+    value: HOME_WORLD_THIN_CLOUD_CONFIG_DESKTOP.rotationDeg[2],
+    min: -360,
+    max: 360,
+    step: 1,
+    label: '薄雲 RotZ°',
+  },
+  thickCloudPosX: {
+    value: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.position[0],
+    min: -200,
+    max: 200,
+    step: 0.1,
+    label: '厚雲 X',
+  },
+  thickCloudPosY: {
+    value: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.position[1],
+    min: -200,
+    max: 200,
+    step: 0.1,
+    label: '厚雲 Y',
+  },
+  thickCloudPosZ: {
+    value: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.position[2],
+    min: -200,
+    max: 200,
+    step: 0.1,
+    label: '厚雲 Z',
+  },
+  thickCloudRotX: {
+    value: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.rotationDeg[0],
+    min: -360,
+    max: 360,
+    step: 1,
+    label: '厚雲 RotX°',
+  },
+  thickCloudRotY: {
+    value: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.rotationDeg[1],
+    min: -360,
+    max: 360,
+    step: 1,
+    label: '厚雲 RotY°',
+  },
+  thickCloudRotZ: {
+    value: HOME_WORLD_THICK_CLOUD_CONFIG_DESKTOP.rotationDeg[2],
+    min: -360,
+    max: 360,
+    step: 1,
+    label: '厚雲 RotZ°',
+  },
+  thinCloudWidth: {
+    value: HOME_WORLD_THIN_CLOUD_GEOMETRY_WIDTH,
+    min: 1,
+    max: 1400,
+    step: 1,
+    label: '薄雲 幅',
+  },
+  thinCloudHeight: {
+    value: HOME_WORLD_THIN_CLOUD_GEOMETRY_HEIGHT,
+    min: 1,
+    max: 1400,
+    step: 1,
+    label: '薄雲 高さ',
+  },
+  thickCloudWidth: {
+    value: HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE,
+    min: 1,
+    max: 1500,
+    step: 1,
+    label: '厚雲 幅',
+  },
+  thickCloudHeight: {
+    value: HOME_WORLD_THICK_CLOUD_GEOMETRY_SIZE,
+    min: 1,
+    max: 1500,
+    step: 1,
+    label: '厚雲 高さ',
+  },
+  thinCloudRepeatX: {
+    value: 1,
+    min: 0.01,
+    max: 20,
+    step: 0.01,
+    label: '薄雲 RepeatX',
+  },
+  thinCloudRepeatY: {
+    value: 2,
+    min: 0.01,
+    max: 20,
+    step: 0.01,
+    label: '薄雲 RepeatY',
+  },
+  thickCloudRepeatX: {
+    value: 7,
+    min: 0.01,
+    max: 50,
+    step: 0.01,
+    label: '厚雲 RepeatX',
+  },
+  thickCloudRepeatY: {
+    value: 7,
+    min: 0.01,
+    max: 50,
+    step: 0.01,
+    label: '厚雲 RepeatY',
+  },
 };
 
 /** Home World デバッグ用：ライトヘルパーコントロール */
@@ -717,20 +789,6 @@ export const HOME_WORLD_DEBUG_LIGHT_HELPER_CONTROLS = {
 
 /** Home World デバッグ用：ライトヘルパーサイズ */
 export const HOME_WORLD_DEBUG_LIGHT_HELPER_SIZE = 30;
-
-/** Home World デバッグ用：水面コントロール */
-export const HOME_WORLD_DEBUG_OCEAN_CONTROLS = {
-  visible: { value: false, label: '水面表示' },
-  color: { label: '水面の色' },
-  distortionScale: {
-    value: 1.6,
-    min: 0,
-    max: 10,
-    step: 0.01,
-    label: '波の粗さ',
-  },
-  speed: { value: 0.2, min: 0, max: 5, step: 0.01, label: '波の変化速度' },
-};
 
 /** Home World デバッグ用：星コントロール */
 export const HOME_WORLD_DEBUG_STAR_CONTROLS = {
@@ -744,6 +802,34 @@ export const HOME_WORLD_DEBUG_STAR_CONTROLS = {
     max: 30000,
     step: 100,
     label: '星の数',
+  },
+  spreadX: {
+    value: HOME_WORLD_DEFAULT_SPREAD_X,
+    min: 0,
+    max: 2000,
+    step: 10,
+    label: '生成範囲 X（全幅）',
+  },
+  spreadY: {
+    value: HOME_WORLD_DEFAULT_SPREAD_Y,
+    min: 0,
+    max: 2000,
+    step: 10,
+    label: '生成範囲 Y（全高）',
+  },
+  zMin: {
+    value: HOME_WORLD_DEFAULT_Z_MIN,
+    min: -500,
+    max: 0,
+    step: 1,
+    label: '生成範囲 Z 最小',
+  },
+  zMax: {
+    value: HOME_WORLD_DEFAULT_Z_MAX,
+    min: -500,
+    max: 0,
+    step: 1,
+    label: '生成範囲 Z 最大',
   },
 };
 
@@ -767,6 +853,55 @@ export const THUNDERSTORM_TYPE_HEAVY = 'heavy' as const;
 export const HOME_WORLD_DEBUG_SUN_LIGHT_CONTROLS = {
   color: { label: '太陽光の色' },
   intensity: { value: 3.0, min: 0, max: 10, step: 0.01, label: '輝度' },
+  shadowCameraLeft: {
+    value: -HOME_WORLD_SHADOW_CAMERA_HALF_SIZE,
+    min: -500,
+    max: 0,
+    step: 1,
+    label: 'Shadow Left',
+  },
+  shadowCameraRight: {
+    value: HOME_WORLD_SHADOW_CAMERA_HALF_SIZE,
+    min: 0,
+    max: 500,
+    step: 1,
+    label: 'Shadow Right',
+  },
+  shadowCameraTop: {
+    value: HOME_WORLD_SHADOW_CAMERA_HALF_SIZE,
+    min: 0,
+    max: 500,
+    step: 1,
+    label: 'Shadow Top',
+  },
+  shadowCameraBottom: {
+    value: -HOME_WORLD_SHADOW_CAMERA_HALF_SIZE,
+    min: -500,
+    max: 0,
+    step: 1,
+    label: 'Shadow Bottom',
+  },
+  shadowCameraFar: {
+    value: HOME_WORLD_SHADOW_CAMERA_FAR,
+    min: 1,
+    max: 1000,
+    step: 1,
+    label: 'Shadow Far',
+  },
+  shadowNormalBias: {
+    value: HOME_WORLD_SHADOW_NORMAL_BIAS,
+    min: 0,
+    max: 5,
+    step: 0.001,
+    label: 'Normal Bias',
+  },
+  shadowBias: {
+    value: HOME_WORLD_SHADOW_BIAS,
+    min: -0.05,
+    max: 0.05,
+    step: 0.0001,
+    label: 'Bias',
+  },
 };
 
 /** Home World デバッグ用：雷コントロール */
@@ -789,6 +924,48 @@ export const HOME_WORLD_DEBUG_LIGHTNING_CONTROLS = {
     step: 1,
     label: '発生確率（％）',
   },
+  positionXRange: {
+    value: HOME_WORLD_LIGHTNING_POSITION_X_RANGE,
+    min: 0,
+    max: 1000,
+    step: 1,
+    label: 'X 分散範囲',
+  },
+  positionZRange: {
+    value: HOME_WORLD_LIGHTNING_POSITION_Z_RANGE,
+    min: 0,
+    max: 200,
+    step: 1,
+    label: 'Z 分散範囲',
+  },
+  positionY: {
+    value: HOME_WORLD_LIGHTNING_POSITION_Y,
+    min: 0,
+    max: 200,
+    step: 1,
+    label: 'Y 高度',
+  },
+  powerScale: {
+    value: HOME_WORLD_LIGHTNING_POWER_SCALE,
+    min: 1,
+    max: 1000,
+    step: 1,
+    label: '輝度スケール',
+  },
+  distance: {
+    value: HOME_WORLD_LIGHTNING_LIGHT_DISTANCE,
+    min: 0,
+    max: 20000,
+    step: 10,
+    label: '有効距離',
+  },
+  decay: {
+    value: HOME_WORLD_LIGHTNING_LIGHT_DECAY,
+    min: 0,
+    max: 100,
+    step: 0.1,
+    label: '減衰係数',
+  },
 };
 
 /** Home World デバッグ用：雨（Canvas）コントロール */
@@ -808,11 +985,14 @@ export const HOME_WORLD_DEBUG_RAIN_CONTROLS = {
  */
 export const HOME_WORLD_DEBUG_RIG_CAMERA_CONTROLS = {
   startX: { min: -15, max: 5, step: 0.01, label: '開始 X' },
-  startY: { min: -5, max: 35, step: 0.01, label: '開始 Y' },
-  startZ: { min: 0, max: 85, step: 0.01, label: '開始 Z' },
+  startY: { min: -5, max: 65, step: 0.01, label: '開始 Y' },
+  startZ: { min: 0, max: 125, step: 0.01, label: '開始 Z' },
   endX: { min: -8, max: 0, step: 0.01, label: '終了 X' },
   endY: { min: -5, max: 5, step: 0.01, label: '終了 Y' },
-  endZ: { min: 0, max: 10, step: 0.01, label: '終了 Z' },
+  endZ: { min: -10, max: 10, step: 0.01, label: '終了 Z' },
+  midX: { min: -100, max: 100, step: 0.1, label: '中間点 X' },
+  midY: { min: -5, max: 65, step: 0.1, label: '中間点 Y' },
+  midZ: { min: 0, max: 125, step: 0.1, label: '中間点 Z' },
   modelsOffsetY: { min: -5, max: 1, step: 0.01, label: 'モデル Y' },
   doorStart: { min: 10, max: 80, step: 1, label: 'ドア開始 (%)' },
   doorEnd: { min: 60, max: 200, step: 1, label: 'ドア終了 (%)' },
@@ -836,8 +1016,8 @@ export const HOME_WORLD_SCENE_NAME_MODELS = 'models' as const;
 export const HOME_WORLD_SCENE_NAME_CAMERA_CONTAINER =
   'camera-container' as const;
 
-/** 山モデルのグループ */
-export const HOME_WORLD_SCENE_NAME_MOUNTAIN = 'mountain' as const;
+/** 地形モデルのグループ */
+export const HOME_WORLD_SCENE_NAME_TERRAIN = 'terrain' as const;
 
 /** 雲グループ */
 export const HOME_WORLD_SCENE_NAME_CLOUDS = 'clouds' as const;
@@ -853,9 +1033,6 @@ export const HOME_WORLD_SCENE_NAME_STAR_CONTAINER = 'star-container' as const;
 
 /** 星のポイントメッシュ */
 export const HOME_WORLD_SCENE_NAME_STAR = 'star' as const;
-
-/** 水面グループ */
-export const HOME_WORLD_SCENE_NAME_WATER = 'water' as const;
 
 /** ドアグループ */
 export const HOME_WORLD_SCENE_NAME_DOOR = 'Door' as const;
@@ -897,3 +1074,207 @@ export const WEATHER_DESCRIPTION_BROKEN_CLOUDS = 'broken clouds' as const;
 
 /** 小雨（弱い雨 / フォールバック用） */
 export const WEATHER_DESCRIPTION_LIGHT_RAIN = 'light rain' as const;
+
+/**
+ * 雨 Canvas のオーバーフローオフセット（px）。
+ * Canvas をビューポートより左右上下この値分大きく描画し、
+ * \`rotateZ\` 回転時に角が途切れないよう余白を確保する。
+ */
+export const HOME_WORLD_RAIN_CANVAS_OVERFLOW_OFFSET = 300;
+
+/**
+ * 雨量係数（モバイル）。
+ * 1 時間降雨量（mm）に乗じて雨粒数を算出する。
+ * デスクトップより小さい値で処理負荷を軽減する。
+ */
+export const HOME_WORLD_RAIN_FALL_MULTIPLIER_XS = 180;
+
+/**
+ * 雨量係数（デスクトップ）。
+ * 1 時間降雨量（mm）に乗じて雨粒数を算出する。
+ */
+export const HOME_WORLD_RAIN_FALL_MULTIPLIER_BASE = 250;
+
+/** 雨粒の水平速度（モバイル） */
+export const HOME_WORLD_RAIN_SPEED_X_XS = 1.5;
+
+/** 雨粒の水平速度（デスクトップ） */
+export const HOME_WORLD_RAIN_SPEED_X_BASE = 2;
+
+/** 雨粒の落下速度（モバイル） */
+export const HOME_WORLD_RAIN_SPEED_Y_XS = 15;
+
+/** 雨粒の落下速度（デスクトップ） */
+export const HOME_WORLD_RAIN_SPEED_Y_BASE = 20;
+
+/** ============================================
+ *  ドアモデル（Geo_Door.glb）ピボット
+ * ============================================ */
+
+/**
+ * SM_DoorPanel ジオメトリの X 方向半幅（= ヒンジ端までのオフセット）。
+ * Geo_Door.glb はジオメトリ原点が扉中央（X: -0.3965〜+0.3965）のため
+ * ピボットトリックで左ヒンジを回転軸にするために使用する。
+ */
+export const HOME_WORLD_DOOR_PANEL_HINGE_OFFSET_X = 0.3965;
+
+/** ============================================
+ *  ドア室内ライト（ポイントライト）
+ * ============================================ */
+
+/** ドア室内ポイントライトの出力（Power） */
+export const HOME_WORLD_DOOR_LIGHT_POWER = 50;
+
+/** ドア室内ポイントライトの距離 */
+export const HOME_WORLD_DOOR_LIGHT_DISTANCE = 3.0;
+
+/** ドア室内ポイントライトの減衰 */
+export const HOME_WORLD_DOOR_LIGHT_DECAY = 1;
+
+/**
+ * ドア室内ポイントライトのローカル座標。
+ * Geo_Door.glb AABBから算出：ドアフレーム頂部 Y≈2.045、幅中夯 X=0、正面側 Z=0.1。
+ */
+export const HOME_WORLD_DOOR_LIGHT_POSITION = [0, 2.2, 0.1] as const;
+
+/**
+ * ドアポイントライトヘルパーの内接球半径。
+ * `PointLightHelper` の `sphereSize` に渡し、実際の照射有効距離（`HOME_WORLD_DOOR_LIGHT_DISTANCE`）と
+ * 一致させることで、デバッグ時に光が届く範囲を正確に見えるようにする。
+ */
+export const HOME_WORLD_DEBUG_DOOR_LIGHT_HELPER_SIZE = HOME_WORLD_DOOR_LIGHT_DISTANCE;
+
+/** ============================================
+ *  地形モデル（Geo_Terrain.glb）ノード名パターン
+ * ============================================ */
+
+/** GPU インスタンシング親ノード名（非表示にして個別ノードのみ使用する） */
+export const HOME_WORLD_TERRAIN_INSTANCED_TREE_NAME = 'SM_Tree' as const;
+
+/**
+ * 個別木ノード名の正規表現パターン。
+ * GLTF JSON 上のノード名は "SM_Tree_B.1" や "SM_Tree_A.119" のようにドットあり形式だが、
+ * Three.js の GLTFLoader は PropertyBinding.sanitizeNodeName により
+ * ドットを含む予約文字 ( [] .:/  ) を除去するため、
+ * object.name は "SM_Tree_B1" / "SM_Tree_A119" 形式（ドットなし）になる。
+ */
+export const HOME_WORLD_TERRAIN_TREE_NODE_PATTERN = /^SM_Tree_[AB]\d+$/;
+
+/** 木ノード名内のドット以降の数値（シード）を抽出する正規表現 */
+export const HOME_WORLD_TERRAIN_TREE_SEED_PATTERN = /\d+$/;
+
+/** 幹マテリアル名 */
+export const HOME_WORLD_TERRAIN_MATERIAL_TRUNK = 'M_TrunkA' as const;
+
+/** 葉マテリアル名 */
+export const HOME_WORLD_TERRAIN_MATERIAL_LEAVES = 'M_LeavesA' as const;
+
+/**
+ * 地形 GLB 内の川メッシュ名（GLB 作成時のタイプミスで "Rivver" と登録されている）。
+ * Water シェーダーオブジェクトに差し替えるために個別に検出する。
+ */
+export const HOME_WORLD_TERRAIN_RIVER_NODE_NAME = 'Rivver' as const;
+
+/** 川水面アニメーション速度 */
+export const HOME_WORLD_TERRAIN_RIVER_FLOW_SPEED = 1;
+
+/** 川水面のディストーションスケール（波の歪み量） */
+export const HOME_WORLD_TERRAIN_RIVER_DISTORTION_SCALE = 25;
+
+/** Home World デバッグ用：川水面コントロール */
+export const HOME_WORLD_DEBUG_RIVER_CONTROLS = {
+  color: { label: '川水面の色' },
+  distortionScale: {
+    value: HOME_WORLD_TERRAIN_RIVER_DISTORTION_SCALE,
+    min: -50,
+    max: 50,
+    step: 0.1,
+    label: '波の歪み',
+  },
+  flowSpeed: {
+    value: HOME_WORLD_TERRAIN_RIVER_FLOW_SPEED,
+    min: -1,
+    max: 1,
+    step: 0.001,
+    label: '波の変化速度',
+  },
+};
+
+/** ============================================
+ *  カメラシェイク（CameraShake）パラメータ
+ * ============================================ */
+
+/** CameraShake の最大 Yaw 角 */
+export const HOME_WORLD_CAMERA_SHAKE_MAX_YAW = 0.01;
+
+/** CameraShake の最大 Pitch 角 */
+export const HOME_WORLD_CAMERA_SHAKE_MAX_PITCH = 0.01;
+
+/** CameraShake の最大 Roll 角 */
+export const HOME_WORLD_CAMERA_SHAKE_MAX_ROLL = 0.01;
+
+/** CameraShake の Yaw 周波数 */
+export const HOME_WORLD_CAMERA_SHAKE_YAW_FREQUENCY = 0.2;
+
+/** CameraShake の Pitch 周波数 */
+export const HOME_WORLD_CAMERA_SHAKE_PITCH_FREQUENCY = 0.2;
+
+/** ============================================
+ *  ドアアニメーション開始・終了（スクロール割合 %）
+ * ============================================ */
+
+/** XS より広いビューポートでのドアアニメーション開始スクロール割合（%） */
+export const HOME_WORLD_DOOR_ANIM_START_DEFAULT = 50;
+
+/** XS 以下のビューポートでのドアアニメーション開始スクロール割合（%） */
+export const HOME_WORLD_DOOR_ANIM_START_XS = 54;
+
+/** XS より広いビューポートでのドアアニメーション終了スクロール割合（%） */
+export const HOME_WORLD_DOOR_ANIM_END_DEFAULT = 100;
+
+/** XS 以下のビューポートでのドアアニメーション終了スクロール割合（%） */
+export const HOME_WORLD_DOOR_ANIM_END_XS = 124;
+
+/** ============================================
+ *  ブレークポイント別モデル Y オフセット
+ * ============================================ */
+
+/** 2XL ビューポートでのモデル Y オフセット */
+export const HOME_WORLD_MODELS_OFFSET_Y_2XL = -0.85;
+
+/** XL ビューポートでのモデル Y オフセット */
+export const HOME_WORLD_MODELS_OFFSET_Y_XL = -0.6;
+
+/** LG ビューポートでのモデル Y オフセット */
+export const HOME_WORLD_MODELS_OFFSET_Y_LG = -0.4;
+
+/** SM（タブレット）ビューポートでのモデル Y オフセット */
+export const HOME_WORLD_MODELS_OFFSET_Y_SM = -1.4;
+
+/** XS（縦持ち）ビューポートでのモデル Y オフセット */
+export const HOME_WORLD_MODELS_OFFSET_Y_XS_WRAP = -3.2;
+
+/** XS（横持ち）ビューポートでのモデル Y オフセット */
+export const HOME_WORLD_MODELS_OFFSET_Y_XS_SIDE = -1.2;
+
+/** 最小ビューポートでのモデル Y オフセット */
+export const HOME_WORLD_MODELS_OFFSET_Y_DEFAULT = -0.5;
+
+/** ============================================
+ *  Canvas / カメラ設定
+ * ============================================ */
+
+/** Canvas のデバイスピクセル比レンジ */
+export const HOME_WORLD_CANVAS_DPR: [number, number] = [1, 2];
+
+/** カメラの FOV（視野角） */
+export const HOME_WORLD_CAMERA_FOV = 45;
+
+/** カメラのニアクリップ */
+export const HOME_WORLD_CAMERA_NEAR = 0.01;
+
+/** カメラのファークリップ */
+export const HOME_WORLD_CAMERA_FAR = 1000;
+
+/** 天気情報の再取得間隔（ミリ秒） */
+export const HOME_WORLD_WEATHER_FETCH_INTERVAL_MS = 60 * 60 * 1000;

@@ -7,45 +7,45 @@ import type { WeatherItem } from '@/types/api';
  * ============================================ */
 
 /**
- * 3D 空間の始点と終点を持つベクトルパス。
- * カメラアニメーションの移動経路定義に使用する。
+ * カメラリグのブレークポイント別設定。
+ * 開始点は全 BP で共通（HOME_WORLD_RIG_CAMERA_START）のため保持しない。
  */
-export type VectorPath = Readonly<{
-  /** パスの始点座標 */
-  start: Vector3;
+export type RigCameraConfig = Readonly<{
+  /** 終点の Y 座標（X・Z は共通の 0） */
+  endY: number;
 
-  /** パスの終点座標 */
-  end: Vector3;
+  /** 中間通過点（start → mid → end の 2 ステップ移動でカーブを近似）。全 BP で必須。 */
+  mid: Vector3;
 }>;
 
 /**
  * Home World のカメラリグのブレークポイント別ポジション。
- * スクロールアニメーションで使用する始点・終点座標をブレークポイントごとに定義する。
+ * スクロールアニメーションで使用する終点 Y・中間点をブレークポイントごとに定義する。
  */
 export type HomeWorldRigCameraPositions = Readonly<{
-  /** XS ブレイクポイント用カメラパス */
-  xs: VectorPath;
+  /** XS ブレイクポイント用カメラ設定 */
+  xs: RigCameraConfig;
 
-  /** SM ブレイクポイント用カメラパス群 */
+  /** SM ブレイクポイント用カメラ設定群 */
   sm: {
-    /** 縦持ち（portrait）時のカメラパス */
-    wrap: VectorPath;
+    /** 縦持ち（portrait）時のカメラ設定 */
+    wrap: RigCameraConfig;
 
-    /** 横持ち（landscape）時のカメラパス */
-    side: VectorPath;
+    /** 横持ち（landscape）時のカメラ設定 */
+    side: RigCameraConfig;
   };
 
-  /** TB ブレイクポイント用カメラパス */
-  tb: VectorPath;
+  /** TB ブレイクポイント用カメラ設定 */
+  tb: RigCameraConfig;
 
-  /** LG ブレイクポイント用カメラパス */
-  lg: VectorPath;
+  /** LG ブレイクポイント用カメラ設定 */
+  lg: RigCameraConfig;
 
-  /** XL ブレイクポイント用カメラパス */
-  xl: VectorPath;
+  /** XL ブレイクポイント用カメラ設定 */
+  xl: RigCameraConfig;
 
-  /** 2XL ブレイクポイント用カメラパス */
-  xxl: VectorPath;
+  /** 2XL ブレイクポイント用カメラ設定 */
+  xxl: RigCameraConfig;
 }>;
 
 /** ============================================
