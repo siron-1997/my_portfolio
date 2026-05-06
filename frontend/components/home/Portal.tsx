@@ -3,7 +3,7 @@
 import React, { type JSX, useEffect } from 'react';
 
 import { portalAnimation } from '@/animations/home';
-import { HOME_PORTAL_TITLE } from '@/constants/home';
+import { HOME_PORTAL_TITLE, HOME_PORTAL_DESCRIPTION } from '@/constants/home';
 import s from '@/styles/home.module.css';
 
 type Props = {
@@ -41,6 +41,7 @@ const Portal = React.memo(
       <div className={s.portal} ref={portalRef}>
         <section>
           <h1 id="portal-title">{HOME_PORTAL_TITLE}</h1>
+          <p id="portal-description">{HOME_PORTAL_DESCRIPTION}</p>
         </section>
       </div>
     );

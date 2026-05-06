@@ -240,7 +240,11 @@ const interpolateCameraState = (
     );
   }
 
-  if (to.viewOffset) {
+  if (
+    to.viewOffset &&
+    to.viewOffset.fullWidth > 0 &&
+    to.viewOffset.fullHeight > 0
+  ) {
     camera.setViewOffset(
       to.viewOffset.fullWidth,
       to.viewOffset.fullHeight,
@@ -846,15 +850,18 @@ export const sectionsAnimation = ({
     cameraParams.portal.rotation.z,
   );
 
-  /** カメラの viewOffset を設定 */
-  camera.setViewOffset(
-    cameraParams.portal.viewOffset.fullWidth,
-    cameraParams.portal.viewOffset.fullHeight,
-    cameraParams.portal.viewOffset.x,
-    cameraParams.portal.viewOffset.y,
-    cameraParams.portal.viewOffset.width,
-    cameraParams.portal.viewOffset.height,
-  );
+  /** カメラの viewOffset を設定（fullWidth/fullHeight が 0 の場合は updateProjectionMatrix で NaN が発生するためスキップ） */
+  const portalVo = cameraParams.portal.viewOffset;
+  if (portalVo.fullWidth > 0 && portalVo.fullHeight > 0) {
+    camera.setViewOffset(
+      portalVo.fullWidth,
+      portalVo.fullHeight,
+      portalVo.x,
+      portalVo.y,
+      portalVo.width,
+      portalVo.height,
+    );
+  }
 
   /** カメラの投影行列を更新 */
   camera.updateProjectionMatrix();

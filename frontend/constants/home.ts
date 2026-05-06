@@ -10,6 +10,10 @@ import { type HomeWorldRigCameraPositions } from '@/types/home';
 /** Portal セクションのタイトル */
 export const HOME_PORTAL_TITLE = 'Symphony';
 
+/** Portal セクションの説明文 */
+export const HOME_PORTAL_DESCRIPTION =
+  '異なる要素が連携し、ひとつの体験として調和する。\n天候データ、3D空間、UI実装を組み合わせたインタラクティブな表現を制作しています。';
+
 /** Works セクションのタイトル */
 export const HOME_WORKS_TITLE = 'Works';
 
@@ -1142,7 +1146,8 @@ export const HOME_WORLD_DOOR_LIGHT_POSITION = [0, 2.2, 0.1] as const;
  * `PointLightHelper` の `sphereSize` に渡し、実際の照射有効距離（`HOME_WORLD_DOOR_LIGHT_DISTANCE`）と
  * 一致させることで、デバッグ時に光が届く範囲を正確に見えるようにする。
  */
-export const HOME_WORLD_DEBUG_DOOR_LIGHT_HELPER_SIZE = HOME_WORLD_DOOR_LIGHT_DISTANCE;
+export const HOME_WORLD_DEBUG_DOOR_LIGHT_HELPER_SIZE =
+  HOME_WORLD_DOOR_LIGHT_DISTANCE;
 
 /** ============================================
  *  地形モデル（Geo_Terrain.glb）ノード名パターン

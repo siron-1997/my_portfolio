@@ -1,6 +1,6 @@
 import { Object3D, PerspectiveCamera } from 'three';
 
-import { BREAK_POINT_KEYS, BREAK_POINTS } from '@/constants/common';
+import { BREAK_POINT_KEYS, BREAK_POINTS, IS_DEV } from '@/constants/common';
 import {
   DEFAULT_CONTROLS_VIEW_OFFSET,
   DEFAULT_SECTION_CAMERA_PARAMS,
@@ -61,13 +61,15 @@ export const getSectionsCameraParams = (
       index = objNames[5];
     }
 
-    /** タブレット or スマホの場合 */
-    if (width < BREAK_POINTS.SM) {
-      const offset = 1.3;
-      obj.position.x = obj.position.x * offset;
-      obj.position.y = obj.position.y * offset;
-      obj.position.z = obj.position.z * offset;
-    }
+    /**
+     * モバイル/タブレット時のスケール係数（GLB オブジェクトを直接変更しない）
+     * obj.position を mutate すると resize ごとに 1.3 倍ずつ累積するため、
+     * ローカル変数で scaled 値を保持する。
+     */
+    const mobileScale = width < BREAK_POINTS.SM ? 1.3 : 1.0;
+    const scaledPosX = obj.position.x * mobileScale;
+    const scaledPosY = obj.position.y * mobileScale;
+    const scaledPosZ = obj.position.z * mobileScale;
 
     /** sectionKey が不正な場合や、代表カメラ以外（index !== '0'）はスキップ */
     const paramKey = sectionKey && WORK_WORLD_SECTION_MAP[sectionKey];
@@ -79,15 +81,32 @@ export const getSectionsCameraParams = (
 
     /** カメラの場合は position/rotation を設定 */
     if (obj instanceof PerspectiveCamera) {
-      target.position = obj.position;
-      target.rotation = obj.rotation;
+      target.position = { x: scaledPosX, y: scaledPosY, z: scaledPosZ };
+      target.rotation = {
+        x: obj.rotation.x,
+        y: obj.rotation.y,
+        z: obj.rotation.z,
+      };
       /** Offset 用 Object3D の場合は viewOffset を設定 */
     } else if (obj instanceof Object3D && objNames[3] === 'Offset') {
+      if (IS_DEV) {
+        console.log(`[getCameraParams] Offset found: ${obj.name}`, {
+          rawPosition: {
+            x: obj.position.x,
+            y: obj.position.y,
+            z: obj.position.z,
+          },
+          computedViewOffset: {
+            x: scaledPosX * width,
+            y: -scaledPosZ * height,
+          },
+        });
+      }
       target.viewOffset = {
         fullWidth: width,
         fullHeight: height,
-        x: obj.position.x * width,
-        y: -obj.position.z * height,
+        x: scaledPosX * width,
+        y: -scaledPosZ * height,
         width,
         height,
       };
