@@ -1,6 +1,38 @@
 import { Box3, Matrix4, type Object3D, Quaternion, Vector3 } from 'three';
 
 /**
+ * カメラ姿勢が「実質的に見ている地点」を返す。
+ *
+ * カメラの前方ベクトル（-Z をクォータニオンで回転）に対し sceneCenter を投影し、
+ * その投影点をフォーカス点とする。投影距離が 0 以下（中心がカメラ背後）の場合は
+ * fallbackDist 前方の点を返す。
+ *
+ * 重要な性質: pos からこの戻り値を見る lookAt クォータニオンは、
+ * （roll を除いて）quat と一致する。これにより端点でプリセット姿勢を保ったまま
+ * 中間で「同じ対象を見続ける」追従ができる。
+ *
+ * @param pos          カメラ位置
+ * @param quat         カメラ姿勢
+ * @param sceneCenter  シーンの基準点
+ * @param fallbackDist 中心がカメラ背後にあるとき、前方 fallbackDist の点を返す
+ * @returns フォーカス点（ワールド座標）
+ */
+export function computeFocusPoint(
+  pos: Vector3,
+  quat: Quaternion,
+  sceneCenter: Vector3,
+  fallbackDist: number = 10,
+): Vector3 {
+  const forward = new Vector3(0, 0, -1).applyQuaternion(quat);
+  const toCenter = sceneCenter.clone().sub(pos);
+  const projDist = toCenter.dot(forward);
+  if (projDist < 0.1) {
+    return pos.clone().addScaledVector(forward, fallbackDist);
+  }
+  return pos.clone().addScaledVector(forward, projDist);
+}
+
+/**
  * シーン中心を軸にした球面線形補間（slerp）でカメラ位置を補間する。
  *
  * カメラは常にシーン中心を「中心」とした球面上を移動するため、

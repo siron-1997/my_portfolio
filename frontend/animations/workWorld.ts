@@ -17,6 +17,7 @@ import {
 } from '@/constants/workThreeD';
 import {
   computeArcPosition,
+  computeFocusPoint,
   computeLookAtQuaternion,
 } from '@/utils/world/work/cameraArc';
 import {
@@ -944,11 +945,8 @@ export const controlsAnimation = ({
      */
     const startPos = cameraRef.current!.position.clone();
 
-    /** カメラ位置：弧状補間（Arc-Slerp） */
+    /** カメラ位置・回転の共通プログレス（Arc-Slerp + ブレンド回転） */
     const arcProgress = { value: 0 };
-
-    /** カメラ回転：クォータニオン slerp（Euler 直接補間によるぎめり回転を防止） */
-    const rotProgress = { value: 0 };
 
     /** viewOffset 補間プログレス */
     const viewProgress = { value: 0 };
@@ -1002,45 +1000,47 @@ export const controlsAnimation = ({
     const midQuat = new Quaternion().slerpQuaternions(startQuat, endQuat, 0.5);
     const midCameraForward = new Vector3(0, 0, -1).applyQuaternion(midQuat);
 
+    /** フォーカス点：各端点でカメラが実質的に「見ている」地点。
+     * sceneCenter を前方ベクトルへ投影することで、roll や微小ズレを保ったまま
+     * 「対象方向」を抽出する。両端では startQuat / endQuat を厳密に再現する。
+     */
+    const startTarget = computeFocusPoint(startPos, startQuat, sceneCenter);
+    const endTarget = computeFocusPoint(endPos, endQuat, sceneCenter);
+
+    /** onUpdate 用の再利用バッファ（毎フレーム new すると GC が走る） */
+    const _curTarget = new Vector3();
+
     /** カメラのアニメーション */
     gsap
       .timeline()
-      /** カメラ位置の弧状補間 */
+      /** カメラ位置の弧状補間 + 注視点追従 */
       .to(arcProgress, {
         value: 1,
         ...options,
         delay: CONTROLS_ANIMATION_DELAY,
         onUpdate: () => {
+          const t = arcProgress.value;
+
           const pos = computeArcPosition(
             startPos,
             endPos,
             sceneCenter,
-            arcProgress.value,
+            t,
             bboxRadius,
             CAMERA_ARC_BIAS,
             midCameraForward,
           );
           cameraRef.current!.position.copy(pos);
+
+          /**
+           * 注視点を startTarget → endTarget で線形補間し、常にフレームに収め続ける。
+           * t=0 では startQuat、t=1 では endQuat と一致する（computeFocusPoint の性質）。
+           * 中間では注視点が画面内を移動し続けるため、フレームアウトが発生しない。
+           */
+          _curTarget.lerpVectors(startTarget, endTarget, t);
+          cameraRef.current!.lookAt(_curTarget);
         },
       })
-      /** カメラ回転のクォータニオン補間 */
-      .to(
-        rotProgress,
-        {
-          value: 1,
-          ...options,
-          delay: 0,
-          onUpdate: () => {
-            /** startQuat（固定始点）から endQuat（固定終点）へ真の slerp 補間 */
-            cameraRef.current!.quaternion.slerpQuaternions(
-              startQuat,
-              endQuat,
-              rotProgress.value,
-            );
-          },
-        },
-        '<',
-      )
       /** カメラの viewOffset 補間（始点→終点の線形補間） */
       .to(
         viewProgress,
