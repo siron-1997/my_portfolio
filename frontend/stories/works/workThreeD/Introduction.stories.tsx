@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 import Introduction from '@/components/works/workThreeD/Introduction';
 import { type WorkDetail } from '@/types/api';
@@ -19,7 +19,8 @@ const sampleContent: WorkDetail = {
   introduction_description:
     'Three.jsとGSAPを活用した3Dインタラクティブな作品。操作パネルで3Dモデルを制御できます。スクロールしてコントロールパネルを確認してください。',
   controls_title: '操作パネル',
-  controls_description: 'モデルの各部位をクリックしてアニメーションを確認できます。',
+  controls_description:
+    'モデルの各部位をクリックしてアニメーションを確認できます。',
   controls: [],
 };
 
@@ -79,14 +80,17 @@ const meta = {
     dispatch: { control: false, table: { disable: true } },
     isLoading: {
       control: 'boolean',
-      description: '3D モデルのロード中フラグ。false でアニメーションが初期化される',
+      description:
+        '3D モデルのロード中フラグ。false でアニメーションが初期化される',
       table: { type: { summary: 'boolean' } },
     },
     viewerStatus: {
       control: 'select',
       options: ['passive', 'entering', 'active', 'exiting'],
       description: 'ビュワーモードの状態',
-      table: { type: { summary: "'passive' | 'entering' | 'active' | 'exiting'" } },
+      table: {
+        type: { summary: "'passive' | 'entering' | 'active' | 'exiting'" },
+      },
     },
     isFingerVisible: {
       control: 'boolean',
@@ -105,7 +109,11 @@ type Story = StoryObj<typeof meta>;
 export const Passive: Story = {
   name: 'Passive（初期状態）',
   render: () => (
-    <IntroductionWithRef isLoading={false} viewerStatus="passive" isFingerVisible={false} />
+    <IntroductionWithRef
+      isLoading={false}
+      viewerStatus="passive"
+      isFingerVisible={false}
+    />
   ),
 };
 
@@ -115,7 +123,11 @@ export const Passive: Story = {
 export const ActiveWithFinger: Story = {
   name: 'Active（指アイコン表示）',
   render: () => (
-    <IntroductionWithRef isLoading={false} viewerStatus="active" isFingerVisible={true} />
+    <IntroductionWithRef
+      isLoading={false}
+      viewerStatus="active"
+      isFingerVisible={true}
+    />
   ),
 };
 
@@ -125,7 +137,11 @@ export const ActiveWithFinger: Story = {
 export const ActiveWithoutFinger: Story = {
   name: 'Active（指アイコン非表示）',
   render: () => (
-    <IntroductionWithRef isLoading={false} viewerStatus="active" isFingerVisible={false} />
+    <IntroductionWithRef
+      isLoading={false}
+      viewerStatus="active"
+      isFingerVisible={false}
+    />
   ),
 };
 
@@ -135,7 +151,11 @@ export const ActiveWithoutFinger: Story = {
 export const Mobile: Story = {
   name: 'モバイル（〜768px）',
   render: () => (
-    <IntroductionWithRef isLoading={false} viewerStatus="passive" isFingerVisible={false} />
+    <IntroductionWithRef
+      isLoading={false}
+      viewerStatus="passive"
+      isFingerVisible={false}
+    />
   ),
   globals: { viewport: { value: 'mobile2' } },
 };

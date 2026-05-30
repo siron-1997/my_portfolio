@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 import ControlItems from '@/components/works/workThreeD/ControlItems';
 
@@ -18,7 +18,13 @@ const meta = {
     (Story) =>
       React.createElement(
         'div',
-        { style: { width: '480px', backgroundColor: '#1D1730', padding: '16px' } },
+        {
+          style: {
+            width: '480px',
+            backgroundColor: '#1D1730',
+            padding: '16px',
+          },
+        },
         React.createElement(Story),
       ),
   ],
@@ -62,7 +68,8 @@ const meta = {
     },
     onClick: {
       control: false,
-      description: 'クリック時に呼び出されるコールバック。引数は項目のインデックス',
+      description:
+        'クリック時に呼び出されるコールバック。引数は項目のインデックス',
       table: { type: { summary: '(index: number) => void' } },
     },
   },

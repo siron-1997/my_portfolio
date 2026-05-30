@@ -14,7 +14,8 @@ const sampleWorks: WorkSummary[] = [
     created: '2024-01-15',
     created_at: '2024-01-15T00:00:00Z',
     image_url: 'https://picsum.photos/520/390?random=10',
-    alternative_text: 'Symphony - 気象情報APIと3D UIを連携したインタラクティブなWeb表現',
+    alternative_text:
+      'Symphony - 気象情報APIと3D UIを連携したインタラクティブなWeb表現',
     category_key: '3d',
     category_name: '3D',
   },
@@ -47,9 +48,7 @@ const sampleWorks: WorkSummary[] = [
 ];
 
 /** フィルタリング用のサンプルカテゴリデータ */
-const sampleCategories: WorkCategory[] = [
-  { id: 3, key: '3d', name: '3D' },
-];
+const sampleCategories: WorkCategory[] = [{ id: 3, key: '3d', name: '3D' }];
 
 /**
  * Contents コンポーネントの Storybook 定義。

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 import ToggleButton from '@/components/works/workThreeD/ToggleButton';
 import { type ViewerStatus } from '@/types/contexts';
@@ -9,7 +9,11 @@ import { type ViewerStatus } from '@/types/contexts';
 /**
  * ToggleButton コンポーネントのラッパー。ref を注入して表示する。
  */
-const ToggleButtonWithRef = ({ viewerStatus }: { viewerStatus: ViewerStatus }) => {
+const ToggleButtonWithRef = ({
+  viewerStatus,
+}: {
+  viewerStatus: ViewerStatus;
+}) => {
   const toggleButtonRef = useRef<HTMLDivElement | null>(null);
   return (
     <ToggleButton
@@ -47,7 +51,9 @@ const meta = {
       control: 'select',
       options: ['passive', 'entering', 'active', 'exiting'],
       description: 'ビュワーモードの状態',
-      table: { type: { summary: "'passive' | 'entering' | 'active' | 'exiting'" } },
+      table: {
+        type: { summary: "'passive' | 'entering' | 'active' | 'exiting'" },
+      },
     },
     toggleButtonRef: { control: false, table: { disable: true } },
     dispatch: { control: false, table: { disable: true } },

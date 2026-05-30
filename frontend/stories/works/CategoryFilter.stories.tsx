@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 import CategoryFilter from '@/components/works/CategoryFilter';
 import { type WorkCategory } from '@/types/api';
@@ -28,7 +28,13 @@ const meta = {
     (Story) =>
       React.createElement(
         'div',
-        { style: { width: '800px', padding: '40px', backgroundColor: '#1D1730' } },
+        {
+          style: {
+            width: '800px',
+            padding: '40px',
+            backgroundColor: '#1D1730',
+          },
+        },
         React.createElement(Story),
       ),
   ],

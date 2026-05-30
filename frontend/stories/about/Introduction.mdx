@@ -1,0 +1,43 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as IntroductionStories from './Introduction.stories';
+
+<Meta of={IntroductionStories} />
+
+<Title />
+
+<Subtitle>
+  About ページの自己紹介テキストセクション。タイトルと長文説明を GSAP
+  アニメーション付きで表示
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Introduction` は、About ページのプロフィール紹介セクションです。
+定数 `INTRODUCTION` から取得したタイトルと説明文を縦に並べて表示します。
+マウント時に GSAP の ScrollTrigger によるスライドインアニメーションが実行されます。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

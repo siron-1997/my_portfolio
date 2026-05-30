@@ -1,0 +1,52 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as PortalStories from './Portal.stories';
+
+<Meta of={PortalStories} />
+
+<Title />
+
+<Subtitle>
+  Home ページのヒーローセクション。サイト名タイトルを GSAP
+  パララックス付きで大きく表示する
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Portal` は Home ページのエントリーポイントとなるヒーローセクションです。
+定数 `HOME_PORTAL_TITLE`（"Symphony"）を `<h1>` で表示します。
+`isCanvasReady` が `true` になると GSAP の ScrollTrigger によるフェード＋パララックスアニメーションが開始されます。
+`false` のときは `window.scrollTo(0, 0)` でスクロール位置をリセットして Three.js Canvas のロードを待ちます。
+
+> **注意**: Storybook 上では Three.js Canvas は表示されません。レイアウト・テキスト確認用途でご利用ください。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

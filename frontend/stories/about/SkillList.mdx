@@ -1,0 +1,55 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as SkillListStories from './SkillList.stories';
+
+<Meta of={SkillListStories} />
+
+<Title />
+
+<Subtitle>
+  About ページのスキル一覧。ウィンドウ幅に応じて 1
+  行あたりのアイコン数が動的に変化するレスポンシブグリッド
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`SkillList` は About ページのスキルセクションです。
+定数 `SKILLS` からカテゴリ・スキルデータを取得し、アイコングリッドで表示します。
+
+### 1 行あたりのアイコン数（チャンクサイズ）
+
+| ブレークポイント             | アイコン数           |
+| ---------------------------- | -------------------- |
+| `〜 768px`（SM 未満）        | 全件（縦スクロール） |
+| `768px〜 1024px`（SM 以上）  | 最大 6 件            |
+| `1024px〜 1280px`（LG 以上） | 最大 7 件            |
+| `1280px〜 1536px`（XL 以上） | 最大 8 件            |
+| `1536px〜`（2XL 以上）       | 全件（1 行）         |
+
+SM 以上ではホバー時にスキル名がオーバーレイ表示されます。
+GSAP によるフェードインアニメーションがマウント時に実行されます。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

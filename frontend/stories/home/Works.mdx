@@ -1,0 +1,54 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as WorksStories from './Works.stories';
+
+<Meta of={WorksStories} />
+
+<Title />
+
+<Subtitle>
+  Home ページの作品紹介セクション。WorkSummary[]
+  を受け取りカード形式で横並び表示する
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Works` は Home ページの作品カードセクションです。
+`data` に渡された `WorkSummary[]` を MUI `Card` コンポーネントでグリッド表示し、
+各カードは `/works/[slug]` 詳細ページへのリンクになっています。
+タイトルと説明文は定数 `HOME_WORKS_TITLE` / `HOME_WORKS_LEARN_MORE` から取得します。
+説明文は `truncateString` で 50 文字に切り詰められます。
+
+GSAP の ScrollTrigger によるタイトル＋カードのフェードインアニメーションが
+マウント時に実行されます。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

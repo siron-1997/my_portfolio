@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 import FingerPress from '@/components/works/workThreeD/FingerPress';
 import { type ViewerStatus } from '@/types/contexts';
@@ -38,7 +38,9 @@ const meta = {
       control: 'select',
       options: ['passive', 'entering', 'active', 'exiting'],
       description: 'ビュワーモードの状態',
-      table: { type: { summary: "'passive' | 'entering' | 'active' | 'exiting'" } },
+      table: {
+        type: { summary: "'passive' | 'entering' | 'active' | 'exiting'" },
+      },
     },
     dispatch: {
       control: false,

@@ -1,4 +1,13 @@
-import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
 
 import * as IntroductionStories from './Introduction.stories';
 
@@ -6,7 +15,10 @@ import * as IntroductionStories from './Introduction.stories';
 
 <Title />
 
-<Subtitle>3D 作品詳細ページの紹介セクション。タイトル・説明文・FingerPress・ToggleButton を縦に配置</Subtitle>
+<Subtitle>
+  3D 作品詳細ページの紹介セクション。タイトル・説明文・FingerPress・ToggleButton
+  を縦に配置
+</Subtitle>
 
 <Description />
 
@@ -21,11 +33,11 @@ import * as IntroductionStories from './Introduction.stories';
 
 ### 表示状態まとめ
 
-| `viewerStatus` | 背景透過 | FingerPress | ToggleButton |
-|---|---|---|---|
-| `passive` | あり | スクロール促進テキスト | Start ラベル |
-| `active` | あり | 指アイコン（`isFingerVisible` に依存） | End ラベル |
-| `entering` / `exiting` | あり | 非表示 | 遷移中ラベル |
+| `viewerStatus`         | 背景透過 | FingerPress                            | ToggleButton |
+| ---------------------- | -------- | -------------------------------------- | ------------ |
+| `passive`              | あり     | スクロール促進テキスト                 | Start ラベル |
+| `active`               | あり     | 指アイコン（`isFingerVisible` に依存） | End ラベル   |
+| `entering` / `exiting` | あり     | 非表示                                 | 遷移中ラベル |
 
 ---
 

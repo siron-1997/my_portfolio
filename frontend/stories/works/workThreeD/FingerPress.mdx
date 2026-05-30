@@ -1,4 +1,13 @@
-import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
 
 import * as FingerPressStories from './FingerPress.stories';
 
@@ -6,7 +15,10 @@ import * as FingerPressStories from './FingerPress.stories';
 
 <Title />
 
-<Subtitle>ビュワーモード切り替えを促すガイドコンポーネント。passive では矢印テキスト、active では指アイコンを表示</Subtitle>
+<Subtitle>
+  ビュワーモード切り替えを促すガイドコンポーネント。passive
+  では矢印テキスト、active では指アイコンを表示
+</Subtitle>
 
 <Description />
 
@@ -18,12 +30,12 @@ import * as FingerPressStories from './FingerPress.stories';
 
 `viewerStatus` の値に応じて表示が切り替わります。
 
-| `viewerStatus` | 表示内容 |
-|---|---|
-| `passive` | 「スクロールしてください」テキスト + 下向き矢印アイコン |
-| `active`（`isFingerVisible: true`） | 指アイコン（クリックで非表示になる） |
-| `active`（`isFingerVisible: false`） | 非表示 |
-| `entering` / `exiting` | 非表示 |
+| `viewerStatus`                       | 表示内容                                                |
+| ------------------------------------ | ------------------------------------------------------- |
+| `passive`                            | 「スクロールしてください」テキスト + 下向き矢印アイコン |
+| `active`（`isFingerVisible: true`）  | 指アイコン（クリックで非表示になる）                    |
+| `active`（`isFingerVisible: false`） | 非表示                                                  |
+| `entering` / `exiting`               | 非表示                                                  |
 
 GSAP アニメーションがマウント時に実行されます。
 

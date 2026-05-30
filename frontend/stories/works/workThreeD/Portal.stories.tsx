@@ -10,13 +10,16 @@ const sampleContent: WorkDetail = {
   id: 1,
   key: 'symphony',
   title: 'Symphony',
-  description: '気象情報APIと3D UIを連携したインタラクティブなWeb表現。Three.jsとGSAPを活用。',
+  description:
+    '気象情報APIと3D UIを連携したインタラクティブなWeb表現。Three.jsとGSAPを活用。',
   slug: 'symphony',
   created_at: '2024-01-01T00:00:00Z',
   introduction_title: '3D インタラクティブ表現',
-  introduction_description: 'Three.jsとGSAPを活用した3Dインタラクティブな作品。',
+  introduction_description:
+    'Three.jsとGSAPを活用した3Dインタラクティブな作品。',
   controls_title: '操作パネル',
-  controls_description: 'モデルの各部位をクリックしてアニメーションを確認できます。',
+  controls_description:
+    'モデルの各部位をクリックしてアニメーションを確認できます。',
   controls: [],
 };
 
@@ -25,7 +28,13 @@ const sampleContent: WorkDetail = {
  */
 const PortalWithRef = ({ isLoading }: { isLoading: boolean }) => {
   const portalRef = useRef<HTMLElement | null>(null);
-  return <Portal content={sampleContent} portalRef={portalRef} isLoading={isLoading} />;
+  return (
+    <Portal
+      content={sampleContent}
+      portalRef={portalRef}
+      isLoading={isLoading}
+    />
+  );
 };
 
 /**
@@ -55,7 +64,8 @@ const meta = {
     portalRef: { control: false, table: { disable: true } },
     isLoading: {
       control: 'boolean',
-      description: '3D モデルのロード中フラグ。false でアニメーションが初期化される',
+      description:
+        '3D モデルのロード中フラグ。false でアニメーションが初期化される',
       table: { type: { summary: 'boolean' } },
     },
   },

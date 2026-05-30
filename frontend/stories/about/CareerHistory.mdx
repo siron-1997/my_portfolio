@@ -1,0 +1,49 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as CareerHistoryStories from './CareerHistory.stories';
+
+<Meta of={CareerHistoryStories} />
+
+<Title />
+
+<Subtitle>
+  About ページの職務・学歴タイムライン。MUI Timeline
+  でキャリアを時系列に表示する
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`CareerHistory` は About ページのキャリア紹介セクションです。
+定数 `CAREER_HISTORIES` から職歴・学歴データを取得し、MUI `Timeline` で時系列に表示します。
+
+### レスポンシブ対応
+
+| ブレークポイント      | 年代カラム          | レイアウト               |
+| --------------------- | ------------------- | ------------------------ |
+| `〜 768px`（XS 未満） | 非表示              | アイコン＋テキストのみ   |
+| `768px〜`（XS 以上）  | 表示（75px 固定幅） | 年代＋アイコン＋テキスト |
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

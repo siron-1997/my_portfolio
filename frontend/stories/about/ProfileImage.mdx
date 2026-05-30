@@ -1,0 +1,47 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as ProfileImageStories from './ProfileImage.stories';
+
+<Meta of={ProfileImageStories} />
+
+<Title />
+
+<Subtitle>
+  About ページのプロフィール画像。Next.js
+  Image（fill）でアスペクト比を維持して表示
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`ProfileImage` は About ページのプロフィール写真コンポーネントです。
+`/images/siron/siron.webp` を Next.js `Image`（`fill`）でレンダリングし、
+`sizes` 属性でブレークポイントごとの表示幅を制御します。
+マウント時に GSAP によるフェードインアニメーションが実行されます。
+
+> **注意**: Storybook 上では親要素のサイズを `400 × 400px` のコンテナで固定しています。
+> 実際のページではグリッドレイアウトに依存したサイズになります。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

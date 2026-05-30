@@ -1,4 +1,13 @@
-import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
 
 import * as ContentsStories from './Contents.stories';
 
@@ -6,7 +15,9 @@ import * as ContentsStories from './Contents.stories';
 
 <Title />
 
-<Subtitle>作品一覧ページのカードグリッド。カテゴリフィルタリングとスクロールアニメーションに対応</Subtitle>
+<Subtitle>
+  作品一覧ページのカードグリッド。カテゴリフィルタリングとスクロールアニメーションに対応
+</Subtitle>
 
 <Description />
 
@@ -21,9 +32,9 @@ import * as ContentsStories from './Contents.stories';
 
 ### フィルタリング仕様
 
-| `selectedCategories` | 表示 |
-|---|---|
-| `[]`（空） | 全件表示 |
+| `selectedCategories`  | 表示                              |
+| --------------------- | --------------------------------- |
+| `[]`（空）            | 全件表示                          |
 | `[{key: 'web'}]` など | `category_key` が一致する作品のみ |
 
 ---

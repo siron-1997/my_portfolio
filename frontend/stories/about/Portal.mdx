@@ -1,0 +1,48 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as PortalStories from './Portal.stories';
+
+<Meta of={PortalStories} />
+
+<Title />
+
+<Subtitle>
+  About ページのヒーローセクション見出し。`title` を h1 として中央揃えで表示する
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Portal` は About ページのページタイトルコンポーネントです。
+受け取った `title` を MUI `Typography`（`h1` / `variant="h1"`）として中央揃えで描画します。
+マウント時に GSAP によるフェードインアニメーションが実行されます。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

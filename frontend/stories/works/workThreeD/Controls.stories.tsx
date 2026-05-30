@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 import Controls from '@/components/works/workThreeD/Controls';
 import { type WorkControl, type WorkDetail } from '@/types/api';
@@ -18,16 +18,37 @@ const sampleContent: WorkDetail = {
   introduction_description:
     'Three.jsとGSAPを活用した3Dインタラクティブな作品。操作パネルで3Dモデルを制御できます。',
   controls_title: '操作パネル',
-  controls_description: 'モデルの各部位をクリックしてアニメーションを確認できます。',
+  controls_description:
+    'モデルの各部位をクリックしてアニメーションを確認できます。',
   controls: [],
 };
 
 /** Controls コンポーネントで使用するサンプルコントロールデータ */
 const sampleControls: WorkControl[] = [
-  { title: 'Idle', description: '待機状態のアニメーション。ループ再生される。', animation_name: 'idle', is_loop: true },
-  { title: 'Walk', description: '歩行アニメーション。ループ再生される。', animation_name: 'walk', is_loop: true },
-  { title: 'Run', description: '走行アニメーション。ループ再生される。', animation_name: 'run', is_loop: true },
-  { title: 'Jump', description: 'ジャンプアニメーション。1 回のみ再生される。', animation_name: 'jump', is_loop: false },
+  {
+    title: 'Idle',
+    description: '待機状態のアニメーション。ループ再生される。',
+    animation_name: 'idle',
+    is_loop: true,
+  },
+  {
+    title: 'Walk',
+    description: '歩行アニメーション。ループ再生される。',
+    animation_name: 'walk',
+    is_loop: true,
+  },
+  {
+    title: 'Run',
+    description: '走行アニメーション。ループ再生される。',
+    animation_name: 'run',
+    is_loop: true,
+  },
+  {
+    title: 'Jump',
+    description: 'ジャンプアニメーション。1 回のみ再生される。',
+    animation_name: 'jump',
+    is_loop: false,
+  },
 ];
 
 /**
@@ -87,7 +108,8 @@ const meta = {
     },
     isLoading: {
       control: 'boolean',
-      description: '3D モデルのロード完了フラグ（true でアニメーションが初期化される）',
+      description:
+        '3D モデルのロード完了フラグ（true でアニメーションが初期化される）',
       table: { type: { summary: 'boolean' } },
     },
   },
