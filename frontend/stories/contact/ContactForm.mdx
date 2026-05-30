@@ -1,0 +1,73 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as ContactFormStories from './ContactForm.stories';
+
+<Meta of={ContactFormStories} />
+
+<Title />
+
+<Subtitle>
+  name / E-mail / Message の 3 フィールドを持つ 3
+  ステップ構成のお問い合わせフォーム
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`ContactForm` は、入力 → 確認 → 送信結果 の 3 ステップで構成されるお問い合わせフォームです。
+
+`react-hook-form` + `zod` によるバリデーション、`useReducer` による `formStep` ステート管理を内包します。
+
+### ステップ遷移フロー
+
+```
+[Step 1: INPUT]
+  バリデーション通過 → 「次へ」ボタンで Step 2 へ
+  バリデーション失敗 → エラー表示（次のステップには進まない）
+
+[Step 2: CONFIRM]
+  入力内容を読み取り専用で表示
+  「修正する」ボタン → Step 1 へ戻る
+  「送信」ボタン → Supabase Edge Function に POST 送信 → Step 3 へ
+
+[Step 3: RESULT]
+  送信成功 → 「送信完了」メッセージ + 「Home へ戻る」ボタン
+  送信失敗 → 「送信失敗」メッセージ + 「もう一度試す」ボタン
+```
+
+### Step 3 の表示条件
+
+| 状態             | `isSubmitSuccessful` | StepProgressBar Step 3         |
+| ---------------- | -------------------- | ------------------------------ |
+| 送信完了（成功） | `true`               | current（青） ラベル: 送信完了 |
+| 送信失敗         | `false`              | error（赤） ラベル: 送信失敗   |
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## ステップ別バリエーション
+
+<Stories includePrimary={false} />

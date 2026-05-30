@@ -1,0 +1,169 @@
+/** ============================================================
+ * WorkCard
+ * ブレークポイントに応じたカードサイズ定義。
+ * Figmaデザインに基づくフルブリード画像+テキストオーバーレイレイアウト。
+ * ============================================================ */
+
+.work_card {
+  position: relative;
+  width: 320px;
+  height: 240px;
+  border-radius: 5px !important;
+  overflow: hidden !important;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.work_card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.work_card_image_wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.work_card_image_wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/** 画像下部のグラデーションオーバーレイ（テキスト可読性向上）*/
+.work_card_gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.4) 60%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+}
+
+/** テキストオーバーレイコンテナ */
+.work_card_content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.work_card_title {
+  color: #ffffff !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+.work_card_description {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.75rem !important;
+  line-height: 1.5 !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/** カテゴリタグバッジ */
+.work_card_tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background-color: rgba(0, 170, 170, 0.2) !important;
+  border: 1px solid #00aaaa;
+  color: #00aaaa !important;
+  font-size: 0.7rem !important;
+  font-weight: 500 !important;
+  width: fit-content;
+}
+
+/** ============================================================
+ * レスポンシブ: SM（768px以上）
+ * ============================================================ */
+@media screen and (min-width: 768px) {
+  .work_card {
+    width: 360px;
+    height: 270px;
+  }
+
+  .work_card_title {
+    font-size: 1.1rem !important;
+  }
+}
+
+/** ============================================================
+ * レスポンシブ: LG（1024px以上）
+ * ============================================================ */
+@media screen and (min-width: 1024px) {
+  .work_card {
+    width: 300px;
+    height: 225px;
+  }
+
+  .work_card_title {
+    font-size: 1rem !important;
+  }
+}
+
+/** ============================================================
+ * レスポンシブ: XL（1280px以上）
+ * ============================================================ */
+@media screen and (min-width: 1280px) {
+  .work_card {
+    width: 380px;
+    height: 285px;
+  }
+
+  .work_card_title {
+    font-size: 1.1rem !important;
+  }
+
+  .work_card_description {
+    font-size: 0.8rem !important;
+  }
+}
+
+/** ============================================================
+ * レスポンシブ: 2XL（1536px以上）
+ * ============================================================ */
+@media screen and (min-width: 1536px) {
+  .work_card {
+    width: 420px;
+    height: 315px;
+  }
+
+  .work_card_title {
+    font-size: 1.2rem !important;
+  }
+}
+
+/** ============================================================
+ * レスポンシブ: 3XL（1920px以上）
+ * ============================================================ */
+@media screen and (min-width: 1920px) {
+  .work_card {
+    width: 520px;
+    height: 390px;
+  }
+
+  .work_card_title {
+    font-size: 1.3rem !important;
+  }
+
+  .work_card_description {
+    font-size: 0.85rem !important;
+    -webkit-line-clamp: 3;
+  }
+}

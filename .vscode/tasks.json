@@ -53,7 +53,7 @@
     {
       "label": "Figma WebSocket Server",
       "type": "shell",
-      "command": "/home/junpei-1997/.bun/bin/bunx cursor-talk-to-figma-socket",
+      "command": "/home/siron-1997/.bun/bin/bunx cursor-talk-to-figma-socket",
       "isBackground": true,
       "problemMatcher": {
         "pattern": {

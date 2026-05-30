@@ -1,0 +1,53 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as LabelStories from './Label.stories';
+
+<Meta of={LabelStories} />
+
+<Title />
+
+<Subtitle>
+  入力フィールドに付与するラベル。確認ステップでは「※ 必須」バッジを非表示にする
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Label` は、お問い合わせフォームの各入力フィールド（name / E-mail / Message）に対応するラベルコンポーネントです。
+
+`isConfirmStep` の値に応じて表示が切り替わります。
+
+| `isConfirmStep`         | 表示                            |
+| ----------------------- | ------------------------------- |
+| `false`（入力ステップ） | 「※ 必須」バッジ + フィールド名 |
+| `true`（確認ステップ）  | フィールド名のみ                |
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

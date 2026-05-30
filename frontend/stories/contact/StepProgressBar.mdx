@@ -1,0 +1,58 @@
+import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+
+import * as StepProgressBarStories from './StepProgressBar.stories';
+
+<Meta of={StepProgressBarStories} />
+
+<Title />
+
+<Subtitle>お問い合わせフォームの進行ステップを可視化する 3 ステップ固定のプログレスバー</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`StepProgressBar` は、お問い合わせフォームの 3 つのステップ（**内容入力** → **内容確認** → **送信**）の進行状況をユーザーに提示するコンポーネントです。
+
+各ステップは `formStep` / `hasValidationError` / `isSubmitSuccessful` の組み合わせによって、以下の 4 つの表示状態を持ちます。
+
+| 状態 | 表示 | 色 |
+|------|------|------|
+| `not_started` | 未開始（番号のみ） | グレー |
+| `current` | 現在進行中（番号・スケールアップアニメーション） | ブルー |
+| `completed` | 完了済み（チェックアイコン） | グリーン |
+| `error` | エラー（`!` アイコン・シェークアニメーション） | レッド |
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## ステップ状態マトリクス
+
+各 Props の組み合わせに応じたステップ状態の変化を以下に示します。
+
+| `formStep` | `hasValidationError` | `isSubmitSuccessful` | Step 1 | Step 2 | Step 3 |
+|---|---|---|---|---|---|
+| `INPUT` | `false` | — | **current** (青) | not_started | not_started |
+| `INPUT` | `true` | — | **error** (赤) | not_started | not_started |
+| `CONFIRM` | — | — | completed (緑) | **current** (青) | not_started |
+| `RESULT` | — | `true` | completed (緑) | completed (緑) | **current** (青) ラベル: 送信完了 |
+| `RESULT` | — | `false` | completed (緑) | completed (緑) | **error** (赤) ラベル: 送信失敗 |
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

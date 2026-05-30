@@ -1,0 +1,59 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as ProgressStatusStories from './ProgressStatus.stories';
+
+<Meta of={ProgressStatusStories} />
+
+<Title />
+
+<Subtitle>
+  「Contact」タイトルと StepProgressBar を組み合わせたページヘッダー領域
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`ProgressStatus` は、コンタクトページの左カラムに表示するヘッダー領域コンポーネントです。
+
+セクションタイトル「Contact」と `StepProgressBar` を縦に並べ、フォームの進行状況を示します。
+ページロード時に GSAP によるフェードイン＋上方向スライドのアニメーションが実行されます。
+
+### レスポンシブ挙動
+
+| ブレークポイント | 幅                                      |
+| ---------------- | --------------------------------------- |
+| `〜 1024px`      | `width: 100%`                           |
+| `1024px〜`       | `width: 50%`（左カラム）                |
+| `1280px〜`       | `StepProgressBar` の幅が `600px` に固定 |
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## ステップ別バリエーション
+
+各 `formStep` / `hasValidationError` / `isSubmitSuccessful` の組み合わせに応じた表示変化を確認できます。
+
+<Stories includePrimary={false} />

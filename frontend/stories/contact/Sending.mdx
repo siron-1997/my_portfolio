@@ -1,0 +1,52 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as SendingStories from './Sending.stories';
+
+<Meta of={SendingStories} />
+
+<Title />
+
+<Subtitle>フォーム送信中に表示するフルスクリーンオーバーレイ</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Sending` は、フォームの送信処理中にページ全体を覆うオーバーレイコンポーネントです。
+
+`isSending` が `true` の間、以下の動作が行われます。
+
+- フルスクリーンのオーバーレイを表示（`position: fixed` / `backdrop-filter: blur`）
+- ページのスクロールを無効化（`overflow: hidden`）
+- ページを先頭にスクロール（`window.scrollTo(0, 0)`）
+
+`isSending` が `false` になると `display: none` で非表示になり、スクロールが再度有効化されます。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

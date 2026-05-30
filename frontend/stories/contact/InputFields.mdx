@@ -1,0 +1,67 @@
+import {
+  Canvas,
+  Controls,
+  Description,
+  Meta,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+
+import * as InputFieldsStories from './InputFields.stories';
+
+<Meta of={InputFieldsStories} />
+
+<Title />
+
+<Subtitle>
+  name / E-mail / Message の 3 フィールドを持つお問い合わせフォームの入力エリア
+</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`InputFields` は、お問い合わせフォームの入力フィールド群を管理するコンポーネントです。
+`react-hook-form` の `register` と `formState` を受け取り、バリデーション状態をフィールドのスタイルに反映します。
+
+### フィールド一覧
+
+| フィールド | 型         | バリデーション                        |
+| ---------- | ---------- | ------------------------------------- |
+| `name`     | `text`     | 必須（1 文字以上）                    |
+| `E-mail`   | `email`    | 必須・RFC 5322 準拠のフォーマット検証 |
+| `Message`  | `textarea` | 必須（1 文字以上）                    |
+
+### ステップ別の挙動
+
+| `formStep` | フィールド                 | 「※ 必須」バッジ |
+| ---------- | -------------------------- | ---------------- |
+| `INPUT`    | 編集可能                   | 表示             |
+| `CONFIRM`  | 読み取り専用（`readOnly`） | 非表示           |
+
+### バリデーションエラー表示条件
+
+`hasAttemptedAdvance` が `true` かつ各フィールドにエラーがある場合、フィールドの下にエラーメッセージを表示します。
+フィールドのボーダーもエラーカラー（赤）に変化します。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

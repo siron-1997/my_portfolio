@@ -1,6 +1,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --text-normal: #ffffff;
   --border-dark-default: rgba(190, 190, 190, 0.4);
   --border-dark-hover: rgba(190, 190, 190, 0.8);
   --border-dark-focus: #00aaaa;
