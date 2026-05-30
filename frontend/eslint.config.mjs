@@ -1,8 +1,7 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
-
 import { FlatCompat } from '@eslint/eslintrc';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import storybook from "eslint-plugin-storybook";
 
 /** FlatCompat: ESLint 9 Flat Config から旧来の extends 形式を利用するためのブリッジ */
 const compat = new FlatCompat({

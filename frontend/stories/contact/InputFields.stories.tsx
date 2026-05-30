@@ -7,8 +7,8 @@ import { useForm } from 'react-hook-form';
 import InputFields from '@/components/contact/InputFields';
 import {
   CONTACT_DEFAULT_VALUES,
-  contactSchema,
   type ContactFormValues,
+  contactSchema,
 } from '@/constants/contact';
 
 /**
@@ -22,6 +22,14 @@ import {
 const meta = {
   title: 'Components/Contact/InputFields',
   component: InputFields,
+  decorators: [
+    (Story) =>
+      React.createElement(
+        'div',
+        { style: { width: '600px' } },
+        React.createElement(Story),
+      ),
+  ],
   parameters: {
     layout: 'centered',
     backgrounds: {

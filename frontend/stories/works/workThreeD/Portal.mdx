@@ -1,0 +1,42 @@
+import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+
+import * as PortalStories from './Portal.stories';
+
+<Meta of={PortalStories} />
+
+<Title />
+
+<Subtitle>3D 作品詳細ページの Canvas 背景セクション。作品タイトルと説明文を表示する</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Portal`（workThreeD）は、3D 作品詳細ページのエントリーポイントセクションコンポーネントです。
+
+`content` から作品タイトルと説明文を受け取って表示します。
+実際の使用時は Three.js Canvas が `position: fixed` でこのセクションの背後に重なり、3D シーンが表示されます。
+
+`isLoading` が `false` になったとき GSAP によるフェードインアニメーションが実行されます。
+
+> **注意**: Storybook 上では Three.js Canvas は表示されません。レイアウト確認用途でご利用ください。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

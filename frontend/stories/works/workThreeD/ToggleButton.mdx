@@ -1,0 +1,44 @@
+import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+
+import * as ToggleButtonStories from './ToggleButton.stories';
+
+<Meta of={ToggleButtonStories} />
+
+<Title />
+
+<Subtitle>3D ビュワーモードの ON / OFF を切り替えるトグルボタン</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`ToggleButton` は、3D 作品詳細ページでビュワーモードを ON / OFF するトグルボタンコンポーネントです。
+
+`viewerStatus` に応じてラベルが切り替わり、クリック時に `dispatch({ type: 'SET_VIEWER_STATUS' })` を発行します。
+
+| `viewerStatus` | 左ボタン（Start） | 右ボタン（End） |
+|---|---|---|
+| `passive` | アクティブ（白背景） | 非アクティブ |
+| `entering` / `active` / `exiting` | 非アクティブ | アクティブ（白背景） |
+
+GSAP アニメーションがマウント時に実行されます。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

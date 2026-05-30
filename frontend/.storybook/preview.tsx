@@ -1,3 +1,5 @@
+import '@/styles/globals.css';
+
 import React from 'react';
 
 import { ThemeProvider } from '@mui/material/styles';
@@ -5,7 +7,6 @@ import type { Preview } from '@storybook/nextjs-vite';
 import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
 
 import { theme } from '@/configs/theme';
-import '@/styles/globals.css';
 
 const customViewports = {
   desktop: {

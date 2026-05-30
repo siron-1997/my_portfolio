@@ -1,0 +1,45 @@
+import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+
+import * as ContentsStories from './Contents.stories';
+
+<Meta of={ContentsStories} />
+
+<Title />
+
+<Subtitle>作品一覧ページのカードグリッド。カテゴリフィルタリングとスクロールアニメーションに対応</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Contents` は、作品一覧ページに表示するカードグリッドコンポーネントです。
+
+`selectedCategories` が空の場合は全件表示し、カテゴリが選択されている場合は一致する作品のみ表示します。
+カードがスクロールビューに入るタイミングで GSAP の ScrollTrigger によるフェードイン＋スライドアニメーションが実行されます。
+
+### フィルタリング仕様
+
+| `selectedCategories` | 表示 |
+|---|---|
+| `[]`（空） | 全件表示 |
+| `[{key: 'web'}]` など | `category_key` が一致する作品のみ |
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

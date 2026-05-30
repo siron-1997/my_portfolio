@@ -1,0 +1,47 @@
+import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+
+import * as WorkCardStories from './WorkCard.stories';
+
+<Meta of={WorkCardStories} />
+
+<Title />
+
+<Subtitle>作品一覧・ホームページで使用するフルブリード画像カード</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`WorkCard` は、作品一覧ページおよびホームページで使用するカードコンポーネントです。
+画像がカード全体を覆うフルブリードレイアウトで、タイトル・説明文・カテゴリを重ねて表示します。
+ホバー時は CSS transition でオーバーレイを表示します。
+
+### レスポンシブサイズ（幅 × 高さ）
+
+| ブレークポイント | カードサイズ |
+|---|---|
+| `〜 768px`（XS） | 320 × 240px |
+| `768px〜`（SM） | 360 × 270px |
+| `1024px〜`（LG） | 300 × 225px |
+| `1280px〜`（XL） | 380 × 285px |
+| `1536px〜`（2XL） | 420 × 315px |
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## ブレークポイント別バリエーション
+
+<Stories includePrimary={false} />

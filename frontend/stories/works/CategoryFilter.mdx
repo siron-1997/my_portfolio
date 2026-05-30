@@ -1,0 +1,45 @@
+import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+
+import * as CategoryFilterStories from './CategoryFilter.stories';
+
+<Meta of={CategoryFilterStories} />
+
+<Title />
+
+<Subtitle>作品一覧ページのカテゴリ絞り込みフィルター（MUI Autocomplete）</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`CategoryFilter` は、作品一覧ページでカテゴリによる絞り込みを行うフィルターコンポーネントです。
+MUI `Autocomplete`（複数選択モード）を使用し、選択済みカテゴリをチップとして表示します。
+
+ページ初回マウント時に GSAP によるフェードイン＋スライドアニメーションが実行されます。
+
+### レスポンシブ挙動
+
+| ブレークポイント | チップ表示上限 |
+|---|---|
+| `〜 768px`（モバイル） | 2件 |
+| `768px〜`（デスクトップ） | 4件 |
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## ブレークポイント別バリエーション
+
+<Stories includePrimary={false} />

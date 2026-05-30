@@ -1,3 +1,5 @@
+import React from 'react';
+
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import ProgressStatus from '@/components/contact/ProgressStatus';
@@ -12,6 +14,14 @@ import ProgressStatus from '@/components/contact/ProgressStatus';
 const meta = {
   title: 'Components/Contact/ProgressStatus',
   component: ProgressStatus,
+  decorators: [
+    (Story) =>
+      React.createElement(
+        'div',
+        { style: { width: '600px' } },
+        React.createElement(Story),
+      ),
+  ],
   parameters: {
     layout: 'centered',
     backgrounds: {

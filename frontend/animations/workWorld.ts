@@ -1,6 +1,5 @@
-import type { Dispatch, RefObject, SetStateAction } from 'react';
-
 import { gsap } from 'gsap';
+import type { Dispatch, RefObject, SetStateAction } from 'react';
 import { Euler, type PerspectiveCamera, Quaternion, Vector3 } from 'three';
 
 import { IS_DEV } from '@/constants/common';
@@ -16,10 +15,6 @@ import {
   VIEWER_TOGGLE_START_DURATION,
 } from '@/constants/workThreeD';
 import {
-  computeArcPosition,
-  computeLookAtQuaternion,
-} from '@/utils/world/work/cameraArc';
-import {
   type CameraParams,
   type ControlCameraConfigs,
   type Position,
@@ -27,6 +22,10 @@ import {
   type ViewOffset,
   type WorkWorldSectionsCameraParams,
 } from '@/types/world';
+import {
+  computeArcPosition,
+  computeLookAtQuaternion,
+} from '@/utils/world/work/cameraArc';
 
 /** セクション種別に応じた「開始・終了位置」情報 */
 type GetSectionAnimationParamsReturn = {

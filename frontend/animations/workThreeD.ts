@@ -1,4 +1,4 @@
-import { RefObject } from 'react';
+import { type RefObject } from 'react';
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,8 +9,8 @@ import {
   POWER2_OUT_OPACITY_RIGHT_MOVE,
   POWER2_OUT_OPACITY_TOP_MOVE,
 } from '@/constants/common';
-import { getScrollTriggerOption } from '@/utils';
 import { type ViewerStatus } from '@/types/contexts';
+import { getScrollTriggerOption } from '@/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 

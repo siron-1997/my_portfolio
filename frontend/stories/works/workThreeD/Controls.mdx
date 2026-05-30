@@ -1,0 +1,45 @@
+import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+
+import * as ControlsStories from './Controls.stories';
+
+<Meta of={ControlsStories} />
+
+<Title />
+
+<Subtitle>3D 作品詳細ページの操作パネルセクション。コントロール項目リストで 3D モデルのアニメーションを切り替える</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Controls` は、3D 作品詳細ページのスクロール下部に表示する操作パネルセクションコンポーネントです。
+`ControlItems` を一覧表示し、クリックで `dispatch({ type: 'NAVIGATE_TO', payload: index })` を発行して 3D モデルのアニメーションを切り替えます。
+
+GSAP の ScrollTrigger を使ったスクロールアニメーションが適用されます（`isLoading: true` のときに初期化）。
+
+### レスポンシブ対応
+
+| ブレークポイント | レイアウト |
+|---|---|
+| `〜 768px`（SM 未満） | `#contents-mb` のみ表示 |
+| `768px〜`（SM 以上） | `#contents-pc` のみ表示 |
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

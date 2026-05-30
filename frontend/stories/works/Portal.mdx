@@ -1,0 +1,37 @@
+import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+
+import * as PortalStories from './Portal.stories';
+
+<Meta of={PortalStories} />
+
+<Title />
+
+<Subtitle>作品一覧ページのエントリーポイントに表示する大見出し</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`Portal` は、作品一覧ページ（`/works`）のエントリーポイントに表示する大見出しコンポーネントです。
+
+MUI `Typography`（`variant="h1"`）を使用し、マウント時に GSAP によるテキストアニメーションが実行されます。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />

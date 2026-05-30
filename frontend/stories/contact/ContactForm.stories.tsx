@@ -8,8 +8,8 @@ import { useForm } from 'react-hook-form';
 import ContactForm from '@/components/contact/ContactForm';
 import {
   CONTACT_DEFAULT_VALUES,
-  contactSchema,
   type ContactFormValues,
+  contactSchema,
 } from '@/constants/contact';
 import { type ContactFormAction, type FormStep } from '@/types/contact';
 

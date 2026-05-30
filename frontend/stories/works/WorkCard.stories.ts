@@ -10,7 +10,7 @@ import WorkCard from '@/components/works/WorkCard';
  * ブレークポイント: XS（<768px）/ SM（<1024px）/ LG（<1280px）/ XL（<1536px）/ 2XL（<1920px）
  */
 const meta = {
-  title: 'Components/WorkCard',
+  title: 'Components/Works/WorkCard',
   component: WorkCard,
   parameters: {
     layout: 'centered',
@@ -24,7 +24,6 @@ const meta = {
   globals: {
     backgrounds: { value: 'dark' },
   },
-  tags: ['autodocs'],
   argTypes: {
     image: { control: 'text' },
     alt: { control: 'text' },

@@ -1,0 +1,42 @@
+import { Canvas, Controls, Description, Meta, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks';
+
+import * as ControlItemsStories from './ControlItems.stories';
+
+<Meta of={ControlItemsStories} />
+
+<Title />
+
+<Subtitle>3D 作品詳細ページの操作パネルに並ぶ各コントロール項目</Subtitle>
+
+<Description />
+
+---
+
+## 概要
+
+`ControlItems` は、3D 作品詳細ページの操作パネル（`Controls`）に並ぶ各コントロール項目コンポーネントです。
+
+インデックス番号・タイトル・説明文を 1 行で表示し、クリックすると `onClick(index)` が呼ばれ、親コンポーネントがモデルアニメーションを切り替えます。
+
+### スタイル
+
+インデックス番号は半透明ボーダー付きのバッジスタイル（`border: 2px solid`）で表示します。
+`className` / `style` は親コンポーネント（`Controls`）から GSAP アニメーション制御のために渡されます。
+
+---
+
+## デフォルト表示
+
+<Primary />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## 全バリエーション
+
+<Stories includePrimary={false} />
