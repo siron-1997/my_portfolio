@@ -1,3 +1,5 @@
+import React from 'react';
+
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import SkillList from '@/components/about/SkillList';
@@ -33,9 +35,31 @@ type Story = StoryObj<typeof meta>;
 
 /**
  * デスクトップ（1280px 以上）。
+ * スキルアイコンのみ表示。ホバーでテキストが展開するインタラクションを確認できる。
  */
 export const Desktop: Story = {
   name: 'デスクトップ（1280px〜）',
+};
+
+/**
+ * デスクトップ ホバー展開時。
+ * 実際のサイトでは各アイテムにホバーすると名称・年数テキストが展開される。
+ * 全アイテムを展開状態で表示したドキュメント用バリアント。
+ */
+export const DesktopHovered: Story = {
+  name: 'デスクトップ ホバー展開時',
+  decorators: [
+    (Story) => (
+      <>
+        <style>{`
+          .skill-list-container li {
+            width: 175px !important;
+          }
+        `}</style>
+        <Story />
+      </>
+    ),
+  ],
 };
 
 /**

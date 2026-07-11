@@ -79,19 +79,21 @@ const WorkCard = React.memo(
 
           {/** テキストオーバーレイコンテナ */}
           <div className={s.work_card_content}>
+            <div className={s.work_card_section}>
+              {/** タイトル */}
+              <Typography component="h4" className={s.work_card_title}>
+                {title}
+              </Typography>
+
+              {/** 説明 */}
+              <Typography component="p" className={s.work_card_description}>
+                {description}
+              </Typography>
+            </div>
+
             {/** カテゴリタグ */}
             <Typography component="span" className={s.work_card_tag}>
               {categoryType}
-            </Typography>
-
-            {/** タイトル */}
-            <Typography component="h4" className={s.work_card_title}>
-              {title}
-            </Typography>
-
-            {/** 説明 */}
-            <Typography component="p" className={s.work_card_description}>
-              {description}
             </Typography>
           </div>
         </div>
